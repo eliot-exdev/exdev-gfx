@@ -19,14 +19,14 @@ struct Pen {
 
 typedef struct Pen Pen_t;
 
-extern Pen_t PEN_BLACK;
-extern Pen_t PEN_WHITE;
-extern Pen_t PEN_GRAY;
-extern Pen_t PEN_RED;
-extern Pen_t PEN_GREEN;
-extern Pen_t PEN_BLUE;
-extern Pen_t PEN_YELLOW;
-extern Pen_t PEN_CYAN;
+extern const Pen_t PEN_BLACK;
+extern const Pen_t PEN_WHITE;
+extern const Pen_t PEN_GRAY;
+extern const Pen_t PEN_RED;
+extern const Pen_t PEN_GREEN;
+extern const Pen_t PEN_BLUE;
+extern const Pen_t PEN_YELLOW;
+extern const Pen_t PEN_CYAN;
 
 void pen_init(Pen_t *p, unsigned int r, unsigned int g, unsigned int b);
 
