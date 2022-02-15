@@ -1,3 +1,7 @@
+/**
+ * Copyright 2022 Andre Geisler (andre@exdev.de)
+ */
+
 #include "exdevgfx/julia.h"
 #define EXDEVGFX2_LOG_LEVEL 1
 #include "exdevgfx/logger.h"

@@ -1,3 +1,7 @@
+/**
+ * Copyright 2022 Andre Geisler (andre@exdev.de)
+ */
+
 #include <exdevgfx/args.h>
 #include <string.h>
 #include <stdlib.h>

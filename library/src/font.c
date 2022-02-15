@@ -1,7 +1,10 @@
+/**
+ * Copyright 2022 Andre Geisler (andre@exdev.de)
+ */
+
 #include "exdevgfx/font.h"
 
 #include <assert.h>
-#include <stdlib.h>
 
 #define MIA_1_WIDTH 4
 #define MIA_1_HEIGHT 7
@@ -43,7 +46,6 @@ void font_init_mia_1(Font_t *f) {
     f->num_characters = MIA_1_NUM_CHARS;
     f->characters = MIA_1_CHARACTERS[0];
     f->table = MIA_1_TRANSLATION_TABLE;
-
 }
 
 void font_deinit(Font_t *f) {

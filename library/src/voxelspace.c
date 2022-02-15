@@ -1,3 +1,7 @@
+/**
+ * Copyright 2022 Andre Geisler (andre@exdev.de)
+ */
+
 #include <exdevgfx/voxelspace.h>
 #include <exdevgfx/vertex2d.h>
 #include <exdevgfx/helper.h>

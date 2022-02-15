@@ -1,3 +1,7 @@
+/**
+ * Copyright 2022 Andre Geisler (andre@exdev.de)
+ */
+
 #include "exdevgfx/window.h"
 
 #define EXDEVGFX2_LOG_LEVEL 2

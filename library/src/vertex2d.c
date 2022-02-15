@@ -1,3 +1,7 @@
+/**
+ * Copyright 2022 Andre Geisler (andre@exdev.de)
+ */
+
 #include <exdevgfx/vertex2d.h>
 
 void vertex2d_init(Vertex2d_t v) {

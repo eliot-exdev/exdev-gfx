@@ -1,3 +1,7 @@
+/**
+ * Copyright 2022 Andre Geisler (andre@exdev.de)
+ */
+
 #include "exdevgfx/exdev_base.h"
 
 #define EXDEVGFX2_LOG_LEVEL 1
