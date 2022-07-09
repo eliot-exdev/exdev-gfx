@@ -7,9 +7,7 @@
 
 extern int exdev_base_initiated;
 
-#ifdef __linux__
-
-#else
+#if defined(__amigaos4__) || defined(__MORPHOS__) || defined(__AROS__)
 #include <proto/exec.h>
 #include <proto/intuition.h>
 
