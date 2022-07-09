@@ -23,7 +23,7 @@ int main() {
 
     matrix_init(m);
     vertex3d_set(v, 0, 1, 0);
-    printf("vector before rotation=%f %f %f\n", v[0], v[1], v[3]);
+    printf("vector before rotation=%f %f %f\n", v[0], v[1], v[2]);
     matrix_rotateZ(m, deg_to_rad(180), m);
     matrix_mul_vector(m, v, v);
     printf("vector after rotation of 180 degree around Z axis=%f %f %f\n", v[0], v[1], v[2]);
