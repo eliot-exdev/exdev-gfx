@@ -62,7 +62,7 @@ void color_rgb_rgba_copy(const ColorRGB_t *src, ColorRGBA_t *dst) {
 }
 
 unsigned char color_rgb_to_8bit(const ColorRGB_t *src) {
-    unsigned char c = 0;
+    unsigned char c = 0; //TODO: implement me!
     return c;
 }
 
@@ -332,8 +332,6 @@ static inline void float_color_rgba_to_color_rgba(const FloatColorRGBA_t *src, C
     dst->a = (unsigned char) (src->a * 255);
 }
 
-#define edgeFunction(a, b, c) (c[0] - a[0]) * (b[1] - a[1]) - (c[1] - a[1]) * (b[0] - a[0])
-
 void framebuffer_fill_triangle(Framebuffer_t *fb, Vertex2d_t *triangle, const ColorRGBA_t *colors) {
     int j, i;
     Vertex2d_t p;
@@ -567,10 +565,9 @@ int framebuffer_read(Framebuffer_t *fb, const char *path) {
     }
 
     char line[LINE_LENGTH];
-    size_t line_length = 0;
 
     // check format
-    line_length = read_line(fp, line, LINE_LENGTH);
+    size_t line_length = read_line(fp, line, LINE_LENGTH);
     if (line_length != 3 || strcmp(line, "P3\n") != 0) {
         log_warning_fmt("wrong file format=%s", line);
         return 1;

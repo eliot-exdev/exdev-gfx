@@ -8,7 +8,7 @@
 #include <exdevgfx/vertex2d.h>
 #include <exdevgfx/font.h>
 
-#define edgeFunction(a, b, c) (c[0] - a[0]) * (b[1] - a[1]) - (c[1] - a[1]) * (b[0] - a[0])
+#define edgeFunction(a, b, c) ((c[0] - a[0]) * (b[1] - a[1]) - (c[1] - a[1]) * (b[0] - a[0]))
 
 typedef unsigned char Color8Bit_t;
 
