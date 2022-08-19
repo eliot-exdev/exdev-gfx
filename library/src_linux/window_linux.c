@@ -54,13 +54,13 @@ typedef struct X11Window X11Window_t;
 //                    PROP_MWM_HINTS_ELEMENTS);
 //}
 
-struct Hints {
+typedef struct hints {
     unsigned long flags;
     unsigned long functions;
     unsigned long decorations;
     long inputMode;
     unsigned long status;
-};
+} hints_t;
 
 
 Window_t *window_create(const int width, const int height, const char *title, const enum FULLSCREEN fs) {
@@ -92,7 +92,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
     XAutoRepeatOff(x11_w->display);
 
     // disable window decorations
-    struct Hints hints = {2, 0, 0, 0, 0};
+    const hints_t hints = {2, 0, 0, 0, 0};
     Atom property = XInternAtom(x11_w->display, "_MOTIF_WM_HINTS", True);
     XChangeProperty(x11_w->display, x11_w->window, property, property, 32, PropModeReplace, (unsigned char *) &hints, 5);
 
