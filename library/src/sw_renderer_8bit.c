@@ -91,12 +91,12 @@ void sw_renderer_8bit_fill_polygon_color_new(SWRenderer8bit_t *sw,
         }
 
         const int xmin = max(min(min(v0[0], v1[0]), v2[0]), 0);
-        const int xmax = max(max(v0[0], v1[0]), v2[0]);
+        const int xmax = min(max(max(v0[0], v1[0]), v2[0]), sw->fb->width - 1);
         const int ymin = max(min(min(v0[1], v1[1]), v2[1]), 0);
-        const int ymax = max(max(v0[1], v1[1]), v2[1]);
+        const int ymax = min(max(max(v0[1], v1[1]), v2[1]), sw->fb->height - 1);
 
-        for (int y = ymin; y <= ymax && y < sw->fb->height; ++y) {
-            for (int x = xmin; x <= xmax && x < sw->fb->width; ++x) {
+        for (int y = ymin; y <= ymax; ++y) {
+            for (int x = xmin; x <= xmax; ++x) {
                 const Vertex2d_t p = {(float) x, (float) y};
                 const float w0 = edgeFunction(v1, v2, p);
                 const float w1 = edgeFunction(v2, v0, p);
