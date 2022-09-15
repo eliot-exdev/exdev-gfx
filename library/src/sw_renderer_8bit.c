@@ -86,17 +86,17 @@ void sw_renderer_8bit_fill_polygon_color_new(SWRenderer8bit_t *sw,
         v1[0] = (1 + v1[0]) * 0.5f * sw->fb->width, v1[1] = (1 + v1[1]) * 0.5f * sw->fb->height;
         v2[0] = (1 + v2[0]) * 0.5f * sw->fb->width, v2[1] = (1 + v2[1]) * 0.5f * sw->fb->height;
 
-        if(!is_visible_(v0,v1,v2)){
+        if (!is_visible_(v0, v1, v2)) {
             continue;
         }
 
-        const int xmin = min(min(v0[0], v1[0]), v2[0]);
+        const int xmin = max(min(min(v0[0], v1[0]), v2[0]), 0);
         const int xmax = max(max(v0[0], v1[0]), v2[0]);
-        const int ymin = min(min(v0[1], v1[1]), v2[1]);
+        const int ymin = max(min(min(v0[1], v1[1]), v2[1]), 0);
         const int ymax = max(max(v0[1], v1[1]), v2[1]);
 
-        for (int y = ymin; y <= ymax; ++y) {
-            for (int x = xmin; x <= xmax; ++x) {
+        for (int y = ymin; y <= ymax && y < sw->fb->height; ++y) {
+            for (int x = xmin; x <= xmax && x < sw->fb->width; ++x) {
                 const Vertex2d_t p = {(float) x, (float) y};
                 const float w0 = edgeFunction(v1, v2, p);
                 const float w1 = edgeFunction(v2, v0, p);
@@ -157,7 +157,8 @@ void sw_renderer_8bit_fill_polygon_color(SWRenderer8bit_t *sw,
     log_debug("<-- sw_renderer_fill_triangle_rgb()");
 }
 
-static void barycentric(const Vertex3d_t a, const Vertex3d_t b, const Vertex3d_t c, const Vertex3d_t p, Vertex3d_t res) {
+static void
+barycentric(const Vertex3d_t a, const Vertex3d_t b, const Vertex3d_t c, const Vertex3d_t p, Vertex3d_t res) {
     const Vertex3d_t s0 = {c[0] - a[0], b[0] - a[0], a[0] - p[0]};
     const Vertex3d_t s1 = {c[1] - a[1], b[1] - a[1], a[1] - p[1]};
     Vertex3d_t u;
