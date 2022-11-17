@@ -157,29 +157,28 @@ void sw_renderer_8bit_fill_polygon_color(SWRenderer8bit_t *sw,
     log_debug("<-- sw_renderer_fill_triangle_rgb()");
 }
 
-static void
-barycentric(const Vertex3d_t a, const Vertex3d_t b, const Vertex3d_t c, const Vertex3d_t p, Vertex3d_t res) {
-    const Vertex3d_t s0 = {c[0] - a[0], b[0] - a[0], a[0] - p[0]};
-    const Vertex3d_t s1 = {c[1] - a[1], b[1] - a[1], a[1] - p[1]};
-    Vertex3d_t u;
-    vertex3d_cross(s0, s1, u);
-
-    if (fabsf(u[2]) < 1.0f) {
-        res[0] = -1;
-        res[1] = 1;
-        res[2] = 1;
-        return;
-    }
-
-    res[0] = 1.0f - (u[0] + u[1]) / u[2];
-    res[1] = u[1] / u[2];
-    res[2] = u[0] / u[2];
-
-}
+//static void barycentric(const Vertex3d_t a, const Vertex3d_t b, const Vertex3d_t c, const Vertex3d_t p, Vertex3d_t res) {
+//    const Vertex3d_t s0 = {c[0] - a[0], b[0] - a[0], a[0] - p[0]};
+//    const Vertex3d_t s1 = {c[1] - a[1], b[1] - a[1], a[1] - p[1]};
+//    Vertex3d_t u;
+//    vertex3d_cross(s0, s1, u);
+//
+//    if (fabsf(u[2]) < 1.0f) {
+//        res[0] = -1;
+//        res[1] = 1;
+//        res[2] = 1;
+//        return;
+//    }
+//
+//    res[0] = 1.0f - (u[0] + u[1]) / u[2];
+//    res[1] = u[1] / u[2];
+//    res[2] = u[0] / u[2];
+//
+//}
 
 void sw_renderer_8bit_fill_polygon_texture(SWRenderer8bit_t *sw,
                                            const Vertex3d_t *triangles,
-                                           const Vertex2d_t *uv_coordinates,
+//                                           const Vertex2d_t *uv_coordinates,
                                            int triangles_count,
                                            const Framebuffer8Bit_t *texture,
                                            const Vertex3d_t trans,
@@ -260,7 +259,5 @@ void sw_renderer_8bit_fill_polygon_texture(SWRenderer8bit_t *sw,
                 }
             }
         }
-
-
     }
 }

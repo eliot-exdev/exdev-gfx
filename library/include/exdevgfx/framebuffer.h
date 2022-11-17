@@ -44,7 +44,6 @@ void color_rgba_rgb_copy(const ColorRGBA_t *src, ColorRGB_t *dst);
 
 void color_rgb_rgba_copy(const ColorRGB_t *src, ColorRGBA_t *dst);
 
-unsigned char color_rgb_to_8bit(const ColorRGB_t *c);
 
 void color_rgba_rgb_combine(const ColorRGBA_t *src, ColorRGB_t *dst);
 

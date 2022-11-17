@@ -30,7 +30,7 @@ void framebuffer_rgba_fill(FramebufferRGBA_t *fb, const Framebuffer_t *src, unsi
     }
 }
 
-void framebuffer_rgba_fill_8bit(FramebufferRGBA_t *fb, const Framebuffer8Bit_t *src, const Palette8Bit_t *p, unsigned char) {
+void framebuffer_rgba_fill_8bit(FramebufferRGBA_t *fb, const Framebuffer8Bit_t *src, const Palette8Bit_t *p) {
     assert(src);
     assert(fb);
     assert(p);

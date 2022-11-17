@@ -174,12 +174,12 @@ int main(int argc, char **argv) {
 //            {0,  -1, 0}, // bottom
 //            {0,  -1, 0}
 //    };
-    const float texture_coordinates[6][2] = {{0.0f, 1.0f},
-                                             {1.0f, 1.0f},
-                                             {0.0f, 0.0f},
-                                             {0.0f, 1.0f},
-                                             {1.0f, 1.0f},
-                                             {1.0f, 0.0f}};
+//    const float texture_coordinates[6][2] = {{0.0f, 1.0f},
+//                                             {1.0f, 1.0f},
+//                                             {0.0f, 0.0f},
+//                                             {0.0f, 1.0f},
+//                                             {1.0f, 1.0f},
+//                                             {1.0f, 0.0f}};
 
     Color8Bit_t cube_colors[12] = {
             RED, RED,

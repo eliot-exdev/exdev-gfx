@@ -15,7 +15,7 @@
 #ifdef __AMIGA__
 #define ASSETS_PREFIX ""
 #else
-#define ASSETS_PREFIX "../share/exdev/"
+#define ASSETS_PREFIX ""
 #endif
 
 #define VERSION "voxelspace 0.7 (26.12.2020)"
@@ -335,6 +335,8 @@ int main(int argc, char **argv) {
                             close_event = 1;
                         }
                         break;
+                    case KEY_TYPE_INVALID:
+                        break;
                 }
             } else if (events[i].event == KEY_EVENT_RELEASED) {
                 switch (events[i].type) {
@@ -352,6 +354,22 @@ int main(int argc, char **argv) {
                         } else if (events[i].code == 'a' || events[i].code == 'd') {
                             ctrl_strafe = 0;
                         }
+                    case KEY_TYPE_INVALID:
+                        break;
+                    case KEY_TYPE_ESC:
+                        break;
+                    case KEY_TYPE_F1:
+                        break;
+                    case KEY_TYPE_F2:
+                        break;
+                    case KEY_TYPE_F3:
+                        break;
+                    case KEY_TYPE_F4:
+                        break;
+                    case KEY_TYPE_F5:
+                        break;
+                    case KEY_TYPE_F6:
+                        break;
                 }
             }
         }

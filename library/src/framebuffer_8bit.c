@@ -249,15 +249,25 @@ int framebuffer_8bit_read_from_dat(Framebuffer8Bit_t *fb, const char *path) {
 
     // width height
     int width = 0, height = 0;
-    fread(&width, sizeof(int), 1, fp);
-    fread(&height, sizeof(int), 1, fp);
+    size_t res = fread(&width, sizeof(int), 1, fp);
+    if (res == 0) {
+        log_warning_fmt("could not read all bytes, res=%lu", res);
+        fclose(fp);
+        return 1;
+    }
+    res = fread(&height, sizeof(int), 1, fp);
+    if (res == 0) {
+        log_warning_fmt("could not read all bytes, res=%lu", res);
+        fclose(fp);
+        return 1;
+    }
     swap_bytes_int(&width);
     swap_bytes_int(&height);
     log_info_fmt("width=%d, height=%d", width, height);
 
     framebuffer_8bit_init(fb, width, height);
 
-    const size_t res = fread(fb->buffer, framebuffer_8bit_num_bytes(fb), 1, fp);
+    res = fread(fb->buffer, framebuffer_8bit_num_bytes(fb), 1, fp);
     if (res != 1) {
         log_warning_fmt("could not read all bytes, res=%lu", res);
         fclose(fp);

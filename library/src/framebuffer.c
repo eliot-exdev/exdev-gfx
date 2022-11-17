@@ -61,11 +61,6 @@ void color_rgb_rgba_copy(const ColorRGB_t *src, ColorRGBA_t *dst) {
     dst->a = 0xff;
 }
 
-unsigned char color_rgb_to_8bit(const ColorRGB_t *src) {
-    unsigned char c = 0; //TODO: implement me!
-    return c;
-}
-
 void color_rgba_rgb_combine(const ColorRGBA_t *src, ColorRGB_t *dst) {
     const float alpha = (float) src->a / 255.0f;
     dst->r = (unsigned char) ((float) src->r * alpha + (1.0f - alpha) * (float) dst->r);
@@ -679,14 +674,24 @@ int framebuffer_read_from_dat(Framebuffer_t *fb, const char *path) {
 
     // width height
     int width = 0, height = 0;
-    fread(&width, sizeof(int), 1, fp);
-    fread(&height, sizeof(int), 1, fp);
+    size_t res = fread(&width, sizeof(int), 1, fp);
+    if (res != 1) {
+        log_warning_fmt("could not read all bytes, res=%lu", res);
+        fclose(fp);
+        return 1;
+    }
+    res = fread(&height, sizeof(int), 1, fp);
+    if (res != 1) {
+        log_warning_fmt("could not read all bytes, res=%lu", res);
+        fclose(fp);
+        return 1;
+    }
     swap_bytes_int(&width);
     swap_bytes_int(&height);
     log_info_fmt("width=%d, height=%d", width, height);
 
     framebuffer_init(fb, width, height);
-    const size_t res = fread(fb->buffer, framebuffer_num_bytes(fb), 1, fp);
+    res = fread(fb->buffer, framebuffer_num_bytes(fb), 1, fp);
     if (res != 1) {
         log_warning_fmt("could not read all bytes, res=%lu", res);
         fclose(fp);
@@ -723,7 +728,7 @@ void framebuffer_draw_text_rgb(Framebuffer_t *fb, const Font_t *f, const char *t
     assert(f);
     assert(text);
 
-    for (int i = 0; i < text_length; ++i) {
+    for (unsigned int i = 0; i < text_length; ++i) {
         const char *c_arr = font_get_character(f, text[i]);
         const int offset = i * f->width + i * f->spacing;
         for (int xx = 0; xx < f->width; ++xx) {
