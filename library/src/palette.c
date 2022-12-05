@@ -33,25 +33,25 @@ void pen_set(Pen_t *p, const ColorRGB_t *c) {
     assert(p);
     assert(c);
 
-    p->r = c->r / 255.0 * PEN_MAX;
-    p->g = c->g / 255.0 * PEN_MAX;
-    p->b = c->b / 255.0 * PEN_MAX;
+    p->r = (uint32_t) (c->r / 255.0 * PEN_MAX);
+    p->g = (uint32_t) (c->g / 255.0 * PEN_MAX);
+    p->b = (uint32_t) (c->b / 255.0 * PEN_MAX);
 }
 
 void pen_to_color_rgb(const Pen_t *p, ColorRGB_t *c) {
     assert(p);
     assert(c);
 
-    c->r = p->r / (double) PEN_MAX * 255;
-    c->g = p->g / (double) PEN_MAX * 255;
-    c->b = p->b / (double) PEN_MAX * 255;
+    c->r = (unsigned char) (p->r / (double) PEN_MAX * 255);
+    c->g = (unsigned char) (p->g / (double) PEN_MAX * 255);
+    c->b = (unsigned char) (p->b / (double) PEN_MAX * 255);
 }
 
-char pen_equals(const Pen_t *p1, const Pen_t *p2) {
+int pen_equals(const Pen_t *p1, const Pen_t *p2) {
     assert(p1);
     assert(p2);
 
-    return p1->r == p2->r && p1->g == p2->g && p1->b == p2->b;
+    return (p1->r == p2->r && p1->g == p2->g && p1->b == p2->b);
 }
 
 
@@ -119,10 +119,10 @@ int palette_8bit_save_as_dat(const Palette8Bit_t *p, const char *path) {
 
     int tmp = p->numPens;
     swap_bytes_int(&tmp);
-    int res = fwrite(&tmp, sizeof(int), 1, fp);
+    size_t res = fwrite(&tmp, sizeof(int), 1, fp);
 
     if (res != 1) {
-        log_warning_fmt("could not write num pens, res=%d", res);
+        log_warning_fmt("could not write num pens, res=%lu", res);
         fclose(fp);
         return 1;
     }
@@ -132,7 +132,7 @@ int palette_8bit_save_as_dat(const Palette8Bit_t *p, const char *path) {
         swap_bytes_int(&tmp);
         res = fwrite(&tmp, sizeof(int), 1, fp);
         if (res != 1) {
-            log_warning_fmt("could not write r, res=%d", res);
+            log_warning_fmt("could not write r, res=%lu", res);
             fclose(fp);
             return 2;
         }
@@ -141,7 +141,7 @@ int palette_8bit_save_as_dat(const Palette8Bit_t *p, const char *path) {
         swap_bytes_int(&tmp);
         res = fwrite(&tmp, sizeof(int), 1, fp);
         if (res != 1) {
-            log_warning_fmt("could not write g, res=%d", res);
+            log_warning_fmt("could not write g, res=%lu", res);
             fclose(fp);
             return 3;
         }
@@ -150,7 +150,7 @@ int palette_8bit_save_as_dat(const Palette8Bit_t *p, const char *path) {
         swap_bytes_int(&tmp);
         res = fwrite(&tmp, sizeof(int), 1, fp);
         if (res != 1) {
-            log_warning_fmt("could not write b, res=%d", res);
+            log_warning_fmt("could not write b, res=%lu", res);
             fclose(fp);
             return 4;
         }
@@ -174,9 +174,9 @@ int palette_8bit_read_from_dat(Palette8Bit_t *p, const char *path) {
 
     // num pens
     int tmp = 0;
-    int res = fread(&tmp, sizeof(int), 1, fp);
+    size_t res = fread(&tmp, sizeof(int), 1, fp);
     if (res != 1) {
-        log_warning_fmt("could not read num pens, res=%d", res);
+        log_warning_fmt("could not read num pens, res=%lu", res);
         fclose(fp);
         return 1;
     }
@@ -187,7 +187,7 @@ int palette_8bit_read_from_dat(Palette8Bit_t *p, const char *path) {
     for (int i = 0; i < p->numPens; ++i) {
         res = fread(&tmp, sizeof(int), 1, fp);
         if (res != 1) {
-            log_warning_fmt("could not read r, res=%d", res);
+            log_warning_fmt("could not read r, res=%lu", res);
             fclose(fp);
             return 2;
         }
@@ -196,7 +196,7 @@ int palette_8bit_read_from_dat(Palette8Bit_t *p, const char *path) {
 
         res = fread(&tmp, sizeof(int), 1, fp);
         if (res != 1) {
-            log_warning_fmt("could not read g, res=%d", res);
+            log_warning_fmt("could not read g, res=%lu", res);
             fclose(fp);
             return 3;
         }
@@ -205,7 +205,7 @@ int palette_8bit_read_from_dat(Palette8Bit_t *p, const char *path) {
 
         res = fread(&tmp, sizeof(int), 1, fp);
         if (res != 1) {
-            log_warning_fmt("could not read b, res=%d", res);
+            log_warning_fmt("could not read b, res=%lu", res);
             fclose(fp);
             return 4;
         }

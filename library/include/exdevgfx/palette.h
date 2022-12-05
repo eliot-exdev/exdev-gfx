@@ -6,15 +6,16 @@
 #define EXDEVGFX2_PALETTE_H
 
 #include <exdevgfx/framebuffer.h>
+#include <inttypes.h>
 
 #define PEN_MAX 0xffffffff
 #define PEN_HALF 0x7FFFFFFF
 #define PEN_MIN 0x00000000
 
 struct Pen {
-    unsigned int r;
-    unsigned int g;
-    unsigned int b;
+    uint32_t r;
+    uint32_t g;
+    uint32_t b;
 };
 
 typedef struct Pen Pen_t;
@@ -34,7 +35,7 @@ void pen_set(Pen_t *p, const ColorRGB_t *c);
 
 void pen_to_color_rgb(const Pen_t *p, ColorRGB_t *c);
 
-char pen_equals(const Pen_t *p1, const Pen_t *p2);
+int pen_equals(const Pen_t *p1, const Pen_t *p2);
 
 struct Palette8Bit {
     Pen_t pens[256];
