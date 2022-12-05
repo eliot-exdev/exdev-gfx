@@ -7,43 +7,9 @@
 
 #include <exdevgfx/vertex2d.h>
 #include <exdevgfx/font.h>
+#include <exdevgfx/color.h>
 
 #define edgeFunction(a, b, c) ((c[0] - a[0]) * (b[1] - a[1]) - (c[1] - a[1]) * (b[0] - a[0]))
-
-struct ColorRGBA {
-    unsigned char r;
-    unsigned char g;
-    unsigned char b;
-    unsigned char a;
-};
-typedef struct ColorRGBA ColorRGBA_t;
-
-void color_rgba_init(ColorRGBA_t *c);
-
-void color_rgba_set(ColorRGBA_t *c, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-
-void color_rgba_copy(const ColorRGBA_t *src, ColorRGBA_t *dst);
-
-struct ColorRGB {
-    unsigned char r;
-    unsigned char g;
-    unsigned char b;
-};
-
-typedef struct ColorRGB ColorRGB_t;
-
-void color_rgb_init(ColorRGB_t *c);
-
-void color_rgb_set(ColorRGB_t *c, unsigned char r, unsigned char g, unsigned char b);
-
-void color_rgb_copy(const ColorRGB_t *src, ColorRGB_t *dst);
-
-void color_rgba_rgb_copy(const ColorRGBA_t *src, ColorRGB_t *dst);
-
-void color_rgb_rgba_copy(const ColorRGB_t *src, ColorRGBA_t *dst);
-
-
-void color_rgba_rgb_combine(const ColorRGBA_t *src, ColorRGB_t *dst);
 
 struct Framebuffer {
     int width;
@@ -108,5 +74,6 @@ void framebuffer_draw_text(Framebuffer_t *fb, const Font_t *f, const char *text,
 
 void framebuffer_draw_text_rgb(Framebuffer_t *fb, const Font_t *f, const char *text, unsigned int text_length, const ColorRGB_t *c, int x,
                                int y);
+
 
 #endif

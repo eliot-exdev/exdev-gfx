@@ -5,9 +5,8 @@
 #ifndef EXDEVGFX2_PALETTE_H
 #define EXDEVGFX2_PALETTE_H
 
-#include <exdevgfx/framebuffer.h>
+#include <exdevgfx/color.h>
 #include <inttypes.h>
-
 #define PEN_MAX 0xffffffff
 #define PEN_HALF 0x7FFFFFFF
 #define PEN_MIN 0x00000000

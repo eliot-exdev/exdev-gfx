@@ -4,7 +4,7 @@
 
 #include "exdevgfx/exdev_base.h"
 
-#define EXDEVGFX2_LOG_LEVEL 1
+#define EXDEVGFX2_LOG_LEVEL 3
 
 #include "exdevgfx/logger.h"
 

@@ -48,7 +48,6 @@ void framebuffer_rgba_fill_8bit(FramebufferRGBA_t *fb, const Framebuffer8Bit_t *
     }
 }
 
-
 int framebuffer_rgba_num_pixels(const FramebufferRGBA_t *fb) {
     return fb->width * fb->height;
 }

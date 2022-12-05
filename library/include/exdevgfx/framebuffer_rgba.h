@@ -5,9 +5,7 @@
 #ifndef EXDEVGFX2_FRAMEBUFFER_RGBA_H
 #define EXDEVGFX2_FRAMEBUFFER_RGBA_H
 
-#include <exdevgfx/framebuffer.h>
 #include <exdevgfx/framebuffer_8bit.h>
-#include <exdevgfx/palette.h>
 
 struct FramebufferRGBA {
     int width;

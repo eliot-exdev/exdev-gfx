@@ -30,6 +30,13 @@ target_link_libraries(convert_to_8bit
         PRIVATE exdevgfx
         )
 
-install(TARGETS convert_ppm_to_dat convert_dat_to_ppm convert_pgm_to_dat convert_to_8bit
+add_executable(convert_palette_to_pgm
+        convert_palette_to_pgm.c
+        )
+target_link_libraries(convert_palette_to_pgm
+        PRIVATE exdevgfx
+        )
+
+install(TARGETS convert_ppm_to_dat convert_dat_to_ppm convert_pgm_to_dat convert_to_8bit convert_palette_to_pgm
         RUNTIME DESTINATION bin
         )

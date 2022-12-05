@@ -55,4 +55,6 @@ void framebuffer_8bit_fill_triangle_fast(Framebuffer8Bit_t *fb, const Vertex2d_t
 
 void framebuffer_8bit_draw_framebuffer(Framebuffer8Bit_t *fb, int x, int y, const Framebuffer8Bit_t *src);
 
+void framebuffer_fill_8bit(Framebuffer_t *fb, const Framebuffer8Bit_t *src, const Palette8Bit_t *p);
+
 #endif //EXDEVGFX2_FRAMEBUFFER_8BIT_H

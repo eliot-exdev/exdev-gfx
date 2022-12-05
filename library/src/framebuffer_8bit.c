@@ -291,7 +291,7 @@ framebuffer_8bit_draw_text(Framebuffer8Bit_t *fb, const Font_t *f, const char *t
         for (int xx = 0; xx < f->width; ++xx) {
             for (int yy = 0; yy < f->height; ++yy) {
                 if (c_arr[yy * f->width + xx]) {
-                    *framebuffer_8bit_pixel_at(fb, x + xx + offset, y + yy) = c;
+                    framebuffer_8bit_draw_pixel(fb, x + xx + offset, y + yy, c);
                 }
             }
         }
@@ -469,6 +469,25 @@ void framebuffer_8bit_draw_framebuffer(Framebuffer8Bit_t *fb, const int x, const
     for (int i = 0; i + x < fb->width && i < src->width; ++i) {
         for (int j = 0; j + y < fb->height && j < src->height; ++j) {
             fb->buffer[((j + y) * fb->width) + i + x] = src->buffer[j * src->width + i];
+        }
+    }
+}
+
+
+void framebuffer_fill_8bit(Framebuffer_t *fb, const Framebuffer8Bit_t *src, const Palette8Bit_t *p) {
+    assert(src);
+    assert(fb);
+    assert(p);
+    assert(src->width == fb->width);
+    assert(src->height == fb->height);
+
+    ColorRGB_t color;
+    for (int x = 0; x < fb->width; ++x) {
+        for (int y = 0; y < fb->height; ++y) {
+            const Color8Bit_t pen_id = *framebuffer_8bit_pixel_at(src, x, y);
+            const Pen_t *pen = palette_8bit_get_pen_const(p, pen_id);
+            pen_to_color_rgb(pen, &color);
+            framebuffer_draw_pixel_rgb(fb, x, y, &color);
         }
     }
 }
