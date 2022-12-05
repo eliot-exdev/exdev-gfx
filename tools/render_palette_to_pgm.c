@@ -18,7 +18,7 @@
 int main(int argc, char **argv) {
     // parse args
     if (argc != 3) {
-        printf("usage: convert_palette_to_pgm: <palette> <pgm>\n");
+        printf("usage: render_palette_to_pgm: <in.dat> <out.pgm>\n");
         return 0;
     }
     const char *infile = argv[1];
@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
                                        &mia1,
                                        text,
                                        strlen(text),
-                                       p.numPens - 1,
+                                       pos,
                                        col * PEN_WIDTH,
                                        row * (PEN_HEIGHT + PEN_HEIGHT) + PEN_HEIGHT + 1);
         }

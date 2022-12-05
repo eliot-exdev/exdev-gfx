@@ -11,6 +11,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 const Pen_t PEN_BLACK = {0, 0, 0};
 const Pen_t PEN_WHITE = {PEN_MAX, PEN_MAX, PEN_MAX};
@@ -154,6 +155,37 @@ int palette_8bit_save_as_dat(const Palette8Bit_t *p, const char *path) {
             fclose(fp);
             return 4;
         }
+    }
+
+    fclose(fp);
+    return 0;
+}
+
+#define PAL_HEADER "JASC-PAL\r\n0100\r\n"
+
+int palette_save_as_pal(const Palette8Bit_t *p, const char *path) {
+    assert(p);
+    assert(path);
+
+    FILE *fp;
+    fp = fopen(path, "w");
+    if (!fp) {
+        log_warning_fmt("could not open file=%s", path);
+        return 1;
+    }
+
+    char s[128];
+    memset(s, 0, 128);
+    fwrite(PAL_HEADER, strlen(PAL_HEADER), 1, fp);
+
+    sprintf(s, "%d\r\n", p->numPens);
+    fwrite(s, strlen(s), 1, fp);
+
+    ColorRGB_t c;
+    for (int i = 0; i < p->numPens; ++i) {
+        pen_to_color_rgb(palette_8bit_get_pen_const(p, i), &c);
+        sprintf(s, "%d %d %d\r\n", c.r, c.g, c.b);
+        fwrite(s, strlen(s), 1, fp);
     }
 
     fclose(fp);
