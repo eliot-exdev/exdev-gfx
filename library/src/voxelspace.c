@@ -22,6 +22,49 @@
 #define AUTO_HEIGHT_OVER_GROUND 10.f
 #endif
 
+
+void sprite_init(Sprite_t *s) {
+    assert(s);
+
+    vertex3d_init(s->position);
+    framebuffer_8bit_init(&s->image, 0, 0);
+}
+
+void sprite_deinit(Sprite_t *s) {
+    assert(s);
+
+    framebuffer_8bit_deinit(&s->image);
+}
+
+void sprite_list_init(SpriteList_t *l, int num) {
+    assert(l);
+    assert(num >= 0);
+
+    l->num = num;
+    if (num > 0) {
+        l->sprites = malloc(sizeof(Sprite_t));
+        for (int i = 0; i < num; ++i) {
+            sprite_init(&l->sprites[i]);
+        }
+    } else {
+        l->sprites = NULL;
+    }
+
+}
+
+void sprite_list_deinit(SpriteList_t *l) {
+    assert(l);
+
+    for (int i = 0; i < l->num; ++i) {
+        sprite_deinit(&l->sprites[i]);
+    }
+
+    l->num = 0;
+    free(l->sprites);
+    l->sprites = NULL;
+
+}
+
 void voxelspace_init(Voxelspace_t *v,
                      Framebuffer8Bit_t *height_map,
                      Framebuffer8Bit_t *color_map,
@@ -42,6 +85,7 @@ void voxelspace_init(Voxelspace_t *v,
     v->scale_height = scale_height;
     v->sky_color = sky_color;
     v->ybuffer = malloc(sizeof(int) * fb->width);
+    sprite_list_init(&v->sprites, 0);
 }
 
 void voxelspace_deinit(Voxelspace_t *v) {
@@ -52,6 +96,7 @@ void voxelspace_deinit(Voxelspace_t *v) {
     v->fb = NULL;
     free(v->ybuffer);
     v->ybuffer = NULL;
+    sprite_list_deinit(&v->sprites);
 }
 
 void voxelspace_render(const Vertex3d_t p,
