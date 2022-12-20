@@ -483,7 +483,7 @@ framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int x, con
     assert(fb);
     assert(src);
 
-    if (scale < 0.0f) {
+    if (scale <= 0.0f) {
         return;
     }
     if (x > fb->width) {
@@ -495,8 +495,8 @@ framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int x, con
 
     const float max_width = (scale * (float) src->width);
     const float max_height = (scale * (float) src->height);
-    const float step_x = (float) src->width / (float) max_width;
-    const float step_y = (float) src->height / (float) max_height;
+    const float step_x = (float) src->width / max_width;
+    const float step_y = (float) src->height / max_height;
 
     for (int i = 0; i + x < fb->width && i < max_width; ++i) {
         for (int j = 0; j + y < fb->height && j < max_height; ++j) {
@@ -506,8 +506,8 @@ framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int x, con
             if (j + y < 0) {
                 continue;
             }
-            const float pos_x = (float) i * step_x;
-            const float pos_y = (float) j * step_y;
+            const int pos_x = (int) ((float) i * step_x);
+            const int pos_y = (int) ((float) j * step_y);
             fb->buffer[((j + y) * fb->width) + i + x] = *framebuffer_8bit_pixel_at(src, pos_x, pos_y);
         }
     }
