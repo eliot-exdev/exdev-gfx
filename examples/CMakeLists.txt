@@ -72,6 +72,13 @@ target_link_libraries(test_palette
         exdevgfx
         )
 
+add_executable(test_sprite
+        test_sprite.c
+        )
+target_link_libraries(test_sprite
+        exdevgfx
+        )
+
 install(TARGETS julia voxelspace
         RUNTIME DESTINATION bin
         )
