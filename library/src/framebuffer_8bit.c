@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <math.h>
 
 void framebuffer_8bit_init(Framebuffer8Bit_t *fb, const int width, const int height) {
     assert(fb);
@@ -478,18 +479,11 @@ void framebuffer_8bit_draw_framebuffer(Framebuffer8Bit_t *fb, const int x, const
 }
 
 void
-framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int x, const int y, const Framebuffer8Bit_t *src,
-                                         const float scale) {
+framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int center_x, const int center_y, const Framebuffer8Bit_t *src, const float scale) {
     assert(fb);
     assert(src);
 
     if (scale <= 0.0f) {
-        return;
-    }
-    if (x > fb->width) {
-        return;
-    }
-    if (y > fb->height) {
         return;
     }
 
@@ -497,6 +491,15 @@ framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int x, con
     const float max_height = (scale * (float) src->height);
     const float step_x = (float) src->width / max_width;
     const float step_y = (float) src->height / max_height;
+    const int x = (int) ((float) center_x - (float) max_width * 0.5f);
+    const int y = (int) ((float) center_y - (float) max_width * 0.5f);
+
+    if (center_x > fb->width) {
+        return;
+    }
+    if (center_y > fb->height) {
+        return;
+    }
 
     for (int i = 0; i + x < fb->width && i < max_width; ++i) {
         for (int j = 0; j + y < fb->height && j < max_height; ++j) {
@@ -509,6 +512,62 @@ framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int x, con
             const int pos_x = (int) ((float) i * step_x);
             const int pos_y = (int) ((float) j * step_y);
             fb->buffer[((j + y) * fb->width) + i + x] = *framebuffer_8bit_pixel_at(src, pos_x, pos_y);
+        }
+    }
+}
+
+void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, const int center_x, const int center_y, const Framebuffer8Bit_t *src, float angle) {
+    assert(fb);
+    assert(src);
+
+    // normalize angle
+    angle = (float) ((((int) angle % 360) + 360) % 360);
+    const float radians = deg_to_rad(angle);
+
+    const float cosine = (float) cos(radians);
+    const float sine = (float) sin(radians);
+
+    const float p1_x = ((float) -src->height * sine);
+    const float p1_y = ((float) src->height * cosine);
+
+    const float p2_x = ((float) src->width * cosine - (float) src->height * sine);
+    const float p2_y = ((float) src->height * cosine + (float) src->width * sine);
+
+    const float p3_x = ((float) src->width * cosine);
+    const float p3_y = ((float) src->width * sine);
+
+    const float minx = min(0, min(p1_x, min(p2_x, p3_x)));
+    const float miny = min(0, min(p1_y, min(p2_y, p3_y)));
+
+    const float maxx = max(p1_x, max(p2_x, p3_x));
+    const float maxy = max(p1_y, max(p2_y, p3_y));
+
+    const int dst_width = (int) ceil(fabs(maxx) - minx);
+    const int dst_height = (int) ceil(fabs(maxy) - miny);
+
+    int dx = (int) ((float) center_x - (float) dst_width * 0.5f);
+    int dy = (int) ((float) center_y - (float) dst_height * 0.5f);
+    if (angle > 90 && angle < 180) {
+        dx = (int) ((float) center_x - (float) dst_height * 0.5f);
+    } else if (angle > 180 && angle < 270) {
+        dy = (int) ((float) center_y - (float) dst_width * 0.5f);
+    }
+
+    if (dx > fb->width) {
+        return;
+    }
+    if (dy > fb->height) {
+        return;
+    }
+
+    int src_x, src_y;
+    for (int x = 0; x < dst_width; ++x) {
+        for (int y = 0; y < dst_height; ++y) {
+            src_x = (int) (((float) x + minx) * cosine + ((float) y + miny) * sine);
+            src_y = (int) (((float) y + miny) * cosine - ((float) x + minx) * sine);
+            if (src_x >= 0 && src_x < src->width && src_y >= 0 && src_y < src->height) {
+                *framebuffer_8bit_pixel_at(fb, x + dx, y + dy) = *framebuffer_8bit_pixel_at(src, src_x, src_y);
+            }
         }
     }
 }
