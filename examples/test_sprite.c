@@ -5,8 +5,8 @@
 
 #define WIDTH 640
 #define HEIGHT 480
-#define STEP_SCALE 0.05f
-#define STEP_ROTATE 3.0f
+#define STEP_SCALE 0.01f
+#define STEP_ROTATE 0.5f
 
 static void paint(Window_t *window, Framebuffer8Bit_t *offscreen, Framebuffer8Bit_t *sprite, const float scale, const float rotate) {
     (void) rotate;
@@ -37,7 +37,7 @@ static float updateRotate(const float rotate) {
     if (rotate > 360.0f) {
         rotate_step = -STEP_ROTATE;
     } else if (rotate < 0.0f) {
-        rotate_step = +STEP_SCALE;
+        rotate_step = +STEP_ROTATE;
     }
     return rotate + rotate_step;
 }
@@ -82,27 +82,6 @@ int main() {
         if (eventCount && keyEvent.event == KEY_EVENT_PRESSED && keyEvent.type == KEY_TYPE_ESC) {
             close_event = 1;
         }
-//        else if (eventCount && keyEvent.event == KEY_EVENT_PRESSED && keyEvent.type == KEY_TYPE_LEFT) {
-//            step_rotate -= STEP_ROTATE;
-//        } else if (eventCount && keyEvent.event == KEY_EVENT_PRESSED && keyEvent.type == KEY_TYPE_RIGHT) {
-//            step_rotate += STEP_ROTATE;
-//        } else if (eventCount && keyEvent.event == KEY_EVENT_RELEASED && keyEvent.type == KEY_TYPE_LEFT) {
-//            step_rotate = 0.0f;
-//        } else if (eventCount && keyEvent.event == KEY_EVENT_RELEASED && keyEvent.type == KEY_TYPE_RIGHT) {
-//            step_rotate = 0.0f;
-//        } else if (eventCount && keyEvent.event == KEY_EVENT_PRESSED && keyEvent.type == KEY_TYPE_CODE &&
-//                   keyEvent.code == '-') {
-//            step_scale = -STEP_SCALE;
-//        } else if (eventCount && keyEvent.event == KEY_EVENT_RELEASED && keyEvent.type == KEY_TYPE_CODE &&
-//                   keyEvent.code == '-') {
-//            step_scale = 0.0f;
-//        } else if (eventCount && keyEvent.event == KEY_EVENT_PRESSED && keyEvent.type == KEY_TYPE_CODE &&
-//                   keyEvent.code == '+') {
-//            step_scale = STEP_SCALE;
-//        } else if (eventCount && keyEvent.event == KEY_EVENT_RELEASED && keyEvent.type == KEY_TYPE_CODE &&
-//                   keyEvent.code == '+') {
-//            step_scale = 0.0f;
-//        }
         scale = updateScale(scale);
         rotate= updateRotate(rotate);
     }
