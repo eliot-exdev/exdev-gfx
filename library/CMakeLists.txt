@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.18)
 
 project(exdevgfx)
-
 find_package(X11 REQUIRED)
+
+add_subdirectory(easing)
 
 file(GLOB ${PROJECT_NAME}_HEADERS
         include
