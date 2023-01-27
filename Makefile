@@ -13,7 +13,7 @@ LD_FLAGS_060_GCC=-lm
 LD_FLAGS_NO_FPU=-lmsoft -lamiga
 
 CC=vc
-CC_GCC=ppc-morphos-gcc-10
+CC_GCC=ppc-morphos-gcc-11
 
 
 PREFIX=ram:exdevgfx
@@ -26,15 +26,15 @@ all: voxelspace julia other
 #--- voxelspace ---#
 voxelspace: voxelspace_mos voxelspace_mos_gcc voxelspace_060
 
-voxelspace_mos: library/src/vertex3d.c library/src/vertex2d.c library/src/matrix.c library/src/palette.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c library/src/heightmap.c\
+voxelspace_mos: library/src/vertex3d.c library/src/vertex2d.c library/src/matrix.c library/src/palette.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c library/src/heightmap.c\
                 library/src/voxelspace.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/voxelspace_main.c
 	$(CC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS} ${LD_FLAGS_MOS}
     
-voxelspace_mos_gcc: library/src/vertex3d.c library/src/vertex2d.c library/src/matrix.c library/src/palette.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c library/src/heightmap.c\
+voxelspace_mos_gcc: library/src/vertex3d.c library/src/vertex2d.c library/src/matrix.c library/src/palette.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c library/src/heightmap.c\
                 library/src/voxelspace.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/voxelspace_main.c
 	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
 
-voxelspace_060: library/src/vertex3d.c library/src/vertex2d.c library/src/matrix.c library/src/palette.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c library/src/heightmap.c\
+voxelspace_060: library/src/vertex3d.c library/src/vertex2d.c library/src/matrix.c library/src/palette.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c library/src/heightmap.c\
                 library/src/voxelspace.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/voxelspace_main.c
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060} -DLOW_RESOLUTION
 
@@ -45,7 +45,7 @@ julia_mos: library/src/vertex2d.c library/src/framebuffer.c library/src_amiga/wi
            library/src_amiga/exdev_base_amiga.c library/src/helper.c examples/julia_main.c
 	$(CC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS} ${LD_FLAGS_MOS}
 
-julia_mos_gcc: library/src/vertex2d.c library/src/framebuffer.c library/src_amiga/window_amiga.c library/src/julia.c library/src/args.c library/src/palette.c\
+julia_mos_gcc: library/src/vertex2d.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src/framebuffer_rgba.c library/src/color.c library/src/font.c library/src_amiga/window_amiga.c library/src/julia.c library/src/args.c library/src/palette.c\
            library/src_amiga/exdev_base_amiga.c library/src/helper.c examples/julia_main.c
 	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
 
@@ -59,12 +59,12 @@ julia_nofpu: library/src/vertex2d.c library/src/framebuffer.c library/src_amiga/
 
 #--- other ---#
 other: render_palette_mos render_palette_060
-render_palette_mos: library/src/framebuffer_8bit.c library/src/framebuffer.c library/src_amiga/window_amiga.c library/src/palette.c\
-               library/src/helper.c library/src_amiga/exdev_base_amiga.c examples/render_palette.c
-	$(CC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS} ${LD_FLAGS_MOS}
+render_palette_mos: library/src/framebuffer_8bit.c library/src/framebuffer.c library/src/framebuffer_rgba.c library/src/color.c library/src/vertex2d.c library/src_amiga/window_amiga.c library/src/palette.c\
+               library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src/font.c examples/render_palette.c
+	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
 
 render_palette_060: library/src/framebuffer_8bit.c library/src/framebuffer.c library/src_amiga/window_amiga.c library/src/palette.c\
-               library/src/helper.c library/src_amiga/exdev_base_amiga.c examples/render_palette.c
+               library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src/font.c examples/render_palette.c
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060}
 
 #--- test_3d ---#
