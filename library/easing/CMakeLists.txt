@@ -18,4 +18,4 @@ target_include_directories(easing
         PUBLIC include
         )
 target_compile_options(easing
-        PRIVATE -Wno-unsequenced)
+        PRIVATE -Wno-unsequenced -Wno-sequence-point)
