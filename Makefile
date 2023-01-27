@@ -23,6 +23,11 @@ INCLUDES_AOS=-Ilibrary/include -IWork:workspace/CGraphX/C/Include
 
 all: voxelspace julia other
 
+#--- easing ---#
+easing_mos_gcc: library/easing/src/Back.c library/easing/src/Bounce.c library/easing/src/Circ.c library/easing/src/Cubic.c library/easing/src/Elastic.c library/easing/src/Expo.c library/easing/src/Linear.c library/easing/src/Quad.c library/easing/src/Quart.c library/easing/src/Quint.c library/easing/src/Sine.c
+	$(CC_GCC) -c -Ilibrary/easing/include $(^) ${C_FLAGS_MOS_GCC}
+	$(AR) rcs easing.a Back.o Bounce.o Circ.o Cubic.o Elastic.o Expo.o Linear.o Quad.o Quart.o Quint.o Sine.o
+
 #--- voxelspace ---#
 voxelspace: voxelspace_mos voxelspace_mos_gcc voxelspace_060
 
