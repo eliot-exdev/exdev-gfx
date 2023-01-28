@@ -83,7 +83,7 @@ int main() {
             close_event = 1;
         }
         scale = updateScale(scale);
-        rotate= updateRotate(rotate);
+        rotate = updateRotate(rotate);
     }
 
     // deinit
