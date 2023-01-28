@@ -30,22 +30,6 @@ static void paint(Window_t *window, Framebuffer8Bit_t *offscreen, Framebuffer8Bi
     window_fill_8bit(window, offscreen);
 }
 
-//static float scale_step = STEP_SCALE;
-//static float rotate_step = STEP_ROTATE;
-
-//static float update(const float t, const float from, const float change, const int in) {
-//    if (in) {
-//        return easing_linear_easeIn(t, from, change, DURATION);
-//    }
-//    return easing_linear_easeOut(t, from, change, DURATION);
-//}
-
-//static float updateRotate(const TIMESTAMP s, const int in) {
-//    const float t = (float) (now() - s);
-//    if(in)
-//    return easing_back_easeInOut(t, 0.0f, 360.0f, DURATION);
-//}
-
 int main() {
     // variables
     float scale = 1.0f;
@@ -93,8 +77,8 @@ int main() {
             t = 0;
             start = now();
         }
-        scale = easing_back_easeInOut(t, 1.0f, 2.0f, DURATION);
-        rotate =easing_back_easeInOut(t, 0.0f, 360.f, DURATION);
+        scale = easing_back_easeInOut((float)t, 1.0f, 2.0f, DURATION);
+        rotate =easing_back_easeInOut((float)t, 0.0f, 360.f, DURATION);
     }
 
     // deinit
