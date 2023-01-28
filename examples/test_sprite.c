@@ -66,7 +66,7 @@ int main() {
         log_warning("could not read palette");
         return 2;
     }
-    if (!(window = window_create(WIDTH, HEIGHT, "Test Window", 0))) {
+    if (!(window = window_create(WIDTH, HEIGHT, "Test Window", FS_8_BIT))) {
         log_warning("could not create window");
         return 3;
     }
