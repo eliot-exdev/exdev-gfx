@@ -13,7 +13,7 @@ LD_FLAGS_060_GCC=-lm
 LD_FLAGS_NO_FPU=-lmsoft -lamiga
 
 CC=vc
-CC_GCC=ppc-morphos-gcc-9
+CC_GCC=ppc-morphos-gcc-11
 
 PREFIX=ram:exdevgfx
 
