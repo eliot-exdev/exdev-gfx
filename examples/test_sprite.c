@@ -2,11 +2,20 @@
 #include <exdevgfx/framebuffer_8bit.h>
 #include <exdevgfx/window.h>
 #include <exdevgfx/logger.h>
+#include <exdevgfx/helper.h>
+
+//#include <easing/Sine.h>
+#include <easing/Back.h>
+//#include <easing/Bounce.h>
+//#include <easing/Elastic.h>
+//#include <easing/Cubic.h>
+//#include <easing/Linear.h>
+//#include <easing/Quad.h>
+//#include <easing/Quint.h>
 
 #define WIDTH 640
 #define HEIGHT 480
-#define STEP_SCALE 0.01f
-#define STEP_ROTATE 0.5f
+#define DURATION 4000
 
 static void paint(Window_t *window, Framebuffer8Bit_t *offscreen, Framebuffer8Bit_t *sprite, const float scale, const float rotate) {
     (void) rotate;
@@ -21,26 +30,21 @@ static void paint(Window_t *window, Framebuffer8Bit_t *offscreen, Framebuffer8Bi
     window_fill_8bit(window, offscreen);
 }
 
-static float scale_step = STEP_SCALE;
-static float rotate_step = STEP_ROTATE;
+//static float scale_step = STEP_SCALE;
+//static float rotate_step = STEP_ROTATE;
 
-static float updateScale(const float scale) {
-    if (scale > 3.0f) {
-        scale_step = -STEP_SCALE;
-    } else if (scale < 0.1f) {
-        scale_step = +STEP_SCALE;
-    }
-    return scale + scale_step;
-}
+//static float update(const float t, const float from, const float change, const int in) {
+//    if (in) {
+//        return easing_linear_easeIn(t, from, change, DURATION);
+//    }
+//    return easing_linear_easeOut(t, from, change, DURATION);
+//}
 
-static float updateRotate(const float rotate) {
-    if (rotate > 360.0f) {
-        rotate_step = -STEP_ROTATE;
-    } else if (rotate < 0.0f) {
-        rotate_step = +STEP_ROTATE;
-    }
-    return rotate + rotate_step;
-}
+//static float updateRotate(const TIMESTAMP s, const int in) {
+//    const float t = (float) (now() - s);
+//    if(in)
+//    return easing_back_easeInOut(t, 0.0f, 360.0f, DURATION);
+//}
 
 int main() {
     // variables
@@ -53,7 +57,6 @@ int main() {
     char close_event = 0;
     KeyEvent_t keyEvent;
     int eventCount = 0;
-
 
     // init
     exdev_base_init();
@@ -72,7 +75,8 @@ int main() {
     }
     window_update_palette(window, &palette);
 
-    // loop events and render
+    TIMESTAMP start = now();
+    TIMESTAMP t = 0;
     while (!close_event) {
         // render
         paint(window, &offscreen, &sprite, scale, rotate);
@@ -82,8 +86,15 @@ int main() {
         if (eventCount && keyEvent.event == KEY_EVENT_PRESSED && keyEvent.type == KEY_TYPE_ESC) {
             close_event = 1;
         }
-        scale = updateScale(scale);
-        rotate = updateRotate(rotate);
+
+        // update animation
+        t = now() - start;
+        if (t > DURATION) {
+            t = 0;
+            start = now();
+        }
+        scale = easing_back_easeInOut(t, 1.0f, 2.0f, DURATION);
+        rotate =easing_back_easeInOut(t, 0.0f, 360.f, DURATION);
     }
 
     // deinit

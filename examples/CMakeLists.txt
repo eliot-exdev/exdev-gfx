@@ -77,6 +77,7 @@ add_executable(test_sprite
         )
 target_link_libraries(test_sprite
         exdevgfx
+        easing
         )
 
 install(TARGETS julia voxelspace
