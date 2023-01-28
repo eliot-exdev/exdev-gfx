@@ -13,7 +13,7 @@ LD_FLAGS_060_GCC=-lm
 LD_FLAGS_NO_FPU=-lmsoft -lamiga
 
 CC=vc
-CC_GCC=ppc-morphos-gcc-11
+CC_GCC=ppc-morphos-gcc-9
 
 PREFIX=ram:exdevgfx
 
@@ -38,11 +38,10 @@ voxelspace_060: library/src/vertex3d.c library/src/vertex2d.c library/src/matrix
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060} -DLOW_RESOLUTION
 
 #--- test sprite ---#
-test_sprite: library/src/palette.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src/font.c \
-             library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c library/src_amiga/window_amiga.c\
-             library/easing/src/Back.c library/easing/src/Bounce.c library/easing/src/Circ.c library/easing/src/Cubic.c library/easing/src/Elastic.c library/easing/src/Expo.c library/easing/src/Linear.c library/easing/src/Quad.c library/easing/src/Quart.c library/easing/src/Quint.c library/easing/src/Sine.c\
-             examples/test_sprite.c
-	$(CC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS} ${LD_FLAGS_MOS}
+test_sprite_mos_gcc: library/src/palette.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src/font.c library/src/vertex2d.c\
+                     library/easing/src/Back.c library/easing/src/Bounce.c library/easing/src/Circ.c library/easing/src/Cubic.c library/easing/src/Elastic.c library/easing/src/Expo.c library/easing/src/Linear.c library/easing/src/Quad.c library/easing/src/Quart.c library/easing/src/Quint.c library/easing/src/Sine.c\
+                     library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c library/src_amiga/window_amiga.c examples/test_sprite.c
+	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
 
 #--- julia ---#
 julia: julia_mos julia_060 julia_nofpu
