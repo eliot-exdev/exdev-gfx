@@ -5,6 +5,8 @@
 #include "exdevgfx/helper.h"
 #include "exdevgfx/exdev_base.h"
 
+#include <proto/timer.h>
+
 static struct timeval a;
 
 TIMESTAMP now(){

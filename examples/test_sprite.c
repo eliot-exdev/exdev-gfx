@@ -15,12 +15,9 @@
 
 #define WIDTH 640
 #define HEIGHT 480
-#define DURATION 4000
+#define DURATION 4000 // in ms
 
 static void paint(Window_t *window, Framebuffer8Bit_t *offscreen, Framebuffer8Bit_t *sprite, const float scale, const float rotate) {
-    (void) rotate;
-    // calc center
-
     // clear buffer + draw
     framebuffer_8bit_fill(offscreen, 0);
     // render scale

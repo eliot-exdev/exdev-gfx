@@ -48,10 +48,7 @@ void font_init_mia_1(Font_t *f) {
     f->table = MIA_1_TRANSLATION_TABLE;
 }
 
-void font_deinit(Font_t *f) {
-    assert(f);
-    (void) f;
-}
+void font_deinit(Font_t *) {}
 
 const char *font_get_character(const Font_t *f, const char c) {
     assert(f);
