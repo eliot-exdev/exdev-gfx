@@ -215,7 +215,7 @@ LONG deadKeyConvert(struct IntuiMessage *msg, UBYTE *kbuffer, LONG kbsize, struc
 
 #define BUFFER_SIZE 8
 
-int window_poll_events(Window_t *win, char *closeEvent, KeyEvent_t *events, const int max)
+void window_poll_events(Window_t *win, char *closeEvent, KeyEvent_t *keyEvents, MouseEvent_t *mouseEvents, const int max)
 {
     NativeWindow_t *w = (NativeWindow_t *) win;
     struct IntuiMessage *msg = NULL;
@@ -224,16 +224,17 @@ int window_poll_events(Window_t *win, char *closeEvent, KeyEvent_t *events, cons
 
     ULONG msgClass;
 
-    int numEvents = 0;
+    int numKeyEvents = 0;
 
-    key_event_init(events, max);
+    key_event_init(keyEvents, max);
+    mouse_event_init(mouseEvents, max);
 
     memset(&ievent, 0, sizeof(struct InputEvent));
     memset(buffer, 0, BUFFER_SIZE);
 
     //Wait(1L << w->window->UserPort->mp_SigBit);
 
-    while (numEvents < max && (msg = GT_GetIMsg(w->window->UserPort)))
+    while (numKeyEvents < max && (msg = GT_GetIMsg(w->window->UserPort)))
     {
         log_debug("got message");
         msgClass = msg->Class;
@@ -246,72 +247,72 @@ int window_poll_events(Window_t *win, char *closeEvent, KeyEvent_t *events, cons
         case IDCMP_RAWKEY:
             if (!(msg->Qualifier & IEQUALIFIER_REPEAT))
             {
-                events[numEvents].event = msg->Code & IECODE_UP_PREFIX ? KEY_EVENT_RELEASED : KEY_EVENT_PRESSED;
+                keyEvents[numKeyEvents].event = msg->Code & IECODE_UP_PREFIX ? KEY_EVENT_RELEASED : KEY_EVENT_PRESSED;
                 if ((msg->Code & ~IECODE_UP_PREFIX) == 0x4C)
                 {
-                    events[numEvents].type = KEY_TYPE_UP;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_UP;
                     log_debug("arrow up");
-                    ++numEvents;
+                    ++numKeyEvents;
                 }
                 else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x4D)
                 {
-                    events[numEvents].type = KEY_TYPE_DOWN;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_DOWN;
                     log_debug("arrow down");
-                    ++numEvents;
+                    ++numKeyEvents;
                 }
                 else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x4F)
                 {
-                    events[numEvents].type = KEY_TYPE_LEFT;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_LEFT;
                     log_debug("arrow left");
-                    ++numEvents;
+                    ++numKeyEvents;
                 }
                 else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x4E)
                 {
-                    events[numEvents].type = KEY_TYPE_RIGHT;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_RIGHT;
                     log_debug("arrow right");
-                    ++numEvents;
+                    ++numKeyEvents;
                 }
                 else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x45)
                 {
-                    events[numEvents].type = KEY_TYPE_ESC;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_ESC;
                     log_debug("esc");
-                    ++numEvents;
+                    ++numKeyEvents;
                 }
                 else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x50)
                 {
-                    events[numEvents].type = KEY_TYPE_F1;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_F1;
                     log_debug("F1");
-                    ++numEvents;
+                    ++numKeyEvents;
                 }
                 else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x51)
                 {
-                    events[numEvents].type = KEY_TYPE_F2;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_F2;
                     log_debug("F2");
-                    ++numEvents;
+                    ++numKeyEvents;
                 }
                 else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x52)
                 {
-                    events[numEvents].type = KEY_TYPE_F3;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_F3;
                     log_debug("F3");
-                    ++numEvents;
+                    ++numKeyEvents;
                 }
                 else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x53)
                 {
-                    events[numEvents].type = KEY_TYPE_F4;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_F4;
                     log_debug("F4");
-                    ++numEvents;
+                    ++numKeyEvents;
                 }
                 else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x54)
                 {
-                    events[numEvents].type = KEY_TYPE_F5;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_F5;
                     log_debug("F5");
-                    ++numEvents;
+                    ++numKeyEvents;
                 }
                 else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x55)
                 {
-                    events[numEvents].type = KEY_TYPE_F6;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_F6;
                     log_debug("F6");
-                    ++numEvents;
+                    ++numKeyEvents;
                 }
                 else
                 {
@@ -319,10 +320,10 @@ int window_poll_events(Window_t *win, char *closeEvent, KeyEvent_t *events, cons
                     log_debug_fmt("numChars=%ld", numChars);
                     if (numChars == 1)
                     {
-                        events[numEvents].type = KEY_TYPE_CODE;
-                        events[numEvents].code = buffer[0];
+                        keyEvents[numKeyEvents].type = KEY_TYPE_CODE;
+                        keyEvents[numKeyEvents].code = buffer[0];
                         log_debug_fmt("char=%c", buffer[0]);
-                        ++numEvents;
+                        ++numKeyEvents;
                     }
                 }
             }
@@ -330,5 +331,4 @@ int window_poll_events(Window_t *win, char *closeEvent, KeyEvent_t *events, cons
         }
         GT_ReplyIMsg(msg);
     }
-    return numEvents;
 }
