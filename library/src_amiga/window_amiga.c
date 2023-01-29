@@ -332,14 +332,3 @@ int window_poll_events(Window_t *win, char *closeEvent, KeyEvent_t *events, cons
     }
     return numEvents;
 }
-
-void key_event_init(KeyEvent_t *events, const int num)
-{
-    for (int i = 0; i < num; ++i)
-    {
-        events[i].event = KEY_EVENT_INVALID;
-        events[i].type = KEY_TYPE_INVALID;
-        events[i].code = 0;
-    }
-}
-

@@ -1,3 +1,7 @@
+/**
+ * Copyright 2023 Andre Geisler (andre@exdev.de)
+ */
+
 #ifndef EXDEVGFX_BASE_COLOR_H
 #define EXDEVGFX_BASE_COLOR_H
 
