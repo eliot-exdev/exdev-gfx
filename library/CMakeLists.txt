@@ -26,6 +26,9 @@ target_link_libraries(${PROJECT_NAME}
         PUBLIC ${X11_LIBRARIES}
         PUBLIC m
         )
+target_compile_options(${PROJECT_NAME}
+        PUBLIC -Wno-c2x-extensions
+        )
 
 install(TARGETS ${PROJECT_NAME}
         LIBRARY DESTINATION lib
