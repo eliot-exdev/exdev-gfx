@@ -73,10 +73,8 @@ Window_t *window_create(const int width, const int height, const char *title, co
     x11_w->screen = DefaultScreen(x11_w->display);
     x11_w->visual = DefaultVisual(x11_w->display, x11_w->screen);
 
-    x11_w->window = XCreateSimpleWindow(x11_w->display, RootWindow(x11_w->display, x11_w->screen), 0, 0, width,
-                                        height, 0,
-                                        BlackPixel(x11_w->display, x11_w->screen),
-                                        WhitePixel(x11_w->display, x11_w->screen));
+    x11_w->window = XCreateSimpleWindow(x11_w->display, RootWindow(x11_w->display, x11_w->screen), 0, 0, width, height, 0,
+                                        BlackPixel(x11_w->display, x11_w->screen), WhitePixel(x11_w->display, x11_w->screen));
     XStoreName(x11_w->display, x11_w->window, title);
 
     x11_w->img = NULL;
@@ -167,8 +165,7 @@ void window_fill(Window_t *w, const Framebuffer_t *gb) {
     framebuffer_rgba_swap(&x11_w->fb);
 
     if (!x11_w->img) {
-        x11_w->img = XCreateImage(x11_w->display, x11_w->visual, 24, ZPixmap,
-                                  0, (char *) x11_w->fb.buffer, x11_w->fb.width, x11_w->fb.height, 32,
+        x11_w->img = XCreateImage(x11_w->display, x11_w->visual, 24, ZPixmap, 0, (char *) x11_w->fb.buffer, x11_w->fb.width, x11_w->fb.height, 32,
                                   framebuffer_rgba_num_bytes_per_line(&x11_w->fb));
     }
     XClearArea(x11_w->display, x11_w->window, 0, 0, 1, 1, 1);
@@ -197,8 +194,7 @@ void window_fill_8bit(Window_t *w, const Framebuffer8Bit_t *gb) {
     framebuffer_rgba_swap(&x11_w->fb);
 
     if (!x11_w->img) {
-        x11_w->img = XCreateImage(x11_w->display, x11_w->visual, 24, ZPixmap,
-                                  0, (char *) x11_w->fb.buffer, x11_w->fb.width, x11_w->fb.height, 32,
+        x11_w->img = XCreateImage(x11_w->display, x11_w->visual, 24, ZPixmap, 0, (char *) x11_w->fb.buffer, x11_w->fb.width, x11_w->fb.height, 32,
                                   framebuffer_rgba_num_bytes_per_line(&x11_w->fb));
     }
     XClearArea(x11_w->display, x11_w->window, 0, 0, 1, 1, 1);
@@ -206,120 +202,115 @@ void window_fill_8bit(Window_t *w, const Framebuffer8Bit_t *gb) {
 }
 
 // TODO: support motion events
-void window_poll_events(Window_t *w, char *closeEvent, KeyEvent_t *keyEvents, MouseEvent_t *mouseEvents, int maxEvents) {
+int window_poll_events(Window_t *w, char *closeEvent, Event_t *events, const int maxEvents) {
     XEvent event;
     X11Window_t *x11_w = (X11Window_t *) w;
     *closeEvent = 0;
-    int numKeyEvents = 0;
-    int numMouseEvents = 0;
+    int numEvents = 0;
 
-    key_event_init(keyEvents, maxEvents);
-    mouse_event_init(mouseEvents, maxEvents);
+    event_init(events, maxEvents);
 
     char buf[8];
-    while (numKeyEvents < maxEvents &&
+    while (numEvents < maxEvents &&
            XCheckWindowEvent(x11_w->display, x11_w->window, ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonPressMask, &event)) {
         if (event.type == Expose) {
             if (x11_w->img)
-                XPutImage(x11_w->display,
-                          x11_w->window,
-                          DefaultGC(x11_w->display, x11_w->screen),
-                          x11_w->img,
-                          0, 0, 0, 0,
-                          x11_w->fb.width,
-                          x11_w->fb.height);
+                XPutImage(x11_w->display, x11_w->window, DefaultGC(x11_w->display, x11_w->screen), x11_w->img, 0, 0, 0, 0, x11_w->fb.width, x11_w->fb.height);
         } else if (event.type == KeyPress) {
-            keyEvents[numKeyEvents].event = KEY_EVENT_PRESSED;
+            events[numEvents].type = EVENT_KEY;
+            events[numEvents].key_event.event = KEY_EVENT_PRESSED;
             KeySym keysym = XLookupKeysym(&event.xkey, 0);
             switch (keysym) {
                 case XK_Escape:
-                    keyEvents[numKeyEvents].type = KEY_TYPE_ESC;
+                    events[numEvents].key_event.key = KEY_TYPE_ESC;
                     break;
                 case XK_Down:
-                    keyEvents[numKeyEvents].type = KEY_TYPE_DOWN;
+                    events[numEvents].key_event.key = KEY_TYPE_DOWN;
                     break;
                 case XK_Up:
-                    keyEvents[numKeyEvents].type = KEY_TYPE_UP;
+                    events[numEvents].key_event.key = KEY_TYPE_UP;
                     break;
                 case XK_Left:
-                    keyEvents[numKeyEvents].type = KEY_TYPE_LEFT;
+                    events[numEvents].key_event.key = KEY_TYPE_LEFT;
                     break;
                 case XK_Right:
-                    keyEvents[numKeyEvents].type = KEY_TYPE_RIGHT;
+                    events[numEvents].key_event.key = KEY_TYPE_RIGHT;
                     break;
                 case XK_F1:
-                    keyEvents[numKeyEvents].type = KEY_TYPE_F1;
+                    events[numEvents].key_event.key = KEY_TYPE_F1;
                     break;
                 case XK_F2:
-                    keyEvents[numKeyEvents].type = KEY_TYPE_F2;
+                    events[numEvents].key_event.key = KEY_TYPE_F2;
                     break;
                 case XK_F3:
-                    keyEvents[numKeyEvents].type = KEY_TYPE_F3;
+                    events[numEvents].key_event.key = KEY_TYPE_F3;
                     break;
                 case XK_F4:
-                    keyEvents[numKeyEvents].type = KEY_TYPE_F4;
+                    events[numEvents].key_event.key = KEY_TYPE_F4;
                     break;
                 case XK_F5:
-                    keyEvents[numKeyEvents].type = KEY_TYPE_F5;
+                    events[numEvents].key_event.key = KEY_TYPE_F5;
                     break;
                 case XK_F6:
-                    keyEvents[numKeyEvents].type = KEY_TYPE_F6;
+                    events[numEvents].key_event.key = KEY_TYPE_F6;
                     break;
                 default:
                     if (XLookupString(&event.xkey, buf, 8, NULL, NULL)) {
-                        keyEvents[numKeyEvents].type = KEY_TYPE_CODE;
-                        keyEvents[numKeyEvents].code = buf[0];
+                        events[numEvents].key_event.key = KEY_TYPE_CODE;
+                        events[numEvents].key_event.code = buf[0];
                     }
             }
-            ++numKeyEvents;
+            ++numEvents;
         } else if (event.type == KeyRelease) {
-            keyEvents[numKeyEvents].event = KEY_EVENT_RELEASED;
+            events[numEvents].type = EVENT_KEY;
+            events[numEvents].key_event.event = KEY_EVENT_RELEASED;
             KeySym keysym = XLookupKeysym(&event.xkey, 0);
             switch (keysym) {
                 case XK_Escape:
-                    keyEvents[numKeyEvents].type = KEY_TYPE_ESC;
+                    events[numEvents].key_event.key = KEY_TYPE_ESC;
                     break;
                 case XK_Down:
-                    keyEvents[numKeyEvents].type = KEY_TYPE_DOWN;
+                    events[numEvents].key_event.key = KEY_TYPE_DOWN;
                     break;
                 case XK_Up:
-                    keyEvents[numKeyEvents].type = KEY_TYPE_UP;
+                    events[numEvents].key_event.key = KEY_TYPE_UP;
                     break;
                 case XK_Left:
-                    keyEvents[numKeyEvents].type = KEY_TYPE_LEFT;
+                    events[numEvents].key_event.key = KEY_TYPE_LEFT;
                     break;
                 case XK_Right:
-                    keyEvents[numKeyEvents].type = KEY_TYPE_RIGHT;
+                    events[numEvents].key_event.key = KEY_TYPE_RIGHT;
                     break;
                 default:
                     if (XLookupString(&event.xkey, buf, 8, NULL, NULL)) {
-                        keyEvents[numKeyEvents].type = KEY_TYPE_CODE;
-                        keyEvents[numKeyEvents].code = buf[0];
+                        events[numEvents].key_event.key = KEY_TYPE_CODE;
+                        events[numEvents].key_event.code = buf[0];
                     }
             }
-            ++numKeyEvents;
+            ++numEvents;
         } else if (event.type == ButtonPress || event.type == ButtonRelease) {
+            events[numEvents].type = EVENT_MOUSE;
             if (event.xbutton.type == ButtonPress) {
-                mouseEvents[numMouseEvents].event = MOUSE_EVENT_BUTTON_PRESSED;
+                events[numEvents].mouse_event.event = MOUSE_EVENT_BUTTON_PRESSED;
             } else if (event.xbutton.type == ButtonRelease) {
-                mouseEvents[numMouseEvents].event = MOUSE_EVENT_BUTTON_RELEASED;
+                events[numEvents].mouse_event.event = MOUSE_EVENT_BUTTON_RELEASED;
             } else {
                 continue;
             }
             if (event.xbutton.button == 1) {
-                mouseEvents[numMouseEvents].button = MOUSE_BUTTON_0;
+                events[numEvents].mouse_event.button = MOUSE_BUTTON_0;
             } else if (event.xbutton.button == 3) {
-                mouseEvents[numMouseEvents].button = MOUSE_BUTTON_1;
+                events[numEvents].mouse_event.button = MOUSE_BUTTON_1;
             } else {
-                mouseEvents[numMouseEvents].button = MOUSE_BUTTON_NONE;
+                events[numEvents].mouse_event.button = MOUSE_BUTTON_NONE;
             }
-            mouseEvents[numMouseEvents].position_x = event.xbutton.x;
-            mouseEvents[numMouseEvents].position_y = event.xbutton.y;
-            ++numMouseEvents;
+            events[numEvents].mouse_event.position_x = event.xbutton.x;
+            events[numEvents].mouse_event.position_y = event.xbutton.y;
+            ++numEvents;
         } else if (event.type == ClientMessage) {
             *closeEvent = 1;
         }
     }
-
     XSync(x11_w->display, 0);
+    return numEvents;
 }

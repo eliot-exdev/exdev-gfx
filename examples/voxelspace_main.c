@@ -89,8 +89,7 @@ static void print_help() {
            "     F3                  increase rendering quality\n"
            "     F4                  decrease distance\n"
            "     F5                  increase distance\n"
-           "     F6                  enable/disable dither x\n"
-    );
+           "     F6                  enable/disable dither x\n");
 }
 
 static void print_version() {
@@ -178,8 +177,6 @@ static void move(Vertex3d_t p, const char move_flag, const char strafe_flag, con
     p[1] = v3[2];
     p[2] = v3[1];
 }
-
-#define NUM_EVENTS 2
 
 int main(int argc, char **argv) {
     parse_args(argc, argv);
@@ -274,106 +271,101 @@ int main(int argc, char **argv) {
 
     //events
     char close_event = 0;
-    KeyEvent_t keyEvents[NUM_EVENTS];
-    MouseEvent_t mouseEvents[NUM_EVENTS];
+    Event_t event;
     // game loop
     while (!close_event) {
         // read inputs
-        window_poll_events(window, &close_event, keyEvents, mouseEvents, NUM_EVENTS);
-        int i = 0;
+        window_poll_events(window, &close_event, &event, 1);
         // keyboard events
-        while (i < NUM_EVENTS && keyEvents[i].event != KEY_EVENT_INVALID) {
-            if (keyEvents[i].event == KEY_EVENT_PRESSED) {
-                switch (keyEvents[i].type) {
-                    case KEY_TYPE_ESC:
+        if (event.type == EVENT_KEY && event.key_event.event == KEY_EVENT_PRESSED) {
+            switch (event.key_event.key) {
+                case KEY_TYPE_ESC:
+                    close_event = 1;
+                    break;
+                case KEY_TYPE_RIGHT:
+                    ctrl_rotate = 1;
+                    break;
+                case KEY_TYPE_LEFT:
+                    ctrl_rotate = 2;
+                    break;
+                case KEY_TYPE_UP:
+                    ctrl_move = 1;
+                    break;
+                case KEY_TYPE_DOWN:
+                    ctrl_move = 2;
+                    break;
+                case KEY_TYPE_F1:
+                    show_fps = !show_fps;
+                    break;
+                case KEY_TYPE_F2:
+                    ++dz;
+                    break;
+                case KEY_TYPE_F3:
+                    if (dz > 1)
+                        --dz;
+                    break;
+                case KEY_TYPE_F4:
+                    if (distance >= 30.0f) {
+                        distance -= 10.f;
+                    }
+                    break;
+                case KEY_TYPE_F5:
+                    if (distance <= 600.0f) {
+                        distance += 10.f;
+                    }
+                    break;
+                case KEY_TYPE_F6:
+                    skip_x = !skip_x;
+                    break;
+                case KEY_TYPE_CODE:
+                    if (event.key_event.code == 'w') {
+                        ctrl_up_down = 1;
+                    } else if (event.key_event.code == 's') {
+                        ctrl_up_down = 2;
+                    } else if (event.key_event.code == 'a') {
+                        ctrl_strafe = 1;
+                    } else if (event.key_event.code == 'd') {
+                        ctrl_strafe = 2;
+                    } else if (event.key_event.code == 'q') {
                         close_event = 1;
-                        break;
-                    case KEY_TYPE_RIGHT:
-                        ctrl_rotate = 1;
-                        break;
-                    case KEY_TYPE_LEFT:
-                        ctrl_rotate = 2;
-                        break;
-                    case KEY_TYPE_UP:
-                        ctrl_move = 1;
-                        break;
-                    case KEY_TYPE_DOWN:
-                        ctrl_move = 2;
-                        break;
-                    case KEY_TYPE_F1:
-                        show_fps = !show_fps;
-                        break;
-                    case KEY_TYPE_F2:
-                        ++dz;
-                        break;
-                    case KEY_TYPE_F3:
-                        if (dz > 1)
-                            --dz;
-                        break;
-                    case KEY_TYPE_F4:
-                        if (distance >= 30.0f) {
-                            distance -= 10.f;
-                        }
-                        break;
-                    case KEY_TYPE_F5:
-                        if (distance <= 600.0f) {
-                            distance += 10.f;
-                        }
-                        break;
-                    case KEY_TYPE_F6:
-                        skip_x = !skip_x;
-                        break;
-                    case KEY_TYPE_CODE:
-                        if (keyEvents[i].code == 'w') {
-                            ctrl_up_down = 1;
-                        } else if (keyEvents[i].code == 's') {
-                            ctrl_up_down = 2;
-                        } else if (keyEvents[i].code == 'a') {
-                            ctrl_strafe = 1;
-                        } else if (keyEvents[i].code == 'd') {
-                            ctrl_strafe = 2;
-                        } else if (keyEvents[i].code == 'q') {
-                            close_event = 1;
-                        }
-                        break;
-                    case KEY_TYPE_INVALID:
-                        break;
-                }
-            } else if (keyEvents[i].event == KEY_EVENT_RELEASED) {
-                switch (keyEvents[i].type) {
-                    case KEY_TYPE_RIGHT:
-                    case KEY_TYPE_LEFT:
-                        ctrl_rotate = 0;
-                        break;
-                    case KEY_TYPE_UP:
-                    case KEY_TYPE_DOWN:
-                        ctrl_move = 0;
-                        break;
-                    case KEY_TYPE_CODE:
-                        if (keyEvents[i].code == 'w' || keyEvents[i].code == 's') {
-                            ctrl_up_down = 0;
-                        } else if (keyEvents[i].code == 'a' || keyEvents[i].code == 'd') {
-                            ctrl_strafe = 0;
-                        }
-                    case KEY_TYPE_INVALID:
-                        break;
-                    case KEY_TYPE_ESC:
-                        break;
-                    case KEY_TYPE_F1:
-                        break;
-                    case KEY_TYPE_F2:
-                        break;
-                    case KEY_TYPE_F3:
-                        break;
-                    case KEY_TYPE_F4:
-                        break;
-                    case KEY_TYPE_F5:
-                        break;
-                    case KEY_TYPE_F6:
-                        break;
-                }
+                    }
+                    break;
+                case KEY_TYPE_INVALID:
+                    break;
             }
-            ++i;
+        } else if (event.type==EVENT_KEY && event.key_event.event == KEY_EVENT_RELEASED) {
+            switch (event.key_event.key) {
+                case KEY_TYPE_RIGHT:
+                case KEY_TYPE_LEFT:
+                    ctrl_rotate = 0;
+                    break;
+                case KEY_TYPE_UP:
+                case KEY_TYPE_DOWN:
+                    ctrl_move = 0;
+                    break;
+                case KEY_TYPE_CODE:
+                    if (event.key_event.code == 'w' || event.key_event.code == 's') {
+                        ctrl_up_down = 0;
+                    } else if (event.key_event.code == 'a' || event.key_event.code == 'd') {
+                        ctrl_strafe = 0;
+                    }
+                case KEY_TYPE_INVALID:
+                    break;
+                case KEY_TYPE_ESC:
+                    break;
+                case KEY_TYPE_F1:
+                    break;
+                case KEY_TYPE_F2:
+                    break;
+                case KEY_TYPE_F3:
+                    break;
+                case KEY_TYPE_F4:
+                    break;
+                case KEY_TYPE_F5:
+                    break;
+                case KEY_TYPE_F6:
+                    break;
+            }
         }
 
         // demo mode
@@ -416,13 +408,7 @@ int main(int argc, char **argv) {
         log_debug("--> render");
         p[0] = normalize_float(p[0], v.heightmap.height);
         p[1] = normalize_float(p[1], v.heightmap.width);
-        voxelspace_render(p,
-                          deg_to_rad((float) rotation),
-                          horizon,
-                          distance,
-                          (float) dz,
-                          skip_x,
-                          &v);
+        voxelspace_render(p, deg_to_rad((float) rotation), horizon, distance, (float) dz, skip_x, &v);
 
         after = now();
         // draw text

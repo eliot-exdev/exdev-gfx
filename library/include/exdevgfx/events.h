@@ -29,7 +29,7 @@ enum key_type {
 
 struct KeyEvent {
     enum key_event event;
-    enum key_type type;
+    enum key_type key;
     unsigned char code;
 };
 
@@ -57,8 +57,24 @@ struct MouseEvent {
 
 typedef struct MouseEvent MouseEvent_t;
 
+enum event_type{
+    EVENT_INVALID,
+    EVENT_KEY,
+    EVENT_MOUSE
+};
+
+struct Event{
+    enum event_type type;
+    KeyEvent_t key_event;
+    MouseEvent_t mouse_event;
+};
+
+typedef struct Event Event_t;
+
 void key_event_init(KeyEvent_t *events, int num);
 
 void mouse_event_init(MouseEvent_t *events, int num);
+
+void event_init(Event_t *events, int num);
 
 #endif //EXDEVGFX_BASE_EVENTS_H
