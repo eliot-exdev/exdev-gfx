@@ -3,7 +3,6 @@
  */
 
 #include "exdevgfx/vertex3d.h"
-#include "exdevgfx/helper.h"
 
 #include <math.h>
 

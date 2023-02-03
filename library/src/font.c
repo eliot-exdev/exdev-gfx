@@ -8,7 +8,6 @@
 
 #define MIA_1_WIDTH 4
 #define MIA_1_HEIGHT 7
-#define MIA_1_COUNT 11
 #define MIA_1_SPACING 2
 #define MIA_1_NUM_CHARS 11
 static const char MIA_1_CHARACTERS[MIA_1_NUM_CHARS + 1][28] = {
