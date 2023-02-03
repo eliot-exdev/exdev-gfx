@@ -13,14 +13,20 @@
 
 static Vertex2d_t posSprite1 = {WIDTH * 0.33f, HEIGHT * 0.5f};
 static Vertex2d_t posSprite2 = {WIDTH * 0.66f, HEIGHT * 0.5f};
+static Vertex2d_t posSprite3 = {WIDTH * 0.5f, HEIGHT * 0.5f};
 
 static void paint(Window_t *window, Framebuffer8Bit_t *offscreen, Framebuffer8Bit_t *sprite, const float scale, const float rotate) {
-    // clear buffer + draw
+    // clear buffer
     framebuffer_8bit_fill(offscreen, 0);
+
     // render scale
     framebuffer_8bit_draw_framebuffer_scaled(offscreen, posSprite1[0], posSprite1[1], sprite, scale);
     // render rotate
     framebuffer_8bit_draw_framebuffer_rotated(offscreen, posSprite2[0], posSprite2[1], sprite, rotate);
+    // render rotate and scale
+    framebuffer_8bit_draw_framebuffer_rotated_and_scaled(offscreen, posSprite3[0], posSprite3[1], sprite, rotate, scale);
+
+    // draw to window
     window_fill_8bit(window, offscreen);
 }
 

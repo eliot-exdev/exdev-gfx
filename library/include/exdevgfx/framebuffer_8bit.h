@@ -59,6 +59,8 @@ void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, int center_
 
 void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, int center_x, int center_y, const Framebuffer8Bit_t *src, float angle);
 
+void framebuffer_8bit_draw_framebuffer_rotated_and_scaled(Framebuffer8Bit_t *fb, int center_x, int center_y, const Framebuffer8Bit_t *src, float angle, float scale);
+
 void framebuffer_fill_8bit(Framebuffer_t *fb, const Framebuffer8Bit_t *src, const Palette8Bit_t *p);
 
 #endif //EXDEVGFX2_FRAMEBUFFER_8BIT_H
