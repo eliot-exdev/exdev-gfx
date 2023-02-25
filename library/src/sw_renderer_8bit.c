@@ -10,8 +10,6 @@
 
 #include <exdevgfx/logger.h>
 #include <assert.h>
-#include <math.h>
-#include <stdlib.h>
 
 void sw_renderer_8bit_init(SWRenderer8bit_t *sw, Framebuffer8Bit_t *fb) {
     assert(sw);
