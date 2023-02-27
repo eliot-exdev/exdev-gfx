@@ -134,7 +134,6 @@ deadKeyConvert(const struct IntuiMessage *msg, char *kbuffer, const LONG kbsize,
 #define BUFFER_SIZE 8
 
 int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const int maxEvents) {
-    log_warning("enter poll events");
     NativeWindow_t *w = (NativeWindow_t *) win;
     struct IntuiMessage *msg = NULL;
     struct InputEvent ievent;
@@ -162,8 +161,7 @@ int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const i
                 log_debug("keye event");
                 events[numEvents].type = EVENT_KEY;
                 if (!(msg->Qualifier & IEQUALIFIER_REPEAT)) {
-                    events[numEvents].key_event.event =
-                            msg->Code & IECODE_UP_PREFIX ? KEY_EVENT_RELEASED : KEY_EVENT_PRESSED;
+                    events[numEvents].key_event.event = msg->Code & IECODE_UP_PREFIX ? KEY_EVENT_RELEASED : KEY_EVENT_PRESSED;
                     if ((msg->Code & ~IECODE_UP_PREFIX) == 0x4C) {
                         events[numEvents].key_event.key = KEY_TYPE_UP;
                         log_debug("arrow up");
@@ -244,6 +242,5 @@ int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const i
         }
         GT_ReplyIMsg(msg);
     }
-    log_warning("exit poll events");
     return numEvents;
 }
