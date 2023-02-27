@@ -12,6 +12,9 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+
 # find programs
 find_program(MOS_GCC
         ppc-morphos-gcc
@@ -84,8 +87,8 @@ set(CMAKE_C_COMPILER_RANLIB ${MOS_RANLIB})
 set(CMAKE_CXX_COMPILER_RANLIB ${MOS_RANLIB})
 
 # set compile flags
-set(CMAKE_C_FLAGS "-noixemul -faltivec -mabi=altivec -D__AMIGA__")
-set(CMAKE_CXX_FLAGS "-noixemul -faltivec -mabi=altivec -D__AMIGA__")
+set(CMAKE_C_FLAGS "-noixemul -mcpu=G4 -maltivec -mabi=altivec")
+set(CMAKE_CXX_FLAGS "-noixemul -mcpu=G4 -maltivec -mabi=altivec")
 
 # set linker flags
 set(CMAKE_C_LINK_FLAGS "")
