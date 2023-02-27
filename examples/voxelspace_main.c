@@ -330,7 +330,7 @@ int main(int argc, char **argv) {
                         close_event = 1;
                     }
                     break;
-                case KEY_TYPE_INVALID:
+                default:
                     break;
             }
         } else if (event.type==EVENT_KEY && event.key_event.event == KEY_EVENT_RELEASED) {
@@ -349,21 +349,7 @@ int main(int argc, char **argv) {
                     } else if (event.key_event.code == 'a' || event.key_event.code == 'd') {
                         ctrl_strafe = 0;
                     }
-                case KEY_TYPE_INVALID:
-                    break;
-                case KEY_TYPE_ESC:
-                    break;
-                case KEY_TYPE_F1:
-                    break;
-                case KEY_TYPE_F2:
-                    break;
-                case KEY_TYPE_F3:
-                    break;
-                case KEY_TYPE_F4:
-                    break;
-                case KEY_TYPE_F5:
-                    break;
-                case KEY_TYPE_F6:
+                 default:
                     break;
             }
         }

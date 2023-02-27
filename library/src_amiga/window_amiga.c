@@ -8,13 +8,11 @@
 
 #include "exdevgfx/logger.h"
 #include "exdevgfx/exdev_base.h"
-#include "exdevgfx/amiga/framebuffer_8bit_amiga.h"
 
 #include <intuition/intuition.h>
 #include <intuition/screens.h>
 #include <cybergraphx/cybergraphics.h>
 
-#include <dos/dos.h>
 #include <devices/inputevent.h>
 #include <devices/keymap.h>
 #include <proto/console.h>
@@ -62,8 +60,6 @@ Window_t *window_create(const int width, const int height, const char *title, co
                                    title, TAG_DONE);
     }
 
-    //OpenDevice("console.device", -1, (struct IORequest *) &ioreq, 0);
-    //ConsoleDevice = (struct Library *) ioreq.io_Device;
     return (Window_t *) w;
 }
 
@@ -84,12 +80,12 @@ void window_destroy(Window_t *win) {
 }
 
 int window_get_width(const Window_t *win) {
-    NativeWindow_t *w = (NativeWindow_t *) win;
+    const NativeWindow_t *w = (const NativeWindow_t *) win;
     return w->window->Width;
 }
 
 int window_get_height(const Window_t *win) {
-    NativeWindow_t *w = (NativeWindow_t *) win;
+    const NativeWindow_t *w = (const NativeWindow_t *) win;
     return w->window->Height;
 }
 
@@ -99,27 +95,19 @@ int window_get_inner_width(const Window_t *win) {
 }
 
 int window_get_inner_height(const Window_t *win) {
-    NativeWindow_t *w = (NativeWindow_t *) win;
+    const NativeWindow_t *w = (const NativeWindow_t *) win;
     return w->window->Height - w->window->BorderTop - w->window->BorderBottom;
 }
 
 void window_fill(Window_t *win, const Framebuffer_t *gb) {
     NativeWindow_t *w = (NativeWindow_t *) win;
-
     WritePixelArray(gb->buffer, 0, 0, gb->width * 3, w->window->RPort, 0, 0, gb->width, gb->height, RECTFMT_RGB);
-
 }
 
-void window_fill_8bit_amiga(Window_t *win, Framebuffer8BitAmiga_t *fb, Palette8Bit_t *p, const int update_palette) {
+void window_fill_8bit(Window_t *win, const Framebuffer8Bit_t *gb) {
     NativeWindow_t *w = (NativeWindow_t *) win;
-    if (update_palette) {
-        for (int i = 0; i < p->numPens; ++i) {
-            const Pen_t *pen = palette_8bit_get_pen(p, i);
-            SetRGB32(&w->screen->ViewPort, i, pen->r, pen->g, pen->b);
-        }
-    }
-
-    BltBitMapRastPort(fb->bm, 0, 0, w->window->RPort, 0, 0, fb->width, fb->height, (ABNC | ABC));
+    assert(w->screen);
+    WritePixelArray(gb->buffer, 0, 0, gb->width, w->window->RPort, 0, 0, gb->width, gb->height, RECTFMT_LUT8);
 }
 
 void window_update_palette(Window_t *win, const Palette8Bit_t *p) {
@@ -129,17 +117,10 @@ void window_update_palette(Window_t *win, const Palette8Bit_t *p) {
         const Pen_t *pen = palette_8bit_get_pen_const(p, i);
         SetRGB32(&w->screen->ViewPort, i, pen->r, pen->g, pen->b);
     }
-
 }
 
-void window_fill_8bit(Window_t *win, const Framebuffer8Bit_t *gb) {
-    NativeWindow_t *w = (NativeWindow_t *) win;
-    assert(w->screen);
-
-    WritePixelArray(gb->buffer, 0, 0, gb->width, w->window->RPort, 0, 0, gb->width, gb->height, RECTFMT_LUT8);
-}
-
-LONG deadKeyConvert(struct IntuiMessage *msg, char *kbuffer, LONG kbsize, struct InputEvent *ievent) {
+static LONG
+deadKeyConvert(const struct IntuiMessage *msg, char *kbuffer, const LONG kbsize, struct InputEvent *ievent) {
     if (msg->Class != IDCMP_RAWKEY)
         return (-2);
 
@@ -226,6 +207,22 @@ int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const i
                     } else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x55) {
                         events[numEvents].key_event.key = KEY_TYPE_F6;
                         log_debug("F6");
+                        ++numEvents;
+                    } else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x56) {
+                        events[numEvents].key_event.key = KEY_TYPE_F7;
+                        log_debug("F7");
+                        ++numEvents;
+                    } else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x57) {
+                        events[numEvents].key_event.key = KEY_TYPE_F8;
+                        log_debug("F8");
+                        ++numEvents;
+                    } else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x58) {
+                        events[numEvents].key_event.key = KEY_TYPE_F9;
+                        log_debug("F9");
+                        ++numEvents;
+                    } else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x59) {
+                        events[numEvents].key_event.key = KEY_TYPE_F10;
+                        log_debug("F10");
                         ++numEvents;
                     } else {
                         const long int numChars = deadKeyConvert(msg, buffer, BUFFER_SIZE, &ievent);
