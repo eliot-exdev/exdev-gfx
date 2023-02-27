@@ -88,8 +88,10 @@ float rad_to_deg(const float rad) {
 //    return acos(a);
 //}
 
+#ifdef __AMIGA__
+void swap_bytes_int(int *i) {(void)i;}
+#else
 void swap_bytes_int(int *i) {
-#ifndef __AMIGA__
     int tmp = *i;
     char *in = (char *) &tmp;
     char *out = (char *) i;
@@ -98,8 +100,9 @@ void swap_bytes_int(int *i) {
     out[1] = in[2];
     out[2] = in[1];
     out[3] = in[0];
-#endif
 }
+#endif
+
 
 int normalize_int(int i, const int s) {
     i = i % s;
