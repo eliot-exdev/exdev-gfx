@@ -57,7 +57,7 @@ find_program(MOS_OBJCOPY
         NO_SYSTEM_ENVIRONMENT_PATH)
 
 find_program(MOS_RANLIB
-        ppc-morphos-gcc-ranlib-9
+        ppc-morphos-gcc-ranlib-11
         PATH "${MOS_SDK_ROOT}/bin"
         NO_SYSTEM_ENVIRONMENT_PATH)
 
@@ -88,6 +88,7 @@ set(CMAKE_CXX_COMPILER_RANLIB ${MOS_RANLIB})
 
 # set compile flags
 set(CMAKE_C_FLAGS "-noixemul -mcpu=G4 -maltivec -mabi=altivec")
+set(CMAKE_C_FLAGS_RELEASE "-Ofast -DNDEBUG")
 set(CMAKE_CXX_FLAGS "-noixemul -mcpu=G4 -maltivec -mabi=altivec")
 
 # set linker flags
