@@ -18,9 +18,9 @@ static void paint(Window_t *window, Framebuffer8Bit_t *offscreen, Framebuffer8Bi
     // clear buffer + draw
     framebuffer_8bit_fill(offscreen, 0);
     // render scale
-    framebuffer_8bit_draw_framebuffer_scaled(offscreen, posSprite1[0], posSprite1[1], sprite, scale);
+    framebuffer_8bit_draw_framebuffer_scaled(offscreen, posSprite1[0], posSprite1[1], sprite, scale, 0);
     // render rotate
-    framebuffer_8bit_draw_framebuffer_rotated(offscreen, posSprite2[0], posSprite2[1], sprite, rotate);
+    framebuffer_8bit_draw_framebuffer_rotated(offscreen, posSprite2[0], posSprite2[1], sprite, rotate, 0);
     window_fill_8bit(window, offscreen);
 }
 
@@ -67,12 +67,12 @@ int main() {
         }
 
         if (event.type == EVENT_MOUSE && event.mouse_event.event == MOUSE_EVENT_BUTTON_PRESSED) {
-            if ( event.mouse_event.button == MOUSE_BUTTON_0) {
-                posSprite1[0] =  event.mouse_event.position_x;
-                posSprite1[1] =  event.mouse_event.position_y;
-            } else if ( event.mouse_event.button == MOUSE_BUTTON_1) {
-                posSprite2[0] =  event.mouse_event.position_x;
-                posSprite2[1] =  event.mouse_event.position_y;
+            if (event.mouse_event.button == MOUSE_BUTTON_0) {
+                posSprite1[0] = event.mouse_event.position_x;
+                posSprite1[1] = event.mouse_event.position_y;
+            } else if (event.mouse_event.button == MOUSE_BUTTON_1) {
+                posSprite2[0] = event.mouse_event.position_x;
+                posSprite2[1] = event.mouse_event.position_y;
             }
         }
 

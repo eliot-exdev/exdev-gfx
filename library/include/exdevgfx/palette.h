@@ -37,8 +37,8 @@ void pen_to_color_rgb(const Pen_t *p, ColorRGB_t *c);
 int pen_equals(const Pen_t *p1, const Pen_t *p2);
 
 struct Palette8Bit {
-    Pen_t pens[256];
     int numPens;
+    Pen_t pens[256];
 };
 
 typedef struct Palette8Bit Palette8Bit_t;
