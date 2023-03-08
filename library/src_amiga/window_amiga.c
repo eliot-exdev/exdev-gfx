@@ -123,8 +123,7 @@ void window_update_palette(Window_t *win, const Palette8Bit_t *p) {
     }
 }
 
-static LONG
-deadKeyConvert(const struct IntuiMessage *msg, char *kbuffer, const LONG kbsize, struct InputEvent *ievent) {
+static LONG deadKeyConvert(const struct IntuiMessage *msg, char *kbuffer, const LONG kbsize, struct InputEvent *ievent) {
     if (msg->Class != IDCMP_RAWKEY)
         return (-2);
 
