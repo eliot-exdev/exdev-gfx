@@ -79,9 +79,6 @@ void voxelspace_render(const Vertex3d_t p,
 
     // init ybuffer
     wmemset(v->ybuffer, v->fb->height, v->fb->width);
-//    for (i = 0; i < v->fb->width; ++i) {
-//        v->ybuffer[i] = v->fb->height;
-//    }
 
     // render sky
     framebuffer_8bit_fill(v->fb, v->sky_color);
@@ -117,6 +114,7 @@ void voxelspace_render(const Vertex3d_t p,
         }
         while (i < v->fb->width) {
             // calc height on screen
+//            log_info_fmt("%d %d", pleft_n[0], pleft_n[1]);
             pleft_n[0] = normalize_int((int) pleft[0], v->heightmap.width);
             pleft_n[1] = normalize_int((int) pleft[1], v->heightmap.height);
             const HeightmapValue_t *value = heightmap_value_at_const(&v->heightmap, pleft_n[0], pleft_n[1]);
@@ -137,8 +135,8 @@ void voxelspace_render(const Vertex3d_t p,
 
             // next step
             if (skip_x) {
-                pleft[0] += dx * 2;
-                pleft[1] += dy * 2;
+                pleft[0] += dx * 2.0f;
+                pleft[1] += dy * 2.0f;
                 i += 2;
             } else {
                 pleft[0] += dx;
