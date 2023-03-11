@@ -14,7 +14,7 @@
 #include <assert.h>
 #include <math.h>
 
-#ifndef __AMIGA__
+#ifndef __VBCC__
 #include <wchar.h>
 #endif
 // see: https://github.com/s-macke/VoxelSpace
@@ -78,7 +78,7 @@ void voxelspace_render(const Vertex3d_t p,
     int i = 0, si = 0;
 
     // init ybuffer
-#ifdef __AMIGA__
+#ifdef __VBCC__
     for (i = 0; i < v->fb->width; ++i) { v->ybuffer[i] = v->fb->height; }
 #else
     wmemset(v->ybuffer, v->fb->height, v->fb->width);
