@@ -92,7 +92,7 @@ set(CMAKE_C_FLAGS_RELEASE "-Ofast -DNDEBUG")
 set(CMAKE_CXX_FLAGS "-noixemul -mcpu=G4 -maltivec -mabi=altivec")
 set(CMAKE_CXX_FLAGS_RELEASE "-Ofast -DNDEBUG")
 
-add_compile_definitions(__AMIGA__ __MORPHOS__)
+add_compile_definitions(__MORPHOS__)
 
 # set linker flags
 set(CMAKE_C_LINK_FLAGS "")
