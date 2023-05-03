@@ -31,9 +31,9 @@ void swap_bytes_int(int *i);
 
 TIMESTAMP now();
 
-static inline int normalize_int(const int i, const int s) {
-    const int mod = i % s;
-    return mod < 0 ? (mod + s) : mod;
+static inline int normalize_int(int i, const int s) {
+    i = i % s;
+    return i < 0 ? (s + i) : i;
 }
 
 float normalize_float(float f, int s);
