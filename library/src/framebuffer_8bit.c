@@ -522,71 +522,41 @@ void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int c
     }
 }
 
-void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, const int center_x, const int center_y, const Framebuffer8Bit_t *src, float angle,
+void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, int center_x, int center_y, const Framebuffer8Bit_t *src, float angle,
                                                const int alpha) {
     assert(fb);
     assert(src);
 
     // normalize angle
-    angle = (float) ((((int) angle % 360) + 360) % 360);
+//    angle = (float) ((((int) angle % 360) + 360) % 360);
     const float radians = deg_to_rad(angle);
 
-    const float cosine = (float) cos(radians);
-    const float sine = (float) sin(radians);
+    const float cos_a = (float) cos(radians);
+    const float sin_a = (float) sin(radians);
 
-    const float p1_x = ((float) -src->height * sine);
-    const float p1_y = ((float) src->height * cosine);
+    const int src_center_x = (int) ((float) src->width * 0.5f);
+    const int src_center_y = (int) ((float) src->height * 0.5f);
+    center_x -= src_center_x;
+    center_y -= src_center_y;
 
-    const float p2_x = ((float) src->width * cosine - (float) src->height * sine);
-    const float p2_y = ((float) src->height * cosine + (float) src->width * sine);
+    const int alpha_enabled = alpha >= 0;
 
-    const float p3_x = ((float) src->width * cosine);
-    const float p3_y = ((float) src->width * sine);
-
-    const float minx = min(0, min(p1_x, min(p2_x, p3_x)));
-    const float miny = min(0, min(p1_y, min(p2_y, p3_y)));
-
-    const float maxx = max(p1_x, max(p2_x, p3_x));
-    const float maxy = max(p1_y, max(p2_y, p3_y));
-
-    const int dst_width = (int) ceil(fabs(maxx) - minx);
-    const int dst_height = (int) ceil(fabs(maxy) - miny);
-
-    int dx;
-    int dy;
-    if (angle > 90 && angle < 180) {
-        dx = (int) ((float) center_x - (float) dst_height * 0.5f);
-        dy = (int) ((float) center_y - (float) dst_height * 0.5f);
-    } else if (angle > 180 && angle < 270) {
-        dx = (int) ((float) center_x - (float) dst_width * 0.5f);
-        dy = (int) ((float) center_y - (float) dst_width * 0.5f);
-    } else {
-        dx = (int) ((float) center_x - (float) dst_width * 0.5f);
-        dy = (int) ((float) center_y - (float) dst_height * 0.5f);
-    }
-
-    if (dx > fb->width) {
-        return;
-    }
-    if (dy > fb->height) {
-        return;
-    }
-
-    const int alphaEnabled = alpha >= 0;
-    int src_x = 0;
-    int src_y = 0;
     Color8Bit_t pixel = 0;
+    int pos_x = 0;
+    int pos_y = 0;
 
-    for (int x = 0; x < dst_width; ++x) {
-        for (int y = 0; y < dst_height; ++y) {
-            src_x = (int) (((float) x + minx) * cosine + ((float) y + miny) * sine);
-            src_y = (int) (((float) y + miny) * cosine - ((float) x + minx) * sine);
-            if (src_x >= 0 && src_x < src->width && src_y >= 0 && src_y < src->height) {
-                pixel = *framebuffer_8bit_pixel_at(src, src_x, src_y);
-                if(!alphaEnabled || alpha != pixel) {
-                    *framebuffer_8bit_pixel_at(fb, x + dx, y + dy) = pixel;
-                }
+    for (int x = 0; x < src->width; ++x) {
+        for (int y = 0; y < src->height; ++y) {
+            pixel = *framebuffer_8bit_pixel_at(src, x, y);
+            // skip alpha
+            if (alpha_enabled && alpha == pixel) {
+                continue;
             }
+            pos_x = (int) ((float) src_center_x + (float) (x - src_center_x) * cos_a - (float) (y - src_center_y) * sin_a);
+            pos_y = (int) ((float) src_center_y + (float) (x - src_center_x) * sin_a + (float) (y - src_center_y) * cos_a);
+            pos_x += center_x;
+            pos_y += center_y;
+            framebuffer_8bit_draw_pixel(fb, pos_x, pos_y, pixel);
         }
     }
 }
