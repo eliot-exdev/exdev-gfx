@@ -494,7 +494,7 @@ void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int c
     const float step_x = (float) src->width / max_width;
     const float step_y = (float) src->height / max_height;
     const int x = (int) ((float) center_x - (float) max_width * 0.5f);
-    const int y = (int) ((float) center_y - (float) max_width * 0.5f);
+    const int y = (int) ((float) center_y - (float) max_height * 0.5f);
 
 
     const int alphaEnabled = alpha >= 0;
@@ -502,8 +502,8 @@ void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int c
     int pos_y = 0;
     Color8Bit_t pixel = 0;
 
-    for (int i = 0; i + x < fb->width && i < max_width; ++i) {
-        for (int j = 0; j + y < fb->height && j < max_height; ++j) {
+    for (int i = 0; i + x < fb->width && i < (int) max_width; ++i) {
+        for (int j = 0; j + y < fb->height && j < (int) max_height; ++j) {
             if (i + x < 0) {
                 continue;
             }
