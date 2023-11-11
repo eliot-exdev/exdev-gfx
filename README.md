@@ -14,6 +14,10 @@ A simple mandelbrot renderer:
 A simple voxelspace renderer (do you remember [Comanche](https://en.wikipedia.org/wiki/Comanche_(video_game_series))?):  
 ![voxelspace](screenshots/voxelspace.png)
 
+## sprite
+A simple sprite renderer with scaling and rotation:
+![sprite](screenshots/sprite.png)
+
 # tools
 ## convert_palette_to_pgm
 Converts an existing palette to pgm. 
