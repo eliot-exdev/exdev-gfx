@@ -15,7 +15,7 @@ A simple voxelspace renderer (do you remember [Comanche](https://en.wikipedia.or
 ![voxelspace](screenshots/voxelspace.png)
 
 ## sprite
-A simple sprite renderer with scaling and rotation:
+A simple sprite renderer with alpha, scaling and rotation:
 ![sprite](screenshots/sprite.png)
 
 # tools
