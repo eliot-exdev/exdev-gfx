@@ -562,8 +562,8 @@ void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, const int 
 
     const float cos_a = (float) cos(radians);
     const float sin_a = (float) sin(radians);
-    const int max_length_x = (int) ((float) (max(src->width, src->height)) * 1.3f);
-    const int max_length_y = (int) ((float) (max(src->width, src->height)) * 1.3f);
+    const int max_length_x = (int) ((float) (max(src->width, src->height)) * 1.2f); // this might be to low
+    const int max_length_y = (int) ((float) (max(src->width, src->height)) * 1.2f); // this might be to low
     const int max_length_center_x = (int) ((float) max_length_x * 0.5f);
     const int max_length_center_y = (int) ((float) max_length_y * 0.5f);
     const int x_offset = (int) ((float) (max_length_x - src->width) * 0.5f);
@@ -579,7 +579,7 @@ void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, const int 
     for (int x = 0; x < max_length_x; ++x) {
         for (int y = 0; y < max_length_y; ++y) {
             pos_x = (int) ((float) max_length_center_x + (float) (x - max_length_center_x) * cos_a - (float) (y - max_length_center_y) * sin_a);
-            pos_y = (int) ((float) max_length_center_x + (float) (x - max_length_center_x) * sin_a + (float) (y - max_length_center_y) * cos_a);
+            pos_y = (int) ((float) max_length_center_y + (float) (x - max_length_center_x) * sin_a + (float) (y - max_length_center_y) * cos_a);
             pos_x -= x_offset;
             pos_y -= y_offset;
             if (pos_x >= 0 && pos_x < src->width && pos_y >= 0 && pos_y < src->height) {
