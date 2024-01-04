@@ -82,28 +82,29 @@ void framebuffer_draw_line(Framebuffer_t *fb, const Vertex2d_t a, const Vertex2d
     }
 }
 
-void framebuffer_draw_vertical_line(Framebuffer_t *fb, int x, const int y, int dx, const ColorRGBA_t *c) {
+void framebuffer_draw_vertical_line(Framebuffer_t *fb, int x, const int y, int dy, const ColorRGBA_t *c) {
     assert(fb);
 
     if (x >= fb->width) {
         return;
     }
-    if (y < 0) {
+    if (x < 0) {
         return;
     }
+
     if (y >= fb->height) {
         return;
     }
-    if (dx <= 0) {
+
+    if (dy <= 0) {
         return;
     }
-    if (x < 0) {
-        x = 0;
+
+    if (y + dy >= fb->height) {
+        dy = fb->height - y;
     }
-    if (x + dx > fb->width) {
-        dx = fb->width - x;
-    }
-    for (int i = 0; i < dx; ++i) {
+
+    for (int i = 0; i < dy; ++i) {
         color_rgba_rgb_combine(c, framebuffer_pixel_at(fb, x + i, y));
     }
 }
@@ -114,22 +115,25 @@ void framebuffer_draw_horizontal_line(Framebuffer_t *fb, int x, int y, int dx, c
     if (x >= fb->width) {
         return;
     }
+
     if (y < 0) {
         return;
     }
     if (y >= fb->height) {
         return;
     }
-    if (x < 0) {
-        dx += x;
-        x = 0;
-    }
+
     if (dx <= 0) {
         return;
+    }
+    if (x < 0) {
+        dx = dx + x;
+        x = 0;
     }
     if (x + dx > fb->width) {
         dx = fb->width - x;
     }
+
     for (int i = 0; i < dx; ++i) {
         *framebuffer_pixel_at(fb, x + i, y) = *c;
     }
