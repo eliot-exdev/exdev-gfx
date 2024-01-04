@@ -562,8 +562,8 @@ void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, const int 
 
     const float cos_a = (float) cos(radians);
     const float sin_a = (float) sin(radians);
-    const int max_length_x = (int) ((float) (max(src->width, src->height)) * 1.2f); // this might be to low
-    const int max_length_y = (int) ((float) (max(src->width, src->height)) * 1.2f); // this might be to low
+    const int max_length_x = (int) ((float) (max(src->width, src->height)) * 1.2f); // this might be too low
+    const int max_length_y = (int) ((float) (max(src->width, src->height)) * 1.2f); // this might be too low
     const int max_length_center_x = (int) ((float) max_length_x * 0.5f);
     const int max_length_center_y = (int) ((float) max_length_y * 0.5f);
     const int x_offset = (int) ((float) (max_length_x - src->width) * 0.5f);
