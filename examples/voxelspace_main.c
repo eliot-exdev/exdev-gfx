@@ -2,8 +2,8 @@
 #include <exdevgfx/voxelspace.h>
 #include <exdevgfx/window.h>
 #include <exdevgfx/helper.h>
-#include <exdevgfx/matrix.h>
 #include <exdevgfx/args.h>
+#include <exdevgfx/vertex2d.h>
 
 #define EXDEVGFX2_LOG_LEVEL 2
 
@@ -144,38 +144,39 @@ static void parse_args(int argc, char **argv) {
     }
 }
 
-static void move(Vertex3d_t p, const char move_flag, const char strafe_flag, const int phi) {
-    if (move_flag == 0 && strafe_flag == 0) {
+static void move(Vertex3d_t p, const char move_flag, const char strafe_flag, const char up_down_flag, const int phi) {
+    if (move_flag == 0 && strafe_flag == 0 && up_down_flag == 0) {
         return;
     }
 
-    float move = 0.0f;
-    float strafe = 0.0f;
+    Vertex2d_t movement = {0.f, 0.f};
 
+    // move forward/backward
     if (move_flag == 1) {
-        move = MOVEMENT_STEP_SIZE;
+        movement[1] = -MOVEMENT_STEP_SIZE;
     } else if (move_flag == 2) {
-        move = -MOVEMENT_STEP_SIZE;
+        movement[1] = MOVEMENT_STEP_SIZE;
     }
 
+    // strafe left/right
     if (strafe_flag == 1) {
-        strafe = -MOVEMENT_STEP_SIZE;
+        movement[0] = -MOVEMENT_STEP_SIZE;
     } else if (strafe_flag == 2) {
-        strafe = MOVEMENT_STEP_SIZE;
+        movement[0] = MOVEMENT_STEP_SIZE;
     }
 
-    Vertex3d_t v1 = {strafe, 0, -move};
-    Vertex3d_t v2 = {p[0], p[2], p[1]};
-    Vertex3d_t v3;
+    // rotate
+    vertex2d_rotate(movement, deg_to_rad((float) -phi));
 
-    MATRIX_DEFAULT(m);
-    matrix_rotateY(m, deg_to_rad((float) phi), m);
-    matrix_mul_vector(m, v1, v3);
-    vertex3d_add(v3, v2, v3);
+    p[0] += movement[0];
+    p[1] += movement[1];
 
-    p[0] = v3[0];
-    p[1] = v3[2];
-    p[2] = v3[1];
+    // move up/down
+    if (p[2] < 120.f && up_down_flag == 1) {
+        p[2] += MOVEMENT_STEP_SIZE;
+    } else if (p[2] > 5.f && up_down_flag == 2) {
+        p[2] -= MOVEMENT_STEP_SIZE;
+    }
 }
 
 int main(int argc, char **argv) {
@@ -262,7 +263,7 @@ int main(int argc, char **argv) {
     char ctrl_strafe = 0; // 0=no, 1=left, 2=right
 
     // show window
-    Window_t* window = window_create(WIDTH, HEIGHT, "voxel", FS_8_BIT);
+    Window_t *window = window_create(WIDTH, HEIGHT, "voxel", FS_8_BIT);
     if (!window) {
         log_warning("could not create window or screen");
         exit(0);
@@ -333,7 +334,7 @@ int main(int argc, char **argv) {
                 default:
                     break;
             }
-        } else if (event.type==EVENT_KEY && event.key_event.event == KEY_EVENT_RELEASED) {
+        } else if (event.type == EVENT_KEY && event.key_event.event == KEY_EVENT_RELEASED) {
             switch (event.key_event.key) {
                 case KEY_TYPE_RIGHT:
                 case KEY_TYPE_LEFT:
@@ -349,7 +350,7 @@ int main(int argc, char **argv) {
                     } else if (event.key_event.code == 'a' || event.key_event.code == 'd') {
                         ctrl_strafe = 0;
                     }
-                 default:
+                default:
                     break;
             }
         }
@@ -363,9 +364,6 @@ int main(int argc, char **argv) {
             p[2] = -1.0f; // use auto height
         }
 
-        // update
-        move(p, ctrl_move, ctrl_strafe, rotation);
-
         switch (ctrl_rotate) {
             case 1:
                 rotation -= ROTATION_STEP_SIZE;
@@ -377,18 +375,9 @@ int main(int argc, char **argv) {
                 break;
         }
 
-        switch (ctrl_up_down) {
-            case 1:
-                if (p[2] <= 120.0f) {
-                    p[2] += MOVEMENT_STEP_SIZE;
-                }
-                break;
-            case 2:
-                if (p[2] >= 5.0f) {
-                    p[2] -= MOVEMENT_STEP_SIZE;
-                }
-                break;
-        }
+        // update
+
+        move(p, ctrl_move, ctrl_strafe, ctrl_up_down, rotation);
 
         // render
         log_debug("--> render");
