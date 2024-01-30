@@ -25,9 +25,12 @@ float vertex2d_cross(const Vertex2d_t a, const Vertex2d_t b) {
     return a[0] * b[1] - a[1] * b[0];
 }
 
-void vertex2d_rotate(const Vertex2d_t v, Vertex2d_t d, const float a) {
+void vertex2d_rotate(Vertex2d_t v, const float a) {
     const float s = sin(a);
     const float c = cos(a);
+    Vertex2d_t d;
     d[0] = v[0] * c - v[1] * s;
     d[1] = v[1] * c + v[0] * s;
+    v[0]=d[0];
+    v[1]=d[1];
 }
