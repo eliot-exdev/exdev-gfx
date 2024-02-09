@@ -619,17 +619,30 @@ void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, const int 
 
     for (int x = 0; x < max_length_x; ++x) {
         for (int y = 0; y < max_length_y; ++y) {
+            // calc x
             pos_x = (int) ((float) max_length_center_x + (float) (x - max_length_center_x) * cos_a - (float) (y - max_length_center_y) * sin_a);
-            pos_y = (int) ((float) max_length_center_y + (float) (x - max_length_center_x) * sin_a + (float) (y - max_length_center_y) * cos_a);
             pos_x -= x_offset;
-            pos_y -= y_offset;
-            if (pos_x >= 0 && pos_x < src->width && pos_y >= 0 && pos_y < src->height) {
-                pixel = *framebuffer_8bit_pixel_at(src, pos_x, pos_y);
-                if (alpha_enabled && alpha == pixel) {
-                    continue;
-                }
-                framebuffer_8bit_draw_pixel(fb, x + center_x - max_length_center_x, y + center_y - max_length_center_y, pixel);
+            if (pos_x < 0 || pos_x >= src->width) {
+                continue;
             }
+
+            // calc y
+            pos_y = (int) ((float) max_length_center_y + (float) (x - max_length_center_x) * sin_a + (float) (y - max_length_center_y) * cos_a);
+            pos_y -= y_offset;
+            if (pos_y < 0 || pos_y >= src->height) {
+                continue;
+            }
+
+            // pixel at src framebuffer
+            pixel = *framebuffer_8bit_pixel_at(src, pos_x, pos_y);
+
+            // skip alpha
+            if (alpha_enabled && alpha == pixel) {
+                continue;
+            }
+
+            // draw
+            framebuffer_8bit_draw_pixel(fb, x + center_x - max_length_center_x, y + center_y - max_length_center_y, pixel);
         }
     }
 }
