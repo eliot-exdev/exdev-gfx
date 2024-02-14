@@ -60,7 +60,21 @@ void voxelspace_deinit(Voxelspace_t *v) {
     v->ybuffer = NULL;
 }
 
+void voxel_object_init(VoxelObject_t *vo) {
+    assert(vo);
+
+    vo->position[0] = 0;
+    vo->position[1] = 0;
+    vo->position[2] = 0;
+    vo->width = 0;
+    vo->height = 0;
+    vo->center_x = 0;
+    vo->center_y = 0;
+}
+
 void voxelspace_render(const Vertex3d_t p, const float phi, const float horizon, const float distance, const float dz, const int skip_x, const Voxelspace_t *v) {
+    const VoxelObject_t vo = {{100, 100, 100}, 100, 100, 50, 50};
+
     // precalculate viewing angle parameters
     const float sinphi = sin(phi);
     const float cosphi = cos(phi);
@@ -118,17 +132,22 @@ void voxelspace_render(const Vertex3d_t p, const float phi, const float horizon,
             pleft_n[1] = normalize_int((int) pleft[1], v->heightmap.height);
             const HeightmapValue_t *value = heightmap_value_at_const(&v->heightmap, pleft_n[0], pleft_n[1]);
             height_on_screen = (int) ((height - (float) value->height) / z * v->scale_height + horizon);
+
+            if (pleft_n[0] == vo.position[0] && pleft_n[1] == vo.position[1]) {
+                log_info("here we render our vo");
+                framebuffer_8bit_fill_rect(v->fb, i - vo.center_x, height_on_screen - vo.center_y, vo.width, vo.height, v->sky_color);
+                for (int d = 0; d < vo.width; ++d) {
+                    v->ybuffer[d + i - vo.center_x] = height_on_screen - vo.center_y;
+                }
+            }
+
             if (height_on_screen < 0) {
                 height_on_screen = 0;
             }
 
             // render
             if (height_on_screen < v->ybuffer[i]) {
-                framebuffer_8bit_draw_vertical_line(v->fb,
-                                                    i,
-                                                    height_on_screen,
-                                                    v->ybuffer[i],
-                                                    value->color);
+                framebuffer_8bit_draw_vertical_line(v->fb, i, height_on_screen, v->ybuffer[i], value->color);
                 v->ybuffer[i] = height_on_screen;
             }
 

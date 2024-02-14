@@ -7,6 +7,7 @@
 
 #include <exdevgfx/heightmap.h>
 #include <exdevgfx/vertex3d.h>
+#include <exdevgfx/vertex2d.h>
 
 struct Voxelspace {
     Heightmap_t heightmap;
@@ -17,6 +18,18 @@ struct Voxelspace {
 };
 
 typedef struct Voxelspace Voxelspace_t;
+
+struct VoxelObject {
+    int position[3];
+    int width;
+    int height;
+    int center_x;
+    int center_y;
+};
+
+typedef struct VoxelObject VoxelObject_t;
+
+void voxel_object_init(VoxelObject_t *vo);
 
 void voxelspace_init(Voxelspace_t *v, Framebuffer8Bit_t *height_map, Framebuffer8Bit_t *color_map, Framebuffer8Bit_t *fb, float scale_height, Color8Bit_t sky_color);
 
