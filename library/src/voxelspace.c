@@ -3,7 +3,6 @@
  */
 
 #include <exdevgfx/voxelspace.h>
-#include <exdevgfx/vertex2d.h>
 #include <exdevgfx/helper.h>
 
 #define EXDEVGFX2_LOG_LEVEL 2
@@ -72,8 +71,9 @@ void voxel_object_init(VoxelObject_t *vo) {
     vo->center_y = 0;
 }
 
-void voxelspace_render(const Vertex3d_t p, const float phi, const float horizon, const float distance, const float dz, const int skip_x, const Voxelspace_t *v) {
-    const VoxelObject_t vo = {{100, 100, 100}, 100, 100, 50, 50};
+void
+voxelspace_render(const Vertex3d_t p, const float phi, const float horizon, const float distance, const float dz, const int skip_x, const Voxelspace_t *v) {
+    const VoxelObject_t vo = {{100, 100, 100}, 50, 100, 25, 50};
 
     // precalculate viewing angle parameters
     const float sinphi = sin(phi);
@@ -137,7 +137,10 @@ void voxelspace_render(const Vertex3d_t p, const float phi, const float horizon,
                 log_info("here we render our vo");
                 framebuffer_8bit_fill_rect(v->fb, i - vo.center_x, height_on_screen - vo.center_y, vo.width, vo.height, v->sky_color);
                 for (int d = 0; d < vo.width; ++d) {
-                    v->ybuffer[d + i - vo.center_x] = height_on_screen - vo.center_y;
+                    const int pos = d + i - vo.center_x;
+                    if (pos >= 0 && pos < v->fb->width) {
+                        v->ybuffer[pos] = height_on_screen - vo.center_y;
+                    }
                 }
             }
 

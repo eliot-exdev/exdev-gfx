@@ -7,7 +7,6 @@
 
 #include <exdevgfx/heightmap.h>
 #include <exdevgfx/vertex3d.h>
-#include <exdevgfx/vertex2d.h>
 
 struct Voxelspace {
     Heightmap_t heightmap;
