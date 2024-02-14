@@ -28,7 +28,7 @@ void heightmap_deinit(Heightmap_t *hm);
 
 void heightmap_init_with_framebuffer(Heightmap_t *hm, const Framebuffer8Bit_t *heights, const Framebuffer8Bit_t *colors);
 
-HeightmapValue_t *heightmap_value_at(Heightmap_t *hm, int x, int y);
+HeightmapValue_t *heightmap_value_at(const Heightmap_t *hm, int x, int y);
 
 const HeightmapValue_t *heightmap_value_at_const(const Heightmap_t *hm, int x, int y);
 

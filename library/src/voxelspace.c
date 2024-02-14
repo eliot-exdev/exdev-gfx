@@ -15,7 +15,9 @@
 #include <math.h>
 
 #ifndef __VBCC__
+
 #include <wchar.h>
+
 #endif
 // see: https://github.com/s-macke/VoxelSpace
 
@@ -58,13 +60,7 @@ void voxelspace_deinit(Voxelspace_t *v) {
     v->ybuffer = NULL;
 }
 
-void voxelspace_render(const Vertex3d_t p,
-                       const float phi,
-                       const float horizon,
-                       const float distance,
-                       const float dz,
-                       const int skip_x,
-                       Voxelspace_t *v) {
+void voxelspace_render(const Vertex3d_t p, const float phi, const float horizon, const float distance, const float dz, const int skip_x, const Voxelspace_t *v) {
     // precalculate viewing angle parameters
     const float sinphi = sin(phi);
     const float cosphi = cos(phi);
