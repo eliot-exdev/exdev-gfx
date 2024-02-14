@@ -135,11 +135,11 @@ voxelspace_render(const Vertex3d_t p, const float phi, const float horizon, cons
 
             if (pleft_n[0] == vo.position[0] && pleft_n[1] == vo.position[1]) {
                 log_info("here we render our vo");
-                framebuffer_8bit_fill_rect(v->fb, i - vo.center_x, height_on_screen - vo.center_y, vo.width, vo.height, v->sky_color);
+                framebuffer_8bit_fill_rect(v->fb, i - vo.center_x, height_on_screen - vo.center_y - value->height, vo.width, vo.height, v->sky_color);
                 for (int d = 0; d < vo.width; ++d) {
                     const int pos = d + i - vo.center_x;
                     if (pos >= 0 && pos < v->fb->width) {
-                        v->ybuffer[pos] = height_on_screen - vo.center_y;
+                        v->ybuffer[pos] = height_on_screen - vo.center_y - value->height;
                     }
                 }
             }
