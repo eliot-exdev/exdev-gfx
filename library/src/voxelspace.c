@@ -73,7 +73,7 @@ void voxel_object_init(VoxelObject_t *vo) {
 
 void
 voxelspace_render(const Vertex3d_t p, const float phi, const float horizon, const float distance, const float dz, const int skip_x, const Voxelspace_t *v) {
-    const VoxelObject_t vo = {{100, 100, 100}, 50, 100, 25, 50};
+    const VoxelObject_t vo = {{100, 100, 100}, 50, 200, 25, 100};
 
     // precalculate viewing angle parameters
     const float sinphi = sin(phi);
@@ -135,7 +135,7 @@ voxelspace_render(const Vertex3d_t p, const float phi, const float horizon, cons
 
             if (pleft_n[0] == vo.position[0] && pleft_n[1] == vo.position[1]) {
                 log_info("here we render our vo");
-                framebuffer_8bit_fill_rect(v->fb, i - vo.center_x, height_on_screen - vo.center_y - value->height, vo.width, vo.height, v->sky_color);
+                framebuffer_8bit_fill_rect(v->fb, i - vo.center_x, height_on_screen - vo.center_y - value->height, vo.width, vo.height, 0);
                 for (int d = 0; d < vo.width; ++d) {
                     const int pos = d + i - vo.center_x;
                     if (pos >= 0 && pos < v->fb->width) {
