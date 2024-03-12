@@ -3,7 +3,6 @@
  */
 
 #include <exdevgfx/voxelspace.h>
-#include <exdevgfx/vertex2d.h>
 #include <exdevgfx/helper.h>
 
 #define EXDEVGFX2_LOG_LEVEL 2
