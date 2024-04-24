@@ -5,6 +5,10 @@
 #ifndef EXDEVGFX_BASE_COLOR_H
 #define EXDEVGFX_BASE_COLOR_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct ColorRGBA {
     unsigned char r;
     unsigned char g;
@@ -38,5 +42,9 @@ void color_rgba_rgb_copy(const ColorRGBA_t *src, ColorRGB_t *dst);
 void color_rgb_rgba_copy(const ColorRGB_t *src, ColorRGBA_t *dst);
 
 void color_rgba_rgb_combine(const ColorRGBA_t *src, ColorRGB_t *dst);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //EXDEVGFX_BASE_COLOR_H

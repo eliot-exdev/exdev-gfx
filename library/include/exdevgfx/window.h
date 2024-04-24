@@ -10,6 +10,10 @@
 #include <exdevgfx/palette.h>
 #include <exdevgfx/events.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef void *Window_t;
 
 enum FULLSCREEN {
@@ -37,5 +41,9 @@ void window_fill_8bit(Window_t *w, const Framebuffer8Bit_t *gb);
 void window_update_palette(Window_t *w, const Palette8Bit_t *p);
 
 int window_poll_events(Window_t *w, char *closeEvent, Event_t *events, int maxEvents);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //EXDEVGFX2_WINDOW_LINUX_H

@@ -8,6 +8,10 @@
 #include <exdevgfx/framebuffer_8bit.h>
 #include <exdevgfx/vertex3d.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct SWRenderer8bit {
     Framebuffer8Bit_t *fb;
     float pc;
@@ -43,5 +47,8 @@ void sw_renderer_8bit_fill_polygon_texture(SWRenderer8bit_t *sw,
                                            const Vertex3d_t trans,
                                            const Vertex3d_t rot);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif //EXDEVGFX2_SW_RENDERER_H

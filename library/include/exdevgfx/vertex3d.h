@@ -5,6 +5,10 @@
 #ifndef EXDEVGFX2_VERTEX3D_H
 #define EXDEVGFX2_VERTEX3D_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef float Vertex3d_t[3];
 
 void vertex3d_init(Vertex3d_t v);
@@ -32,5 +36,9 @@ float vertex3d_angle(const Vertex3d_t a, const Vertex3d_t b);
 float vertex3d_distance(const Vertex3d_t a, const Vertex3d_t b);
 
 void vertex3d_normalize(const Vertex3d_t src, Vertex3d_t dst);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -7,6 +7,10 @@
 
 #include <stdio.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define TIMESTAMP long
 
 float deg_to_rad(float deg);
@@ -37,5 +41,9 @@ static inline int normalize_int(int i, const int s) {
 }
 
 float normalize_float(float f, int s);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

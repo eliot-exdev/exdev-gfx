@@ -5,6 +5,11 @@
 #ifndef EXDEVGFX2_EXDEV_BASE_H
 #define EXDEVGFX2_EXDEV_BASE_H
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern int exdev_base_initiated;
 
 #if defined(__amigaos4__) || defined(__MORPHOS__) || defined(__AROS__)
@@ -24,5 +29,9 @@ extern int exdev_base_initiated;
 int exdev_base_init();
 
 int exdev_base_deinit();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //EXDEVGFX2_EXDEV_BASE_H
