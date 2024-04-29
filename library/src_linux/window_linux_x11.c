@@ -190,7 +190,11 @@ void window_fill_8bit(Window_t *w, const Framebuffer8Bit_t *gb) {
         log_warning("width or height differ");
         return;
     }
-    framebuffer_rgba_fill_8bit(&x11_w->fb, gb, x11_w->palette);
+
+    ColorRGB_t *color_table = malloc(sizeof(ColorRGB_t) * x11_w->palette->numPens);
+    framebuffer_rgb_build_color_table_from_palette_8bit(color_table, x11_w->palette);
+    framebuffer_rgba_fill_8bit(&x11_w->fb, gb, color_table);
+    free(color_table);
     framebuffer_rgba_swap(&x11_w->fb);
 
     if (!x11_w->img) {
