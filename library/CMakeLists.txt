@@ -70,7 +70,7 @@ else ()
             PUBLIC m
             )
     target_compile_options(${PROJECT_NAME}
-            PUBLIC -Wno-c2x-extensions -Wno-unused-variable
+            PUBLIC -Wno-c2x-extensions -Wno-unused-variable -fPIC
             )
 endif ()
 
