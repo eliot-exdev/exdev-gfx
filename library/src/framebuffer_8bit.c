@@ -117,8 +117,7 @@ void framebuffer_8bit_draw_pixel(Framebuffer8Bit_t *fb, int x, int y, Color8Bit_
     *framebuffer_8bit_pixel_at(fb, x, y) = c;
 }
 
-void framebuffer_8bit_fill_rect(Framebuffer8Bit_t *fb, const int x, const int y, const int width, const int height,
-                                const Color8Bit_t c) {
+void framebuffer_8bit_fill_rect(Framebuffer8Bit_t *fb, const int x, const int y, const int width, const int height, const Color8Bit_t c) {
     assert(fb);
 
     for (int i = 0; i < height; ++i) {
@@ -126,8 +125,7 @@ void framebuffer_8bit_fill_rect(Framebuffer8Bit_t *fb, const int x, const int y,
     }
 }
 
-void framebuffer_8bit_draw_rect(Framebuffer8Bit_t *fb, const int x, const int y, const int width, const int height,
-                                const Color8Bit_t c) {
+void framebuffer_8bit_draw_rect(Framebuffer8Bit_t *fb, const int x, const int y, const int width, const int height, const Color8Bit_t c) {
     assert(fb);
 
     framebuffer_8bit_draw_vertical_line(fb, x, y, width, c);
@@ -484,6 +482,12 @@ void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int c
     if (scale <= 0.0f) {
         return;
     }
+    if (center_x >= fb->width) {
+        return;
+    }
+    if (center_y >= fb->height) {
+        return;
+    }
 
     const float max_width = (scale * (float) src->width);
     const float max_height = (scale * (float) src->height);
@@ -492,12 +496,6 @@ void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int c
     const int x = (int) ((float) center_x - (float) max_width * 0.5f);
     const int y = (int) ((float) center_y - (float) max_width * 0.5f);
 
-    if (center_x > fb->width) {
-        return;
-    }
-    if (center_y > fb->height) {
-        return;
-    }
 
     const int alphaEnabled = alpha >= 0;
     int pos_x = 0;
@@ -522,10 +520,17 @@ void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int c
     }
 }
 
-void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, int center_x, int center_y, const Framebuffer8Bit_t *src, float angle,
+void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, const int center_x, const int center_y, const Framebuffer8Bit_t *src, float angle,
                                                const int alpha) {
     assert(fb);
     assert(src);
+
+    if (center_x >= fb->width) {
+        return;
+    }
+    if (center_y >= fb->height) {
+        return;
+    }
 
     // normalize angle
 //    angle = (float) ((((int) angle % 360) + 360) % 360);
@@ -533,7 +538,7 @@ void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, int center
 
     const float cos_a = (float) cos(radians);
     const float sin_a = (float) sin(radians);
-    const int max_length = (int) ((float) (max(src->width, src->height)) * 1.5f);
+    const int max_length = (int) ((float) (max(src->width, src->height)) * 1.3f);
     const int dst_center_x = (int) ((float) max_length * 0.5f);
     const int dst_center_y = (int) ((float) max_length * 0.5f);
     const int x_offset = (int) ((float) (max_length - src->width) * 0.5f);
