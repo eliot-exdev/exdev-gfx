@@ -46,18 +46,20 @@ Window_t *window_create(const int width, const int height, const char *title, co
                                    SA_Type, CUSTOMSCREEN, SA_DisplayID, id,
                                    SA_Title, title, SA_Exclusive, TRUE, SA_SharePens, TRUE, TAG_DONE);
 
-        w->window = OpenWindowTags(NULL, WA_Left, 0, WA_Top, 0, WA_Width, width, WA_Height, height, WA_CustomScreen,
-                                   w->screen, WA_IDCMP,
-                                   IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS, WA_Flags,
-                                   WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS,
-                                   WA_Title, title, TAG_DONE);
+        w->window = OpenWindowTags(NULL, WA_Left, 0, WA_Top, 0, WA_Width, width, WA_Height, height,
+                                   WA_CustomScreen, w->screen,
+                                   WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
+                                   WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_REPORTMOUSE,
+                                   WA_Title, title,
+                                   TAG_DONE);
     } else {
         w->screen = NULL;
 
-        w->window = OpenWindowTags(NULL, WA_Left, 50, WA_Top, 50, WA_Width, width, WA_Height, height, WA_IDCMP,
-                                   IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS, WA_Flags,
-                                   WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_DRAGBAR, WA_Title,
-                                   title, TAG_DONE);
+        w->window = OpenWindowTags(NULL, WA_Left, 50, WA_Top, 50, WA_Width, width, WA_Height, height,
+                                   WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
+                                   WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_DRAGBAR | WFLG_REPORTMOUSE,
+                                   WA_Title, title,
+                                   TAG_DONE);
     }
 
     return (Window_t *) w;
@@ -145,12 +147,11 @@ int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const i
     event_init(events, maxEvents);
 
     memset(&ievent, 0, sizeof(struct InputEvent));
-    memset(buffer, 0, BUFFER_SIZE);
 
-    //Wait(1L << w->window->UserPort->mp_SigBit);
+//    Wait(1L << w->window->UserPort->mp_SigBit);
 
     while (numEvents < maxEvents && (msg = GT_GetIMsg(w->window->UserPort))) {
-        log_debug("got message");
+        log_debug("--> got message");
         msgClass = msg->Class;
         switch (msgClass) {
             case IDCMP_CLOSEWINDOW:
@@ -158,87 +159,109 @@ int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const i
                 log_debug("window close event");
                 break;
             case IDCMP_RAWKEY:
-                log_debug("keye event");
+                log_debug("key event");
                 events[numEvents].type = EVENT_KEY;
                 if (!(msg->Qualifier & IEQUALIFIER_REPEAT)) {
                     events[numEvents].key_event.event = msg->Code & IECODE_UP_PREFIX ? KEY_EVENT_RELEASED : KEY_EVENT_PRESSED;
                     if ((msg->Code & ~IECODE_UP_PREFIX) == 0x4C) {
                         events[numEvents].key_event.key = KEY_TYPE_UP;
                         log_debug("arrow up");
-                        ++numEvents;
                     } else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x4D) {
                         events[numEvents].key_event.key = KEY_TYPE_DOWN;
                         log_debug("arrow down");
-                        ++numEvents;
                     } else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x4F) {
                         events[numEvents].key_event.key = KEY_TYPE_LEFT;
                         log_debug("arrow left");
-                        ++numEvents;
                     } else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x4E) {
                         events[numEvents].key_event.key = KEY_TYPE_RIGHT;
                         log_debug("arrow right");
-                        ++numEvents;
                     } else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x45) {
                         events[numEvents].key_event.key = KEY_TYPE_ESC;
                         log_debug("esc");
-                        ++numEvents;
                     } else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x50) {
                         events[numEvents].key_event.key = KEY_TYPE_F1;
                         log_debug("F1");
-                        ++numEvents;
                     } else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x51) {
                         events[numEvents].key_event.key = KEY_TYPE_F2;
                         log_debug("F2");
-                        ++numEvents;
                     } else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x52) {
                         events[numEvents].key_event.key = KEY_TYPE_F3;
                         log_debug("F3");
-                        ++numEvents;
                     } else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x53) {
                         events[numEvents].key_event.key = KEY_TYPE_F4;
                         log_debug("F4");
-                        ++numEvents;
                     } else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x54) {
                         events[numEvents].key_event.key = KEY_TYPE_F5;
                         log_debug("F5");
-                        ++numEvents;
                     } else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x55) {
                         events[numEvents].key_event.key = KEY_TYPE_F6;
                         log_debug("F6");
-                        ++numEvents;
                     } else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x56) {
                         events[numEvents].key_event.key = KEY_TYPE_F7;
                         log_debug("F7");
-                        ++numEvents;
                     } else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x57) {
                         events[numEvents].key_event.key = KEY_TYPE_F8;
                         log_debug("F8");
-                        ++numEvents;
                     } else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x58) {
                         events[numEvents].key_event.key = KEY_TYPE_F9;
                         log_debug("F9");
-                        ++numEvents;
                     } else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x59) {
                         events[numEvents].key_event.key = KEY_TYPE_F10;
                         log_debug("F10");
-                        ++numEvents;
                     } else {
+                        memset(buffer, 0, BUFFER_SIZE);
                         const long int numChars = deadKeyConvert(msg, buffer, BUFFER_SIZE, &ievent);
                         log_debug_fmt("numChars=%ld", numChars);
                         if (numChars == 1) {
                             events[numEvents].key_event.key = KEY_TYPE_CODE;
                             events[numEvents].key_event.code = buffer[0];
                             log_debug_fmt("char=%c", buffer[0]);
-                            ++numEvents;
                         }
                     }
                 }
+                ++numEvents;
                 break;
             case IDCMP_MOUSEBUTTONS:
-                log_warning("mouse event");
-                // TODO: implement me!
-                //++numEvents;
-                //break;
+                log_debug("mouse event");
+                switch (msg->Code) {
+                    case SELECTDOWN:
+                        events[numEvents].mouse_event.event = MOUSE_EVENT_BUTTON_PRESSED;
+                        events[numEvents].mouse_event.button = MOUSE_BUTTON_0;
+                        break;
+                    case SELECTUP:
+                        events[numEvents].mouse_event.event = MOUSE_EVENT_BUTTON_RELEASED;
+                        events[numEvents].mouse_event.button = MOUSE_BUTTON_0;
+                        break;
+                    case MENUDOWN:
+                        events[numEvents].mouse_event.event = MOUSE_EVENT_BUTTON_PRESSED;
+                        events[numEvents].mouse_event.button = MOUSE_BUTTON_1;
+                        break;
+                    case MENUUP:
+                        events[numEvents].mouse_event.event = MOUSE_EVENT_BUTTON_RELEASED;
+                        events[numEvents].mouse_event.button = MOUSE_BUTTON_1;
+                        break;
+                    default:
+                        events[numEvents].mouse_event.event = MOUSE_EVENT_INVALID;
+                        events[numEvents].mouse_event.button = MOUSE_BUTTON_NONE;
+                }
+                events[numEvents].type = EVENT_MOUSE;
+                events[numEvents].mouse_event.position_x = msg->MouseX;
+                events[numEvents].mouse_event.position_y = msg->MouseY;
+                log_debug_fmt("mouse event %d %d %d %d",
+                              events[numEvents].mouse_event.event,
+                              events[numEvents].mouse_event.button,
+                              events[numEvents].mouse_event.position_x,
+                              events[numEvents].mouse_event.position_y);
+                ++numEvents;
+                break;
+            case IDCMP_MOUSEMOVE:
+                events[numEvents].type = EVENT_MOUSE;
+                events[numEvents].mouse_event.event = MOUSE_EVENT_MOVED;
+                events[numEvents].mouse_event.button = MOUSE_BUTTON_NONE;
+                events[numEvents].mouse_event.position_x = msg->MouseX;
+                events[numEvents].mouse_event.position_y = msg->MouseY;
+                ++numEvents;
+                break;
         }
         GT_ReplyIMsg(msg);
     }
