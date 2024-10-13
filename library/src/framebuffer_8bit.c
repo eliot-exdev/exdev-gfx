@@ -73,11 +73,30 @@ Color8Bit_t *framebuffer_8bit_pixel_at(const Framebuffer8Bit_t *fb, const int x,
     return fb->buffer + ((y * fb->width) + x);
 }
 
-void framebuffer_8bit_draw_vertical_line(Framebuffer8Bit_t *fb, const int x, int y, const int dy, const Color8Bit_t c) {
+void framebuffer_8bit_draw_vertical_line(Framebuffer8Bit_t *fb, const int x, int y, int dy, const Color8Bit_t c) {
     assert(fb);
 
-    for (; y < dy; ++y) {
-        fb->buffer[y * fb->width + x] = c;
+    if (x >= fb->width) {
+        return;
+    }
+    if (x < 0) {
+        return;
+    }
+
+    if (y >= fb->height) {
+        return;
+    }
+
+    if (dy <= 0) {
+        return;
+    }
+
+    if (y + dy >= fb->height) {
+        dy = fb->height - y;
+    }
+
+    for (int i = 0; i < dy; ++i) {
+        fb->buffer[(y + i) * fb->width + x] = c;
     }
 }
 
@@ -87,21 +106,25 @@ void framebuffer_8bit_draw_horizontal_line(Framebuffer8Bit_t *fb, int x, const i
     if (x >= fb->width) {
         return;
     }
+
     if (y < 0) {
         return;
     }
     if (y >= fb->height) {
         return;
     }
+
     if (dx <= 0) {
         return;
     }
     if (x < 0) {
+        dx = dx + x;
         x = 0;
     }
     if (x + dx > fb->width) {
         dx = fb->width - x;
     }
+
     memset(framebuffer_8bit_pixel_at(fb, x, y), c, dx);
 }
 
@@ -128,10 +151,11 @@ void framebuffer_8bit_fill_rect(Framebuffer8Bit_t *fb, const int x, const int y,
 void framebuffer_8bit_draw_rect(Framebuffer8Bit_t *fb, const int x, const int y, const int width, const int height, const Color8Bit_t c) {
     assert(fb);
 
-    framebuffer_8bit_draw_vertical_line(fb, x, y, width, c);
-    framebuffer_8bit_draw_vertical_line(fb, x + height, y, width, c);
-    framebuffer_8bit_draw_horizontal_line(fb, x, y, height, c);
-    framebuffer_8bit_draw_horizontal_line(fb, x + width, y, height, c);
+    framebuffer_8bit_draw_vertical_line(fb, x, y, height, c);
+    framebuffer_8bit_draw_vertical_line(fb, x + width, y, height, c);
+
+    framebuffer_8bit_draw_horizontal_line(fb, x, y, width, c);
+    framebuffer_8bit_draw_horizontal_line(fb, x, y + height, width, c);
 }
 
 int framebuffer_8bit_num_bytes(const Framebuffer8Bit_t *fb) {
@@ -544,6 +568,8 @@ void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, const int 
     const int x_offset = (int) ((float) (max_length - src->width) * 0.5f);
     const int y_offset = (int) ((float) (max_length - src->height) * 0.5f);
     const int alpha_enabled = alpha >= 0;
+
+//    framebuffer_8bit_draw_rect(fb, center_x - dst_center_x, center_y - dst_center_y, max_length, max_length, alpha);
 
     Color8Bit_t pixel = 0;
     int pos_x = 0;
