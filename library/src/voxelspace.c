@@ -78,7 +78,7 @@ void voxelspace_render(const Vertex3d_t p,
     int i = 0, si = 0;
 
     // init ybuffer
-    wmemset(v->ybuffer, v->fb->height, v->fb->width);
+    wmemset((unsigned int *) v->ybuffer, v->fb->height, v->fb->width);
 //    for (i = 0; i < v->fb->width; ++i) {
 //        v->ybuffer[i] = v->fb->height;
 //    }
