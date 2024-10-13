@@ -92,9 +92,11 @@ Window_t *window_create(const int width, const int height, const char *title, co
     XAutoRepeatOff(x11_w->display);
 
     // disable window decorations
+#ifndef __APPLE__
     const hints_t hints = {2, 0, 0, 0, 0};
     Atom property = XInternAtom(x11_w->display, "_MOTIF_WM_HINTS", True);
     XChangeProperty(x11_w->display, x11_w->window, property, property, 32, PropModeReplace, (unsigned char *) &hints, 5);
+#endif
 
     if (fs != FS_NO) {
         log_warning("full screen is currently not supported on linux");
