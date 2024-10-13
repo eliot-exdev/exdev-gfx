@@ -23,9 +23,9 @@ int framebuffer_8bit_init_from_framebuffer(Framebuffer8Bit_t *f, Palette8Bit_t *
 
 Color8Bit_t *framebuffer_8bit_pixel_at(const Framebuffer8Bit_t *fb, int x, int y);
 
-void framebuffer_8bit_draw_vertical_line(Framebuffer8Bit_t *fb, int x, int y, int dy, Color8Bit_t c);
+void framebuffer_8bit_draw_vertical_line(Framebuffer8Bit_t *fb, int x, int y, int to_y, Color8Bit_t c);
 
-void framebuffer_8bit_draw_horizontal_line(Framebuffer8Bit_t *fb, int x, int y, int dx, Color8Bit_t c);
+void framebuffer_8bit_draw_horizontal_line(Framebuffer8Bit_t *fb, int x, int y, int to_x, Color8Bit_t c);
 
 void framebuffer_8bit_draw_pixel(Framebuffer8Bit_t *fb, int x, int y, Color8Bit_t c);
 
