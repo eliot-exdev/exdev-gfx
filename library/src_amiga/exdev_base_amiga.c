@@ -8,6 +8,9 @@
 
 #include "exdevgfx/logger.h"
 
+#include <devices/console.h>
+#include <devices/timer.h>
+
 int exdev_base_initiated = 0;
 
 struct IntuitionBase *IntuitionBase = 0;
@@ -15,13 +18,13 @@ struct GfxBase *GfxBase = 0;
 struct Library *GadToolsBase = 0;
 struct Library *CyberGfxBase = 0;
 
-#define DEVICE_TYPE Library
+//#define DEVICE_TYPE Library
 
 struct IOStdReq console_ioreq;
-struct DEVICE_TYPE *ConsoleDevice = 0;
+struct Library *ConsoleDevice = 0;
 
 struct IORequest timer_ioreq;
-struct DEVICE_TYPE *TimerBase = 0;
+struct Library *TimerBase = 0;
 
 int exdev_base_init() {
     if (exdev_base_initiated) {
@@ -49,10 +52,10 @@ int exdev_base_init() {
     }
 
     OpenDevice("console.device", -1, (struct IORequest *) &console_ioreq, 0);
-    ConsoleDevice = (struct DEVICE_TYPE *) console_ioreq.io_Device;
+    ConsoleDevice = (struct Library *) console_ioreq.io_Device;
 
     OpenDevice("timer.device", 0, &timer_ioreq, 0);
-    TimerBase = (struct DEVICE_TYPE *) timer_ioreq.io_Device;
+    TimerBase = (struct Library *) timer_ioreq.io_Device;
 
     exdev_base_initiated = 1;
     log_info("<-- exdev_base_init()");

@@ -8,21 +8,16 @@
 extern int exdev_base_initiated;
 
 #if defined(__amigaos4__) || defined(__MORPHOS__) || defined(__AROS__)
+
 #include <proto/exec.h>
 #include <proto/intuition.h>
-
 #include <proto/graphics.h>
-
 #include <proto/gadtools.h>
-
 #include <proto/cybergraphics.h>
-
-#include <proto/console.h>
 #include <proto/dos.h>
-extern struct IOStdReq ioreq;
 
-#include <proto/timer.h>
-extern struct IORequest timer_ioreq;
+//extern struct IOStdReq ioreq;
+//extern struct IORequest timer_ioreq;
 
 #endif
 

@@ -17,6 +17,7 @@
 #include <dos/dos.h>
 #include <devices/inputevent.h>
 #include <devices/keymap.h>
+#include <proto/console.h>
 
 #include <stdlib.h>
 #include <string.h>
