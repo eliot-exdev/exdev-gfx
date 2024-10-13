@@ -19,7 +19,7 @@ int exdev_base_initiated = 0;
 struct IntuitionBase *IntuitionBase = 0;
 struct GfxBase *GfxBase = 0;
 struct Library *GadToolsBase = 0;
-struct Library *CyberGfxBase = 0;
+//struct Library *CyberGfxBase = 0;
 
 //#define DEVICE_TYPE Library
 
@@ -49,10 +49,10 @@ int exdev_base_init() {
         return 3;
     }
 
-    CyberGfxBase = (struct Library *) OpenLibrary("cybergraphics.library", 41L);
-    if (!CyberGfxBase) {
-        return 4;
-    }
+//    CyberGfxBase = (struct Library *) OpenLibrary("cybergraphics.library", 41L);
+//    if (!CyberGfxBase) {
+//        return 4;
+//    }
 
     OpenDevice("console.device", -1, (struct IORequest *) &console_ioreq, 0);
     ConsoleDevice = (struct Library *) console_ioreq.io_Device;
@@ -74,10 +74,10 @@ int exdev_base_deinit() {
     CloseDevice(&timer_ioreq);
     CloseDevice((struct IORequest *) &console_ioreq);
 
-    if (CyberGfxBase) {
-        CloseLibrary((struct Library *) CyberGfxBase);
-        CyberGfxBase = 0;
-    }
+//    if (CyberGfxBase) {
+//        CloseLibrary((struct Library *) CyberGfxBase);
+//        CyberGfxBase = 0;
+//    }
 
     if (GadToolsBase) {
         CloseLibrary((struct Library *) GadToolsBase);

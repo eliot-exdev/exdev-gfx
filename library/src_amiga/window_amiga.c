@@ -12,8 +12,8 @@
 #include <intuition/intuition.h>
 #include <proto/intuition.h>
 #include <intuition/screens.h>
-#include <cybergraphx/cybergraphics.h>
-#include <proto/cybergraphics.h>
+//#include <cybergraphx/cybergraphics.h>
+//#include <proto/cybergraphics.h>
 #include <proto/graphics.h>
 #include <devices/inputevent.h>
 #include <devices/keymap.h>
@@ -37,8 +37,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
         if (fs == FS_8_BIT) {
             depth = 8;
         }
-        const unsigned long id = BestCModeIDTags(CYBRBIDTG_Depth, depth, CYBRBIDTG_NominalWidth, width,
-                                                 CYBRBIDTG_NominalHeight, height, TAG_DONE);
+        const unsigned long id = BestModeID(BIDTAG_Depth, depth, BIDTAG_DesiredWidth, width, BIDTAG_DesiredHeight, height, TAG_DONE);
         log_info_fmt("screen id=0x%08lx", id);
         if (id == (unsigned long) INVALID_ID) {
             free(w);
@@ -105,13 +104,15 @@ int window_get_inner_height(const Window_t *win) {
 
 void window_fill(Window_t *win, const Framebuffer_t *gb) {
     NativeWindow_t *w = (NativeWindow_t *) win;
-    WritePixelArray(gb->buffer, 0, 0, gb->width * 3, w->window->RPort, 0, 0, gb->width, gb->height, RECTFMT_RGB);
+//    WritePixelArray(gb->buffer, 0, 0, gb->width * 3, w->window->RPort, 0, 0, gb->width, gb->height, RECTFMT_RGB);
+    WriteChunkyPixels(w->window->RPort, 0, 0, gb->height * 3, gb->height * 3, (unsigned char *) gb->buffer, gb->width);
 }
 
 void window_fill_8bit(Window_t *win, const Framebuffer8Bit_t *gb) {
     NativeWindow_t *w = (NativeWindow_t *) win;
     assert(w->screen);
-    WritePixelArray(gb->buffer, 0, 0, gb->width, w->window->RPort, 0, 0, gb->width, gb->height, RECTFMT_LUT8);
+//    WritePixelArray(gb->buffer, 0, 0, gb->width, w->window->RPort, 0, 0, gb->width, gb->height, RECTFMT_LUT8);
+    WriteChunkyPixels(w->window->RPort, 0, 0, gb->height, gb->height, gb->buffer, gb->width);
 }
 
 void window_update_palette(Window_t *win, const Palette8Bit_t *p) {

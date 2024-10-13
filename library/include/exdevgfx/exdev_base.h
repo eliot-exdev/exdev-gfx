@@ -18,7 +18,7 @@ extern int exdev_base_initiated;
 #include <proto/intuition.h>
 #include <proto/graphics.h>
 #include <proto/gadtools.h>
-#include <proto/cybergraphics.h>
+//#include <proto/cybergraphics.h>
 #include <proto/dos.h>
 
 //extern struct IOStdReq ioreq;
