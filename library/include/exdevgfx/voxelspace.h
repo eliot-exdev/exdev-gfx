@@ -18,18 +18,10 @@ struct Voxelspace {
 
 typedef struct Voxelspace Voxelspace_t;
 
-void
-voxelspace_init(Voxelspace_t *v, Framebuffer8Bit_t *height_map, Framebuffer8Bit_t *color_map, Framebuffer8Bit_t *fb, float scale_height,
-                Color8Bit_t sky_color);
+void voxelspace_init(Voxelspace_t *v, Framebuffer8Bit_t *height_map, Framebuffer8Bit_t *color_map, Framebuffer8Bit_t *fb, float scale_height, Color8Bit_t sky_color);
 
 void voxelspace_deinit(Voxelspace_t *v);
 
-void voxelspace_render(const Vertex3d_t p,
-                       float phi,
-                       float horizon,
-                       float distance,
-                       float dz,
-                       int skip_x,
-                       Voxelspace_t *v);
+void voxelspace_render(const Vertex3d_t p, float phi, float horizon, float distance, float dz, int skip_x, const Voxelspace_t *v);
 
 #endif //EXDEVGFX2_VOXELSPACE_H
