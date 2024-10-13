@@ -1,3 +1,7 @@
+/**
+ * Copyright 2022 Andre Geisler (andre@exdev.de)
+ */
+
 #include "exdevgfx/amiga/framebuffer_8bit_amiga.h"
 #include <cybergraphx/cybergraphics.h>
 #include <intuition/intuition.h>

@@ -1,3 +1,7 @@
+/**
+ * Copyright 2022 Andre Geisler (andre@exdev.de)
+ */
+
 #include "exdevgfx/framebuffer_rgba.h"
 
 #include <stdlib.h>

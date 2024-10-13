@@ -1,3 +1,7 @@
+/**
+ * Copyright 2022 Andre Geisler (andre@exdev.de)
+ */
+
 #include "exdevgfx/vertex3d.h"
 #include "exdevgfx/helper.h"
 
