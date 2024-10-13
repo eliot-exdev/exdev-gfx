@@ -71,10 +71,8 @@ Window_t *window_create(const int width, const int height, const char *title, co
     x11_w->screen = DefaultScreen(x11_w->display);
     x11_w->visual = DefaultVisual(x11_w->display, x11_w->screen);
 
-    x11_w->window = XCreateSimpleWindow(x11_w->display, RootWindow(x11_w->display, x11_w->screen), 0, 0, width, height,
-                                        0,
-                                        BlackPixel(x11_w->display, x11_w->screen),
-                                        WhitePixel(x11_w->display, x11_w->screen));
+    x11_w->window = XCreateSimpleWindow(x11_w->display, RootWindow(x11_w->display, x11_w->screen), 0, 0, width, height, 0,
+                                        BlackPixel(x11_w->display, x11_w->screen), WhitePixel(x11_w->display, x11_w->screen));
     XStoreName(x11_w->display, x11_w->window, title);
 
     x11_w->img = NULL;
@@ -84,8 +82,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
     x11_w->delWindow = XInternAtom(x11_w->display, "WM_DELETE_WINDOW", 0);
     XSetWMProtocols(x11_w->display, x11_w->window, &x11_w->delWindow, 1);
 
-    XSelectInput(x11_w->display, x11_w->window,
-                 ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask);
+    XSelectInput(x11_w->display, x11_w->window, ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask);
 
     XMapWindow(x11_w->display, x11_w->window);
     XAutoRepeatOff(x11_w->display);
@@ -168,8 +165,7 @@ void window_fill(Window_t *w, const Framebuffer_t *gb) {
     framebuffer_rgba_swap(&x11_w->fb);
 
     if (!x11_w->img) {
-        x11_w->img = XCreateImage(x11_w->display, x11_w->visual, 24, ZPixmap, 0, (char *) x11_w->fb.buffer,
-                                  x11_w->fb.width, x11_w->fb.height, 32,
+        x11_w->img = XCreateImage(x11_w->display, x11_w->visual, 24, ZPixmap, 0, (char *) x11_w->fb.buffer, x11_w->fb.width, x11_w->fb.height, 32,
                                   framebuffer_rgba_num_bytes_per_line(&x11_w->fb));
     }
     XClearArea(x11_w->display, x11_w->window, 0, 0, 1, 1, 1);
@@ -198,8 +194,7 @@ void window_fill_8bit(Window_t *w, const Framebuffer8Bit_t *gb) {
     framebuffer_rgba_swap(&x11_w->fb);
 
     if (!x11_w->img) {
-        x11_w->img = XCreateImage(x11_w->display, x11_w->visual, 24, ZPixmap, 0, (char *) x11_w->fb.buffer,
-                                  x11_w->fb.width, x11_w->fb.height, 32,
+        x11_w->img = XCreateImage(x11_w->display, x11_w->visual, 24, ZPixmap, 0, (char *) x11_w->fb.buffer, x11_w->fb.width, x11_w->fb.height, 32,
                                   framebuffer_rgba_num_bytes_per_line(&x11_w->fb));
     }
     XClearArea(x11_w->display, x11_w->window, 0, 0, 1, 1, 1);
@@ -207,6 +202,8 @@ void window_fill_8bit(Window_t *w, const Framebuffer8Bit_t *gb) {
 }
 
 // TODO: support motion events
+static const long EVENT_MASK = ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonPressMask;
+
 int window_poll_events(Window_t *w, char *closeEvent, Event_t *events, const int maxEvents) {
     XEvent event;
     X11Window_t *x11_w = (X11Window_t *) w;
@@ -216,14 +213,10 @@ int window_poll_events(Window_t *w, char *closeEvent, Event_t *events, const int
     event_init(events, maxEvents);
 
     char buf[8];
-    while (numEvents < maxEvents &&
-           XCheckWindowEvent(x11_w->display, x11_w->window,
-                             ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonPressMask,
-                             &event)) {
+    while (numEvents < maxEvents && XCheckWindowEvent(x11_w->display, x11_w->window, EVENT_MASK, &event)) {
         if (event.type == Expose) {
             if (x11_w->img)
-                XPutImage(x11_w->display, x11_w->window, DefaultGC(x11_w->display, x11_w->screen), x11_w->img, 0, 0, 0,
-                          0, x11_w->fb.width, x11_w->fb.height);
+                XPutImage(x11_w->display, x11_w->window, DefaultGC(x11_w->display, x11_w->screen), x11_w->img, 0, 0, 0, 0, x11_w->fb.width, x11_w->fb.height);
         } else if (event.type == KeyPress) {
             events[numEvents].type = EVENT_KEY;
             events[numEvents].key_event.event = KEY_EVENT_PRESSED;
