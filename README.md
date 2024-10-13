@@ -33,7 +33,7 @@ Usage:
 
 ## morphos
 To set up a cross-compiler for Linux you can use this script from git: https://bigfoot.morphos-team.net/files/setup-cross-sdk.sh
-Afterward you should have the cross-compiler and SDK in path /gg installed.  
+Afterwards you should have the cross-compiler and the SDK in path /gg installed.  
 You can now cross compile for MorphOs with CMake:
 
     mkdir build-mos
