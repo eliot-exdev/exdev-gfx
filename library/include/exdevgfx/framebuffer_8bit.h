@@ -8,6 +8,8 @@
 #include <exdevgfx/framebuffer.h>
 #include <exdevgfx/palette.h>
 
+typedef unsigned char Color8Bit_t;
+
 struct Framebuffer8Bit {
     int width;
     int height;
