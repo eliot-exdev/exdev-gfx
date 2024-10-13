@@ -247,6 +247,8 @@ int main(int argc, char **argv) {
                             cube_rotation[2] -= deg_to_rad(ROT_STEP_SIZE);
                         } else if (events[i].code == 'Z') {
                             cube_rotation[2] += deg_to_rad(ROT_STEP_SIZE);
+                        } else if (events[i].code == 'q') {
+                            close_event = 1;
                         }
                     }
                         break;
@@ -264,11 +266,11 @@ int main(int argc, char **argv) {
 
         // render cube color
         sw_renderer_8bit_fill_polygon_color_new(&swRenderer,
-                                            cube_triangles, // first rect will have texture
-                                            12,
-                                            cube_colors,
-                                            cube_translation,
-                                            cube_rotation);
+                                                cube_triangles, // first rect will have texture
+                                                12,
+                                                cube_colors,
+                                                cube_translation,
+                                                cube_rotation);
         // render cube texture
 //        sw_renderer_8bit_fill_polygon_texture(&swRenderer,
 //                                              cube_triangles,
