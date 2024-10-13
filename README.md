@@ -28,6 +28,16 @@ Usage:
 ## linux
 
 ## morphos
+To setup a Cross Compiler for Linux you can use this script from geit: https://bigfoot.morphos-team.net/files/setup-cross-sdk.sh
+Afterwards you should have the cross compiler and SDK in path /gg installed.  
+You can now cross compile for MorphOs with CMake:
+
+    mkdir build-mos
+    cd build-mos
+    cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/morphos-pcc.toolchain -DCMAKE_BUILD_TYPE=Release -CCMAKE_INSTALL_PREFIX=/tmp/exdevgfx-mos
+    cmake --build . --target install --paralllel 4
+
+For native builds please use the Makefile!
 
 ## amigaos
 
