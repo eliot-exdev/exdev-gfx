@@ -157,7 +157,7 @@ void framebuffer_8bit_fill_rect(Framebuffer8Bit_t *fb, const int x, const int y,
     assert(fb);
 
     for (int i = 0; i < height; ++i) {
-        framebuffer_8bit_draw_horizontal_line(fb, x, i + y, width, c);
+        framebuffer_8bit_draw_horizontal_line(fb, x, i + y, x + width, c);
     }
 }
 
