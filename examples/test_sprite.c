@@ -3,29 +3,28 @@
 #include <exdevgfx/window.h>
 #include <exdevgfx/logger.h>
 #include <exdevgfx/helper.h>
+#include <exdevgfx/vertex2d.h>
 
-//#include <easing/Sine.h>
 #include <easing/Back.h>
-//#include <easing/Bounce.h>
-//#include <easing/Elastic.h>
-//#include <easing/Cubic.h>
-//#include <easing/Linear.h>
-//#include <easing/Quad.h>
-//#include <easing/Quint.h>
 
 #define WIDTH 640
 #define HEIGHT 480
 #define DURATION 4000 // in ms
 
+static Vertex2d_t posSprite1 = {WIDTH * 0.33f, HEIGHT * 0.5f};
+static Vertex2d_t posSprite2 = {WIDTH * 0.66f, HEIGHT * 0.5f};
+
 static void paint(Window_t *window, Framebuffer8Bit_t *offscreen, Framebuffer8Bit_t *sprite, const float scale, const float rotate) {
     // clear buffer + draw
     framebuffer_8bit_fill(offscreen, 0);
     // render scale
-    framebuffer_8bit_draw_framebuffer_scaled(offscreen, WIDTH * 0.33f, HEIGHT * 0.5f, sprite, scale);
+    framebuffer_8bit_draw_framebuffer_scaled(offscreen, posSprite1[0], posSprite1[1], sprite, scale);
     // render rotate
-    framebuffer_8bit_draw_framebuffer_rotated(offscreen, WIDTH * 0.66f, HEIGHT * 0.5f, sprite, rotate);
+    framebuffer_8bit_draw_framebuffer_rotated(offscreen, posSprite2[0], posSprite2[1], sprite, rotate);
     window_fill_8bit(window, offscreen);
 }
+
+#define MAX_KEY_EVENTS 1
 
 int main() {
     // variables
@@ -37,7 +36,7 @@ int main() {
     Window_t *window = NULL;
     char close_event = 0;
     KeyEvent_t keyEvent;
-    int eventCount = 0;
+    MouseEvent_t mouseEvent;
 
     // init
     exdev_base_init();
@@ -64,9 +63,20 @@ int main() {
         paint(window, &offscreen, &sprite, scale, rotate);
 
         // handle events
-        eventCount = window_poll_events(window, &close_event, &keyEvent, 1);
-        if (eventCount && keyEvent.event == KEY_EVENT_PRESSED && keyEvent.type == KEY_TYPE_ESC) {
+        window_poll_events(window, &close_event, &keyEvent, &mouseEvent, MAX_KEY_EVENTS);
+
+        if (keyEvent.event == KEY_EVENT_PRESSED && keyEvent.type == KEY_TYPE_ESC) {
             close_event = 1;
+        }
+
+        if (mouseEvent.event == MOUSE_EVENT_BUTTON_PRESSED) {
+            if (mouseEvent.button == MOUSE_BUTTON_0) {
+                posSprite1[0] = mouseEvent.position_x;
+                posSprite1[1] = mouseEvent.position_y;
+            } else if (mouseEvent.button == MOUSE_BUTTON_1) {
+                posSprite2[0] = mouseEvent.position_x;
+                posSprite2[1] = mouseEvent.position_y;
+            }
         }
 
         // update animation

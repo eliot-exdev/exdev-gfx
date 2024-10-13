@@ -8,6 +8,7 @@
 #include <exdevgfx/framebuffer.h>
 #include <exdevgfx/framebuffer_8bit.h>
 #include <exdevgfx/palette.h>
+#include <exdevgfx/events.h>
 
 typedef void *Window_t;
 
@@ -35,38 +36,6 @@ void window_fill_8bit(Window_t *w, const Framebuffer8Bit_t *gb);
 
 void window_update_palette(Window_t *w, const Palette8Bit_t *p);
 
-enum key_event {
-    KEY_EVENT_INVALID,
-    KEY_EVENT_PRESSED,
-    KEY_EVENT_RELEASED
-};
-
-enum key_type {
-    KEY_TYPE_INVALID,
-    KEY_TYPE_CODE,
-    KEY_TYPE_UP,
-    KEY_TYPE_DOWN,
-    KEY_TYPE_LEFT,
-    KEY_TYPE_RIGHT,
-    KEY_TYPE_ESC,
-    KEY_TYPE_F1,
-    KEY_TYPE_F2,
-    KEY_TYPE_F3,
-    KEY_TYPE_F4,
-    KEY_TYPE_F5,
-    KEY_TYPE_F6
-};
-
-struct KeyEvent {
-    enum key_event event;
-    enum key_type type;
-    unsigned char code;
-};
-
-typedef struct KeyEvent KeyEvent_t;
-
-void key_event_init(KeyEvent_t *events, int num);
-
-int window_poll_events(Window_t *w, char *closeEvent, KeyEvent_t *events, int num);
+void window_poll_events(Window_t *w, char *closeEvent, KeyEvent_t *keyEvents, MouseEvent_t *mouseEvents, int maxEvents);
 
 #endif //EXDEVGFX2_WINDOW_LINUX_H

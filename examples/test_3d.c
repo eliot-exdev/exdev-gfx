@@ -30,7 +30,7 @@ unsigned char versiontag[] = "\0$VER: " VERSION;
 #define HEIGHT 240
 #define TRIANGLE_SIZE 75
 #endif
-#define MAX_KEY_EVENTS 2
+#define MAX_EVENTS 2
 
 static void print_help() {
     printf("voxelspace [ARGUMENTS]...\n"
@@ -193,8 +193,8 @@ int main(int argc, char **argv) {
     Vertex3d_t cube_rotation = {0, 0, 0};
 
     // work loop
-    KeyEvent_t events[MAX_KEY_EVENTS];
-    int num_events = 0;
+    KeyEvent_t keyEvents[MAX_EVENTS];
+    MouseEvent_t mouseEvents[MAX_EVENTS];
     char close_event = 0;
     TIMESTAMP before = 0;
     TIMESTAMP after = 0;
@@ -202,10 +202,11 @@ int main(int argc, char **argv) {
     int show_fps = 1;
     while (!close_event) {
         // read inputs
-        num_events = window_poll_events(window, &close_event, events, MAX_KEY_EVENTS);
-        for (int i = 0; i < num_events; ++i) {
-            if (events[i].event == KEY_EVENT_PRESSED) {
-                switch (events[i].type) {
+        window_poll_events(window, &close_event, keyEvents, mouseEvents, MAX_EVENTS);
+        int i=0;
+        while (i < MAX_EVENTS && keyEvents[i].event != KEY_EVENT_INVALID) {
+            if (keyEvents[i].event == KEY_EVENT_PRESSED) {
+                switch (keyEvents[i].type) {
                     case KEY_TYPE_ESC:
                         close_event = 1;
                         break;
@@ -225,29 +226,29 @@ int main(int argc, char **argv) {
                         cube_translation[0] += MOVE_STEP_SIZE;
                         break;
                     case KEY_TYPE_CODE: {
-                        if (events[i].code == '+') {
+                        if (keyEvents[i].code == '+') {
                             cube_translation[2] -= MOVE_STEP_SIZE;
-                        } else if (events[i].code == '-') {
+                        } else if (keyEvents[i].code == '-') {
                             cube_translation[2] += MOVE_STEP_SIZE;
-                        } else if (events[i].code == 'p') {
+                        } else if (keyEvents[i].code == 'p') {
                             swRenderer.pc -= MOVE_STEP_SIZE;
                             log_info_fmt("pc=%f\n", swRenderer.pc);
-                        } else if (events[i].code == 'P') {
+                        } else if (keyEvents[i].code == 'P') {
                             swRenderer.pc += MOVE_STEP_SIZE;
                             log_info_fmt("pc=%f\n", swRenderer.pc);
-                        } else if (events[i].code == 'y') {
+                        } else if (keyEvents[i].code == 'y') {
                             cube_rotation[1] -= deg_to_rad(ROT_STEP_SIZE);
-                        } else if (events[i].code == 'Y') {
+                        } else if (keyEvents[i].code == 'Y') {
                             cube_rotation[1] += deg_to_rad(ROT_STEP_SIZE);
-                        } else if (events[i].code == 'x') {
+                        } else if (keyEvents[i].code == 'x') {
                             cube_rotation[0] -= deg_to_rad(ROT_STEP_SIZE);
-                        } else if (events[i].code == 'X') {
+                        } else if (keyEvents[i].code == 'X') {
                             cube_rotation[0] += deg_to_rad(ROT_STEP_SIZE);
-                        } else if (events[i].code == 'z') {
+                        } else if (keyEvents[i].code == 'z') {
                             cube_rotation[2] -= deg_to_rad(ROT_STEP_SIZE);
-                        } else if (events[i].code == 'Z') {
+                        } else if (keyEvents[i].code == 'Z') {
                             cube_rotation[2] += deg_to_rad(ROT_STEP_SIZE);
-                        } else if (events[i].code == 'q') {
+                        } else if (keyEvents[i].code == 'q') {
                             close_event = 1;
                         }
                     }

@@ -179,7 +179,7 @@ static void move(Vertex3d_t p, const char move_flag, const char strafe_flag, con
     p[2] = v3[1];
 }
 
-#define NUM_EVENTS 5
+#define NUM_EVENTS 2
 
 int main(int argc, char **argv) {
     parse_args(argc, argv);
@@ -259,9 +259,6 @@ int main(int argc, char **argv) {
     Vertex3d_t p;
     vertex3d_set(p, 550, 320, 70);
 
-    char close_event = 0;
-    KeyEvent_t events[NUM_EVENTS];
-
     char ctrl_move = 0; // 0=no, 1=forward, 2=backward
     char ctrl_rotate = 0; // 0=no, 1=right, 2=left
     char ctrl_up_down = 0; // 0=no, 1=up, 2=down
@@ -275,15 +272,19 @@ int main(int argc, char **argv) {
     }
     window_update_palette(window, &palette);
 
+    //events
+    char close_event = 0;
+    KeyEvent_t keyEvents[NUM_EVENTS];
+    MouseEvent_t mouseEvents[NUM_EVENTS];
     // game loop
     while (!close_event) {
         // read inputs
-        //log_debug("before get events");
-        const int numKeyEvents = window_poll_events(window, &close_event, events, NUM_EVENTS);
-        //log_debug_fmt("num events: %i", numKeyEvents);
-        for (int i = 0; i < numKeyEvents; ++i) {
-            if (events[i].event == KEY_EVENT_PRESSED) {
-                switch (events[i].type) {
+        window_poll_events(window, &close_event, keyEvents, mouseEvents, NUM_EVENTS);
+        int i = 0;
+        // keyboard events
+        while (i < NUM_EVENTS && keyEvents[i].event != KEY_EVENT_INVALID) {
+            if (keyEvents[i].event == KEY_EVENT_PRESSED) {
+                switch (keyEvents[i].type) {
                     case KEY_TYPE_ESC:
                         close_event = 1;
                         break;
@@ -323,23 +324,23 @@ int main(int argc, char **argv) {
                         skip_x = !skip_x;
                         break;
                     case KEY_TYPE_CODE:
-                        if (events[i].code == 'w') {
+                        if (keyEvents[i].code == 'w') {
                             ctrl_up_down = 1;
-                        } else if (events[i].code == 's') {
+                        } else if (keyEvents[i].code == 's') {
                             ctrl_up_down = 2;
-                        } else if (events[i].code == 'a') {
+                        } else if (keyEvents[i].code == 'a') {
                             ctrl_strafe = 1;
-                        } else if (events[i].code == 'd') {
+                        } else if (keyEvents[i].code == 'd') {
                             ctrl_strafe = 2;
-                        } else if (events[i].code == 'q') {
+                        } else if (keyEvents[i].code == 'q') {
                             close_event = 1;
                         }
                         break;
                     case KEY_TYPE_INVALID:
                         break;
                 }
-            } else if (events[i].event == KEY_EVENT_RELEASED) {
-                switch (events[i].type) {
+            } else if (keyEvents[i].event == KEY_EVENT_RELEASED) {
+                switch (keyEvents[i].type) {
                     case KEY_TYPE_RIGHT:
                     case KEY_TYPE_LEFT:
                         ctrl_rotate = 0;
@@ -349,9 +350,9 @@ int main(int argc, char **argv) {
                         ctrl_move = 0;
                         break;
                     case KEY_TYPE_CODE:
-                        if (events[i].code == 'w' || events[i].code == 's') {
+                        if (keyEvents[i].code == 'w' || keyEvents[i].code == 's') {
                             ctrl_up_down = 0;
-                        } else if (events[i].code == 'a' || events[i].code == 'd') {
+                        } else if (keyEvents[i].code == 'a' || keyEvents[i].code == 'd') {
                             ctrl_strafe = 0;
                         }
                     case KEY_TYPE_INVALID:
@@ -372,6 +373,7 @@ int main(int argc, char **argv) {
                         break;
                 }
             }
+            ++i;
         }
 
         // demo mode

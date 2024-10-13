@@ -64,7 +64,9 @@ int main(int argc, char **argv) {
     Framebuffer_t fb;
     Julia_t julia;
     Window_t *window;
-    KeyEvent_t events;
+    KeyEvent_t keyEvents;
+    MouseEvent_t mouseEvents;
+
     char close_event = 0;
 
     framebuffer_init(&fb, width, height);
@@ -76,51 +78,49 @@ int main(int argc, char **argv) {
     window_fill(window, &fb);
 
     while (!close_event) {
-        const int numKeyEvents = window_poll_events(window, &close_event, &events, 1);
-        if (numKeyEvents > 0) {
-            if (events.event == KEY_EVENT_PRESSED) {
-                if (events.type == KEY_TYPE_ESC) {
-                    close_event = 1;
-                } else if (events.type == KEY_TYPE_UP) {
-                    julia_move_up(&julia);
-                    julia_paint(&julia, &fb);
-                    window_fill(window, &fb);
-                } else if (events.type == KEY_TYPE_DOWN) {
-                    julia_move_down(&julia);
-                    julia_paint(&julia, &fb);
-                    window_fill(window, &fb);
-                } else if (events.type == KEY_TYPE_LEFT) {
-                    julia_move_left(&julia);
-                    julia_paint(&julia, &fb);
-                    window_fill(window, &fb);
-                } else if (events.type == KEY_TYPE_RIGHT) {
-                    julia_move_right(&julia);
-                    julia_paint(&julia, &fb);
-                    window_fill(window, &fb);
-                } else if (events.type == KEY_TYPE_CODE) {
-                    switch (events.code) {
-                        case 'q':
-                            close_event = 1;
-                            break;
-                        case '+':
-                            julia_move_zoom_in(&julia);
-                            julia_paint(&julia, &fb);
-                            window_fill(window, &fb);
-                            break;
-                        case '-':
-                            julia_move_zoom_out(&julia);
-                            julia_paint(&julia, &fb);
-                            window_fill(window, &fb);
-                            break;
-                        case 'r':
-                            julia_init(&julia);
-                            julia_paint(&julia, &fb);
-                            window_fill(window, &fb);
-                            break;
-                        case 's':
-                            framebuffer_save(&fb, IMAGE_PATH);
-                            log_info_fmt("saved image to:%s", IMAGE_PATH);
-                    }
+        window_poll_events(window, &close_event, &keyEvents, &mouseEvents, 1);
+        if (keyEvents.event == KEY_EVENT_PRESSED) {
+            if (keyEvents.type == KEY_TYPE_ESC) {
+                close_event = 1;
+            } else if (keyEvents.type == KEY_TYPE_UP) {
+                julia_move_up(&julia);
+                julia_paint(&julia, &fb);
+                window_fill(window, &fb);
+            } else if (keyEvents.type == KEY_TYPE_DOWN) {
+                julia_move_down(&julia);
+                julia_paint(&julia, &fb);
+                window_fill(window, &fb);
+            } else if (keyEvents.type == KEY_TYPE_LEFT) {
+                julia_move_left(&julia);
+                julia_paint(&julia, &fb);
+                window_fill(window, &fb);
+            } else if (keyEvents.type == KEY_TYPE_RIGHT) {
+                julia_move_right(&julia);
+                julia_paint(&julia, &fb);
+                window_fill(window, &fb);
+            } else if (keyEvents.type == KEY_TYPE_CODE) {
+                switch (keyEvents.code) {
+                    case 'q':
+                        close_event = 1;
+                        break;
+                    case '+':
+                        julia_move_zoom_in(&julia);
+                        julia_paint(&julia, &fb);
+                        window_fill(window, &fb);
+                        break;
+                    case '-':
+                        julia_move_zoom_out(&julia);
+                        julia_paint(&julia, &fb);
+                        window_fill(window, &fb);
+                        break;
+                    case 'r':
+                        julia_init(&julia);
+                        julia_paint(&julia, &fb);
+                        window_fill(window, &fb);
+                        break;
+                    case 's':
+                        framebuffer_save(&fb, IMAGE_PATH);
+                        log_info_fmt("saved image to:%s", IMAGE_PATH);
                 }
             }
         }

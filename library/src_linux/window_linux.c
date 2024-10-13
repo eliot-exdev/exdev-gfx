@@ -86,7 +86,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
     x11_w->delWindow = XInternAtom(x11_w->display, "WM_DELETE_WINDOW", 0);
     XSetWMProtocols(x11_w->display, x11_w->window, &x11_w->delWindow, 1);
 
-    XSelectInput(x11_w->display, x11_w->window, ExposureMask | KeyPressMask | KeyReleaseMask);
+    XSelectInput(x11_w->display, x11_w->window, ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask);
 
     XMapWindow(x11_w->display, x11_w->window);
     XAutoRepeatOff(x11_w->display);
@@ -205,21 +205,20 @@ void window_fill_8bit(Window_t *w, const Framebuffer8Bit_t *gb) {
     XSync(x11_w->display, 0);
 }
 
-int window_poll_events(Window_t *w, char *closeEvent, KeyEvent_t *events, const int max) {
+// TODO: support motion events
+void window_poll_events(Window_t *w, char *closeEvent, KeyEvent_t *keyEvents, MouseEvent_t *mouseEvents, int maxEvents) {
     XEvent event;
     X11Window_t *x11_w = (X11Window_t *) w;
     *closeEvent = 0;
     int numKeyEvents = 0;
+    int numMouseEvents = 0;
 
-    key_event_init(events, max);
+    key_event_init(keyEvents, maxEvents);
+    mouse_event_init(mouseEvents, maxEvents);
 
     char buf[8];
-//    const int count = XPending(x11_w->display);
-//    log_debug_fmt("before next event, count=%d", numKeyEvents);
-    while (numKeyEvents < max &&
-           XCheckWindowEvent(x11_w->display, x11_w->window, ExposureMask | KeyPressMask | KeyReleaseMask, &event)) {
-//    XNextEvent(x11_w->display, &event);
-//        log_debug("after next event");
+    while (numKeyEvents < maxEvents &&
+           XCheckWindowEvent(x11_w->display, x11_w->window, ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonPressMask, &event)) {
         if (event.type == Expose) {
             if (x11_w->img)
                 XPutImage(x11_w->display,
@@ -230,89 +229,97 @@ int window_poll_events(Window_t *w, char *closeEvent, KeyEvent_t *events, const 
                           x11_w->fb.width,
                           x11_w->fb.height);
         } else if (event.type == KeyPress) {
-            events[numKeyEvents].event = KEY_EVENT_PRESSED;
+            keyEvents[numKeyEvents].event = KEY_EVENT_PRESSED;
             KeySym keysym = XLookupKeysym(&event.xkey, 0);
             switch (keysym) {
                 case XK_Escape:
-                    events[numKeyEvents].type = KEY_TYPE_ESC;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_ESC;
                     break;
                 case XK_Down:
-                    events[numKeyEvents].type = KEY_TYPE_DOWN;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_DOWN;
                     break;
                 case XK_Up:
-                    events[numKeyEvents].type = KEY_TYPE_UP;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_UP;
                     break;
                 case XK_Left:
-                    events[numKeyEvents].type = KEY_TYPE_LEFT;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_LEFT;
                     break;
                 case XK_Right:
-                    events[numKeyEvents].type = KEY_TYPE_RIGHT;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_RIGHT;
                     break;
                 case XK_F1:
-                    events[numKeyEvents].type = KEY_TYPE_F1;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_F1;
                     break;
                 case XK_F2:
-                    events[numKeyEvents].type = KEY_TYPE_F2;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_F2;
                     break;
                 case XK_F3:
-                    events[numKeyEvents].type = KEY_TYPE_F3;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_F3;
                     break;
                 case XK_F4:
-                    events[numKeyEvents].type = KEY_TYPE_F4;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_F4;
                     break;
                 case XK_F5:
-                    events[numKeyEvents].type = KEY_TYPE_F5;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_F5;
                     break;
                 case XK_F6:
-                    events[numKeyEvents].type = KEY_TYPE_F6;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_F6;
                     break;
                 default:
                     if (XLookupString(&event.xkey, buf, 8, NULL, NULL)) {
-                        events[numKeyEvents].type = KEY_TYPE_CODE;
-                        events[numKeyEvents].code = buf[0];
+                        keyEvents[numKeyEvents].type = KEY_TYPE_CODE;
+                        keyEvents[numKeyEvents].code = buf[0];
                     }
             }
             ++numKeyEvents;
         } else if (event.type == KeyRelease) {
-            events[numKeyEvents].event = KEY_EVENT_RELEASED;
+            keyEvents[numKeyEvents].event = KEY_EVENT_RELEASED;
             KeySym keysym = XLookupKeysym(&event.xkey, 0);
             switch (keysym) {
                 case XK_Escape:
-                    events[numKeyEvents].type = KEY_TYPE_ESC;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_ESC;
                     break;
                 case XK_Down:
-                    events[numKeyEvents].type = KEY_TYPE_DOWN;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_DOWN;
                     break;
                 case XK_Up:
-                    events[numKeyEvents].type = KEY_TYPE_UP;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_UP;
                     break;
                 case XK_Left:
-                    events[numKeyEvents].type = KEY_TYPE_LEFT;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_LEFT;
                     break;
                 case XK_Right:
-                    events[numKeyEvents].type = KEY_TYPE_RIGHT;
+                    keyEvents[numKeyEvents].type = KEY_TYPE_RIGHT;
                     break;
                 default:
                     if (XLookupString(&event.xkey, buf, 8, NULL, NULL)) {
-                        events[numKeyEvents].type = KEY_TYPE_CODE;
-                        events[numKeyEvents].code = buf[0];
+                        keyEvents[numKeyEvents].type = KEY_TYPE_CODE;
+                        keyEvents[numKeyEvents].code = buf[0];
                     }
             }
             ++numKeyEvents;
+        } else if (event.type == ButtonPress || event.type == ButtonRelease) {
+            if (event.xbutton.type == ButtonPress) {
+                mouseEvents[numMouseEvents].event = MOUSE_EVENT_BUTTON_PRESSED;
+            } else if (event.xbutton.type == ButtonRelease) {
+                mouseEvents[numMouseEvents].event = MOUSE_EVENT_BUTTON_RELEASED;
+            } else {
+                continue;
+            }
+            if (event.xbutton.button == 1) {
+                mouseEvents[numMouseEvents].button = MOUSE_BUTTON_0;
+            } else if (event.xbutton.button == 3) {
+                mouseEvents[numMouseEvents].button = MOUSE_BUTTON_1;
+            } else {
+                mouseEvents[numMouseEvents].button = MOUSE_BUTTON_NONE;
+            }
+            mouseEvents[numMouseEvents].position_x = event.xbutton.x;
+            mouseEvents[numMouseEvents].position_y = event.xbutton.y;
+            ++numMouseEvents;
         } else if (event.type == ClientMessage) {
             *closeEvent = 1;
         }
     }
 
     XSync(x11_w->display, 0);
-
-    return numKeyEvents;
-}
-
-void key_event_init(KeyEvent_t *events, const int num) {
-    for (int i = 0; i < num; ++i) {
-        events[i].event = KEY_EVENT_INVALID;
-        events[i].type = KEY_TYPE_INVALID;
-        events[i].code = 0;
-    }
 }

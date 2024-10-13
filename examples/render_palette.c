@@ -50,14 +50,15 @@ int main(int argc, char **argv) {
     }
 
     Window_t window = window_create(WIDTH, HEIGHT, "8bit", FS_8_BIT);
-    window_update_palette(window,&p);
+    window_update_palette(window, &p);
     window_fill_8bit(window, &fb);
 
     char closeEvent = 0;
     KeyEvent_t keyEvent;
+    MouseEvent_t mouseEvent;
     while (!closeEvent) {
-        int eventCount = window_poll_events(window, &closeEvent, &keyEvent, 1);
-        if (eventCount && keyEvent.event == KEY_EVENT_PRESSED && keyEvent.type == KEY_TYPE_ESC) {
+        window_poll_events(window, &closeEvent, &keyEvent, &mouseEvent, 1);
+        if (keyEvent.event == KEY_EVENT_PRESSED && keyEvent.type == KEY_TYPE_ESC) {
             closeEvent = 1;
         }
     }
