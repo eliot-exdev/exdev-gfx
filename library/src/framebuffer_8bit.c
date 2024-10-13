@@ -569,14 +569,42 @@ void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, const int 
         return;
     }
 
-    // normalize angle
-//    angle = (float) ((((int) angle % 360) + 360) % 360);
     const float radians = deg_to_rad(-angle);
-
     const float cos_a = (float) cos(radians);
     const float sin_a = (float) sin(radians);
-    const int max_length_x = (int) ((float) (max(src->width, src->height)) * 1.2f); // this might be too low
-    const int max_length_y = (int) ((float) (max(src->width, src->height)) * 1.2f); // this might be too low
+
+    int max_length_x = 0;
+    int max_length_y = 0;
+    {
+        const float width_half = (float) src->width * 0.5f;
+        const float height_half = (float) src->height * 0.5f;
+        const Vertex2d_t upper_left = {-width_half, height_half};
+        const Vertex2d_t upper_right = {width_half, height_half};
+        const Vertex2d_t lower_left = {-width_half, -height_half};
+        const Vertex2d_t lower_right = {width_half, -height_half};
+
+        Vertex2d_t upper_left_rotated;
+        vertex2d_rotate(upper_left, upper_left_rotated, radians);
+        Vertex2d_t upper_right_rotated;
+        vertex2d_rotate(upper_right, upper_right_rotated, radians);
+        Vertex2d_t lower_left_rotated;
+        vertex2d_rotate(lower_left, lower_left_rotated, radians);
+        Vertex2d_t lower_right_rotated;
+        vertex2d_rotate(lower_right, lower_right_rotated, radians);
+
+        const int min_x = min(min(min(upper_left_rotated[0], upper_right_rotated[0]), lower_left_rotated[0]), lower_right_rotated[0]);
+        const int max_x = max(max(max(upper_left_rotated[0], upper_right_rotated[0]), lower_left_rotated[0]), lower_right_rotated[0]);
+
+        const int min_y = min(min(min(upper_left_rotated[1], upper_right_rotated[1]), lower_left_rotated[1]), lower_right_rotated[1]);
+        const int max_y = max(max(max(upper_left_rotated[1], upper_right_rotated[1]), lower_left_rotated[1]), lower_right_rotated[1]);
+
+        max_length_x = abs(min_x - max_x);
+        max_length_y = abs(min_y - max_y);
+    }
+
+//    const int max_length_x = (int) ((float) (max(src->width, src->height)) * 1.2f); // this might be too low
+//    const int max_length_y = (int) ((float) (max(src->width, src->height)) * 1.2f); // this might be too low
+
     const int max_length_center_x = (int) ((float) max_length_x * 0.5f);
     const int max_length_center_y = (int) ((float) max_length_y * 0.5f);
     const int x_offset = (int) ((float) (max_length_x - src->width) * 0.5f);
