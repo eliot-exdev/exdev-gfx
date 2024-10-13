@@ -43,6 +43,7 @@ add_executable(julia
 target_link_libraries(julia
         exdevgfx
         )
+StripTarget(julia)
 
 add_executable(voxelspace
         voxelspace_main.c
