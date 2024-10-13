@@ -24,7 +24,11 @@ enum key_type {
     KEY_TYPE_F3,
     KEY_TYPE_F4,
     KEY_TYPE_F5,
-    KEY_TYPE_F6
+    KEY_TYPE_F6,
+    KEY_TYPE_F7,
+    KEY_TYPE_F8,
+    KEY_TYPE_F9,
+    KEY_TYPE_F10
 };
 
 struct KeyEvent {
