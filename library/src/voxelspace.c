@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <math.h>
+#include <wchar.h>
 // see: https://github.com/s-macke/VoxelSpace
 
 
@@ -77,9 +78,10 @@ void voxelspace_render(const Vertex3d_t p,
     int i = 0, si = 0;
 
     // init ybuffer
-    for (i = 0; i < v->fb->width; ++i) {
-        v->ybuffer[i] = v->fb->height;
-    }
+    wmemset(v->ybuffer, v->fb->height, v->fb->width);
+//    for (i = 0; i < v->fb->width; ++i) {
+//        v->ybuffer[i] = v->fb->height;
+//    }
 
     // render sky
     framebuffer_8bit_fill(v->fb, v->sky_color);
@@ -92,6 +94,7 @@ void voxelspace_render(const Vertex3d_t p,
     // log_info_fmt("height=%f", height);
 
     log_debug("--> starting render round");
+    int height_on_screen = 0;
     while (z < distance) {
         log_debug_fmt("z=%f", z);
         // Find line on map. This calculation corresponds to a field of view of 90°
@@ -117,7 +120,7 @@ void voxelspace_render(const Vertex3d_t p,
             pleft_n[0] = normalize_int((int) pleft[0], v->heightmap.width);
             pleft_n[1] = normalize_int((int) pleft[1], v->heightmap.height);
             const HeightmapValue_t *value = heightmap_value_at_const(&v->heightmap, pleft_n[0], pleft_n[1]);
-            int height_on_screen = (int) ((height - (float) value->height) / z * v->scale_height + horizon);
+            height_on_screen = (int) ((height - (float) value->height) / z * v->scale_height + horizon);
             if (height_on_screen < 0) {
                 height_on_screen = 0;
             }
