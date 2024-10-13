@@ -15,18 +15,12 @@ LD_FLAGS_NO_FPU=-lmsoft -lamiga
 CC=vc
 CC_GCC=ppc-morphos-gcc-11
 
-
 PREFIX=ram:exdevgfx
 
-INCLUDES_MOS=-Ilibrary/include
-INCLUDES_AOS=-Ilibrary/include -IWork:workspace/CGraphX/C/Include
+INCLUDES_MOS=-Ilibrary/include -Ilibrary/easing/include
+INCLUDES_AOS=-Ilibrary/include -Ilibrary/easing/include -IWork:workspace/CGraphX/C/Include
 
 all: voxelspace julia other
-
-#--- easing ---#
-easing_mos_gcc: library/easing/src/Back.c library/easing/src/Bounce.c library/easing/src/Circ.c library/easing/src/Cubic.c library/easing/src/Elastic.c library/easing/src/Expo.c library/easing/src/Linear.c library/easing/src/Quad.c library/easing/src/Quart.c library/easing/src/Quint.c library/easing/src/Sine.c
-	$(CC_GCC) -c -Ilibrary/easing/include $(^) ${C_FLAGS_MOS_GCC}
-	$(AR) rcs easing.a Back.o Bounce.o Circ.o Cubic.o Elastic.o Expo.o Linear.o Quad.o Quart.o Quint.o Sine.o
 
 #--- voxelspace ---#
 voxelspace: voxelspace_mos voxelspace_mos_gcc voxelspace_060
@@ -42,6 +36,13 @@ voxelspace_mos_gcc: library/src/vertex3d.c library/src/vertex2d.c library/src/ma
 voxelspace_060: library/src/vertex3d.c library/src/vertex2d.c library/src/matrix.c library/src/palette.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c library/src/heightmap.c\
                 library/src/voxelspace.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/voxelspace_main.c
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060} -DLOW_RESOLUTION
+
+#--- test sprite ---#
+test_sprite: library/src/palette.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src/font.c \
+             library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c library/src_amiga/window_amiga.c\
+             library/easing/src/Back.c library/easing/src/Bounce.c library/easing/src/Circ.c library/easing/src/Cubic.c library/easing/src/Elastic.c library/easing/src/Expo.c library/easing/src/Linear.c library/easing/src/Quad.c library/easing/src/Quart.c library/easing/src/Quint.c library/easing/src/Sine.c\
+             examples/test_sprite.c
+	$(CC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS} ${LD_FLAGS_MOS}
 
 #--- julia ---#
 julia: julia_mos julia_060 julia_nofpu
