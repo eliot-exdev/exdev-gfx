@@ -1,6 +1,6 @@
 cmake-build-debug
 cmake-build-release
-cmake-build-morphos*
+cmake-build-release-mos
 .idea
 *.o
 *.a
