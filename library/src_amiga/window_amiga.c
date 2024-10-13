@@ -4,7 +4,7 @@
 
 #include "exdevgfx/window.h"
 
-#define EXDEVGFX2_LOG_LEVEL 2
+//#define EXDEVGFX2_LOG_LEVEL 1
 
 #include "exdevgfx/logger.h"
 #include "exdevgfx/exdev_base.h"
@@ -70,7 +70,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
                                    WA_Width, width,
                                    WA_Height, height,
                                    WA_CustomScreen, w->screen,
-                                   WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY,
+                                   WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY| IDCMP_MOUSEBUTTONS,
                                    WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS,
                                    WA_Title, title,
                                    TAG_DONE);
@@ -84,7 +84,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
                                    WA_Top, 50,
                                    WA_Width, width,
                                    WA_Height, height,
-                                   WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY,
+                                   WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS,
                                    WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_DRAGBAR,
                                    WA_Title, title,
                                    TAG_DONE);
@@ -215,8 +215,9 @@ LONG deadKeyConvert(struct IntuiMessage *msg, UBYTE *kbuffer, LONG kbsize, struc
 
 #define BUFFER_SIZE 8
 
-void window_poll_events(Window_t *win, char *closeEvent, KeyEvent_t *keyEvents, MouseEvent_t *mouseEvents, const int max)
+int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const int maxEvents)
 {
+    log_warning("enter poll events");
     NativeWindow_t *w = (NativeWindow_t *) win;
     struct IntuiMessage *msg = NULL;
     struct InputEvent ievent;
@@ -224,17 +225,15 @@ void window_poll_events(Window_t *win, char *closeEvent, KeyEvent_t *keyEvents, 
 
     ULONG msgClass;
 
-    int numKeyEvents = 0;
-
-    key_event_init(keyEvents, max);
-    mouse_event_init(mouseEvents, max);
+    int numEvents = 0;
+    event_init(events, maxEvents);
 
     memset(&ievent, 0, sizeof(struct InputEvent));
     memset(buffer, 0, BUFFER_SIZE);
 
     //Wait(1L << w->window->UserPort->mp_SigBit);
 
-    while (numKeyEvents < max && (msg = GT_GetIMsg(w->window->UserPort)))
+    while (numEvents < maxEvents && (msg = GT_GetIMsg(w->window->UserPort)))
     {
         log_debug("got message");
         msgClass = msg->Class;
@@ -245,90 +244,99 @@ void window_poll_events(Window_t *win, char *closeEvent, KeyEvent_t *keyEvents, 
             log_debug("window close event");
             break;
         case IDCMP_RAWKEY:
+            log_debug("keye event");
+            events[numEvents].type = EVENT_KEY;
             if (!(msg->Qualifier & IEQUALIFIER_REPEAT))
             {
-                keyEvents[numKeyEvents].event = msg->Code & IECODE_UP_PREFIX ? KEY_EVENT_RELEASED : KEY_EVENT_PRESSED;
+                events[numEvents].key_event.event = msg->Code & IECODE_UP_PREFIX ? KEY_EVENT_RELEASED : KEY_EVENT_PRESSED;
                 if ((msg->Code & ~IECODE_UP_PREFIX) == 0x4C)
                 {
-                    keyEvents[numKeyEvents].type = KEY_TYPE_UP;
+                    events[numEvents].key_event.key = KEY_TYPE_UP;
                     log_debug("arrow up");
-                    ++numKeyEvents;
+                    ++numEvents;
                 }
                 else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x4D)
                 {
-                    keyEvents[numKeyEvents].type = KEY_TYPE_DOWN;
+                    events[numEvents].key_event.key = KEY_TYPE_DOWN;
                     log_debug("arrow down");
-                    ++numKeyEvents;
+                    ++numEvents;
                 }
                 else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x4F)
                 {
-                    keyEvents[numKeyEvents].type = KEY_TYPE_LEFT;
+                    events[numEvents].key_event.key = KEY_TYPE_LEFT;
                     log_debug("arrow left");
-                    ++numKeyEvents;
+                    ++numEvents;
                 }
                 else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x4E)
                 {
-                    keyEvents[numKeyEvents].type = KEY_TYPE_RIGHT;
+                    events[numEvents].key_event.key = KEY_TYPE_RIGHT;
                     log_debug("arrow right");
-                    ++numKeyEvents;
+                    ++numEvents;
                 }
                 else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x45)
                 {
-                    keyEvents[numKeyEvents].type = KEY_TYPE_ESC;
+                    events[numEvents].key_event.key = KEY_TYPE_ESC;
                     log_debug("esc");
-                    ++numKeyEvents;
+                    ++numEvents;
                 }
                 else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x50)
                 {
-                    keyEvents[numKeyEvents].type = KEY_TYPE_F1;
+                    events[numEvents].key_event.key = KEY_TYPE_F1;
                     log_debug("F1");
-                    ++numKeyEvents;
+                    ++numEvents;
                 }
                 else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x51)
                 {
-                    keyEvents[numKeyEvents].type = KEY_TYPE_F2;
+                    events[numEvents].key_event.key = KEY_TYPE_F2;
                     log_debug("F2");
-                    ++numKeyEvents;
+                    ++numEvents;
                 }
                 else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x52)
                 {
-                    keyEvents[numKeyEvents].type = KEY_TYPE_F3;
+                    events[numEvents].key_event.key= KEY_TYPE_F3;
                     log_debug("F3");
-                    ++numKeyEvents;
+                    ++numEvents;
                 }
                 else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x53)
                 {
-                    keyEvents[numKeyEvents].type = KEY_TYPE_F4;
+                    events[numEvents].key_event.key = KEY_TYPE_F4;
                     log_debug("F4");
-                    ++numKeyEvents;
+                    ++numEvents;
                 }
                 else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x54)
                 {
-                    keyEvents[numKeyEvents].type = KEY_TYPE_F5;
+                    events[numEvents].key_event.key = KEY_TYPE_F5;
                     log_debug("F5");
-                    ++numKeyEvents;
+                    ++numEvents;
                 }
                 else if ((msg->Code & ~IECODE_UP_PREFIX) == 0x55)
                 {
-                    keyEvents[numKeyEvents].type = KEY_TYPE_F6;
+                    events[numEvents].key_event.key = KEY_TYPE_F6;
                     log_debug("F6");
-                    ++numKeyEvents;
+                    ++numEvents;
                 }
                 else
                 {
-                    long int numChars = deadKeyConvert(msg, buffer, BUFFER_SIZE, &ievent);
+                    const long int numChars = deadKeyConvert(msg, buffer, BUFFER_SIZE, &ievent);
                     log_debug_fmt("numChars=%ld", numChars);
                     if (numChars == 1)
                     {
-                        keyEvents[numKeyEvents].type = KEY_TYPE_CODE;
-                        keyEvents[numKeyEvents].code = buffer[0];
+                        events[numEvents].key_event.key = KEY_TYPE_CODE;
+                        events[numEvents].key_event.code= buffer[0];
                         log_debug_fmt("char=%c", buffer[0]);
-                        ++numKeyEvents;
+                        ++numEvents;
                     }
                 }
             }
             break;
+            case IDCMP_MOUSEBUTTONS:
+               log_warning("mouse event");
+               // TODO: implement me!
+               //++numEvents;
+                //break;
         }
         GT_ReplyIMsg(msg);
     }
+    log_warning("exit poll events");
+    return numEvents;
 }
