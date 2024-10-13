@@ -7,6 +7,11 @@
 
 #include <exdevgfx/color.h>
 #include <inttypes.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define PEN_MAX 0xffffffff
 #define PEN_HALF 0x7FFFFFFF
 #define PEN_MIN 0x00000000
@@ -58,5 +63,9 @@ int palette_8bit_find_pen(const Palette8Bit_t *palette, const Pen_t *pen);
 int palette_8bit_save_as_dat(const Palette8Bit_t *p, const char *path);
 
 int palette_8bit_read_from_dat(Palette8Bit_t *p, const char *path);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //EXDEVGFX2_PALETTE_H

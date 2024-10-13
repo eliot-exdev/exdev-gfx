@@ -8,6 +8,10 @@
 #include <exdevgfx/framebuffer.h>
 #include <exdevgfx/palette.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef unsigned char Color8Bit_t;
 
 struct Framebuffer8Bit {
@@ -60,5 +64,9 @@ void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, int center_
 void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, int center_x, int center_y, const Framebuffer8Bit_t *src, float angle, int alpha);
 
 void framebuffer_fill_8bit(Framebuffer_t *fb, const Framebuffer8Bit_t *src, const Palette8Bit_t *p);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //EXDEVGFX2_FRAMEBUFFER_8BIT_H

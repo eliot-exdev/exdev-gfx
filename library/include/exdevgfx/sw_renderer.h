@@ -8,6 +8,10 @@
 #include <exdevgfx/framebuffer.h>
 #include <exdevgfx/vertex3d.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct SWRenderer {
     Framebuffer_t *fb;
     float pc;
@@ -31,5 +35,8 @@ void sw_renderer_fill_polygon_rgb(SWRenderer_t *sw,
                                   const Vertex3d_t rot
                                   );
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif //EXDEVGFX2_SW_RENDERER_H

@@ -7,6 +7,10 @@
 
 #include <exdevgfx/framebuffer.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct Julia {
     float im_min;
     float im_max;
@@ -37,5 +41,9 @@ void julia_move_zoom_in(Julia_t *j);
 void julia_move_zoom_out(Julia_t *j);
 
 void julia_paint(const Julia_t *j, Framebuffer_t *fb);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //EXDEVGFX2_JULIA_H

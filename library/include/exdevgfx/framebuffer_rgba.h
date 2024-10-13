@@ -7,6 +7,10 @@
 
 #include <exdevgfx/framebuffer_8bit.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct FramebufferRGBA {
     int width;
     int height;
@@ -38,5 +42,9 @@ void framebuffer_rgba_swap(FramebufferRGBA_t *fb);
 void framebuffer_rgba_set_pixel_rgba(FramebufferRGBA_t *fb, int x, int y, const ColorRGBA_t *c);
 
 ColorRGBA_t *framebuffer_rgba_pixel_at(const FramebufferRGBA_t *fb, int x, int y);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //EXDEVGFX2_FRAMEBUFFER_RGBA_H

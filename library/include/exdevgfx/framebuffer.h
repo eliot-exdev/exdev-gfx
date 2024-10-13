@@ -9,6 +9,10 @@
 #include <exdevgfx/font.h>
 #include <exdevgfx/color.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define edgeFunction(a, b, c) ((c[0] - a[0]) * (b[1] - a[1]) - (c[1] - a[1]) * (b[0] - a[0]))
 
 struct Framebuffer {
@@ -75,5 +79,8 @@ void framebuffer_draw_text(Framebuffer_t *fb, const Font_t *f, const char *text,
 void framebuffer_draw_text_rgb(Framebuffer_t *fb, const Font_t *f, const char *text, unsigned int text_length, const ColorRGB_t *c, int x,
                                int y);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif

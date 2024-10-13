@@ -5,6 +5,10 @@
 #ifndef EXDEVGFX2_FONT_H
 #define EXDEVGFX2_FONT_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct TranslationTable {
     char c;
     unsigned char pos;
@@ -26,5 +30,9 @@ void font_init_mia_1(Font_t *f);
 void font_deinit(Font_t *f);
 
 const char *font_get_character(const Font_t *f, char c);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //EXDEVGFX2_FONT_H

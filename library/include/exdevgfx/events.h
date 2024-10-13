@@ -5,6 +5,10 @@
 #ifndef EXDEVGFX_BASE_EVENTS_H
 #define EXDEVGFX_BASE_EVENTS_H
 
+#ifdef __cplusplus
+}
+#endif
+
 enum key_event {
     KEY_EVENT_INVALID,
     KEY_EVENT_PRESSED,
@@ -80,5 +84,9 @@ void key_event_init(KeyEvent_t *events, int num);
 void mouse_event_init(MouseEvent_t *events, int num);
 
 void event_init(Event_t *events, int num);
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #endif //EXDEVGFX_BASE_EVENTS_H

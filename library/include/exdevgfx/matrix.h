@@ -7,6 +7,10 @@
 
 #include <exdevgfx/vertex3d.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef float Matrix_t[4][4];
 
 #define MATRIX_DEFAULT(name) Matrix_t name = {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}}
@@ -30,5 +34,9 @@ void matrix_rotateZ(const Matrix_t src, float rz, Matrix_t dst);
 void matrix_translate(const Matrix_t src, const Vertex3d_t vec, Matrix_t dst);
 
 void matrix_scale(const Matrix_t src, const Vertex3d_t vec, Matrix_t dst);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

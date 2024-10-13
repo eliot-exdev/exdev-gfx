@@ -7,6 +7,10 @@
 
 #include <stdio.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if EXDEVGFX2_LOG_LEVEL == 1
 #define log_debug_fmt(format, ...) printf("[DEBUG] "format"\n", __VA_ARGS__)
 #define log_debug(msg) printf("[DEBUG] "msg"\n")
@@ -38,5 +42,8 @@
 #define log_warning(msg) printf("[WARNING] "msg"\n")
 #endif
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif //EXDEVGFX2_LOGGER_H

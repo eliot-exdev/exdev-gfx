@@ -7,6 +7,10 @@
 
 #include <exdevgfx/framebuffer_8bit.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct HeightmapValue {
     Color8Bit_t height;
     Color8Bit_t color;
@@ -31,5 +35,9 @@ void heightmap_init_with_framebuffer(Heightmap_t *hm, const Framebuffer8Bit_t *h
 HeightmapValue_t *heightmap_value_at(const Heightmap_t *hm, int x, int y);
 
 const HeightmapValue_t *heightmap_value_at_const(const Heightmap_t *hm, int x, int y);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //EXDEVGFX2_HEIGHTMAP_H
