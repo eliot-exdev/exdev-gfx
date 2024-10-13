@@ -25,7 +25,9 @@ void framebuffer_rgba_deinit(FramebufferRGBA_t *fb);
 
 void framebuffer_rgba_fill(FramebufferRGBA_t *fb, const Framebuffer_t *src, unsigned char a);
 
-void framebuffer_rgba_fill_8bit(FramebufferRGBA_t *fb, const Framebuffer8Bit_t *src, const Palette8Bit_t *p);
+void framebuffer_rgb_build_color_table_from_palette_8bit(ColorRGB_t *color_table , const Palette8Bit_t *p);
+
+void framebuffer_rgba_fill_8bit(FramebufferRGBA_t *fb, const Framebuffer8Bit_t *src, const ColorRGB_t *color_table);
 
 void framebuffer_rgba_copy(const FramebufferRGBA_t *src, FramebufferRGBA_t *dst);
 

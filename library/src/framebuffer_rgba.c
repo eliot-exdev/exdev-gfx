@@ -30,20 +30,25 @@ void framebuffer_rgba_fill(FramebufferRGBA_t *fb, const Framebuffer_t *src, unsi
     }
 }
 
-void framebuffer_rgba_fill_8bit(FramebufferRGBA_t *fb, const Framebuffer8Bit_t *src, const Palette8Bit_t *p) {
+void framebuffer_rgb_build_color_table_from_palette_8bit(ColorRGB_t *color_table, const Palette8Bit_t *p) {
+    assert(p);
+    for (int i = 0; i < p->numPens; ++i) {
+        const Pen_t *pen = palette_8bit_get_pen_const(p, i);
+        pen_to_color_rgb(pen, color_table + i);
+    }
+}
+
+void framebuffer_rgba_fill_8bit(FramebufferRGBA_t *fb, const Framebuffer8Bit_t *src, const ColorRGB_t *color_table) {
     assert(src);
     assert(fb);
-    assert(p);
+    assert(color_table);
     assert(src->width == fb->width);
     assert(src->height == fb->height);
 
-    ColorRGB_t color;
+    // draw to rgba
     for (int x = 0; x < fb->width; ++x) {
         for (int y = 0; y < fb->height; ++y) {
-            const Color8Bit_t pen_id = *framebuffer_8bit_pixel_at(src, x, y);
-            const Pen_t *pen = palette_8bit_get_pen_const(p, pen_id);
-            pen_to_color_rgb(pen, &color);
-            framebuffer_rgba_set_pixel(fb, x, y, &color, 0xff);
+            framebuffer_rgba_set_pixel(fb, x, y, color_table + (*framebuffer_8bit_pixel_at(src, x, y)), 0xff);
         }
     }
 }
