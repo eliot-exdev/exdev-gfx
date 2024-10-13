@@ -5,14 +5,9 @@
 #include "exdevgfx/helper.h"
 #include "exdevgfx/exdev_base.h"
 
-static struct timeval t;
-static struct timeval a, b;
+static struct timeval a;
 
 TIMESTAMP now(){
   GetSysTime(&a);
-  b = a;
-  SubTime(&b, &t);
-  t = a;
-
-  return b.tv_secs*1000 + b.tv_micro/1000;
+  return a.tv_secs*1000 + a.tv_micro/1000;
 }
