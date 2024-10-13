@@ -44,12 +44,12 @@ Window_t *window_create(const int width, const int height, const char *title, co
         }
         w->screen = OpenScreenTags(NULL, SA_Left, 0, SA_Top, 0, SA_Width, width, SA_Height, height, SA_Depth, depth,
                                    SA_Type, CUSTOMSCREEN, SA_DisplayID, id,
-                                   SA_Title, title, SA_Exclusive, TRUE, SA_SharePens, TRUE, TAG_DONE);
+                                   SA_Title, title, SA_Exclusive, TRUE, SA_SharePens, TRUE, SA_ShowTitle, FALSE, TAG_DONE);
 
         w->window = OpenWindowTags(NULL, WA_Left, 0, WA_Top, 0, WA_Width, width, WA_Height, height,
                                    WA_CustomScreen, w->screen,
                                    WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
-                                   WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_REPORTMOUSE,
+                                   WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_REPORTMOUSE | WFLG_RMBTRAP,
                                    WA_Title, title,
                                    TAG_DONE);
     } else {
@@ -57,7 +57,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
 
         w->window = OpenWindowTags(NULL, WA_Left, 50, WA_Top, 50, WA_Width, width, WA_Height, height,
                                    WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
-                                   WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_DRAGBAR | WFLG_REPORTMOUSE,
+                                   WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_DRAGBAR | WFLG_REPORTMOUSE | WFLG_RMBTRAP,
                                    WA_Title, title,
                                    TAG_DONE);
     }
