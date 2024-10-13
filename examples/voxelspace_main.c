@@ -83,7 +83,7 @@ static void print_help() {
            "     cursors             navigate forward/backward and turn left/right\n"
            "\n"
            "options:\n"
-           "     ESC                 quit\n"
+           "     ESC or q            quit\n"
            "     F1                  enable/disable show fps\n"
            "     F2                  reduce rendering quality\n"
            "     F3                  increase rendering quality\n"
@@ -331,6 +331,8 @@ int main(int argc, char **argv) {
                             ctrl_strafe = 1;
                         } else if (events[i].code == 'd') {
                             ctrl_strafe = 2;
+                        } else if (events[i].code == 'q') {
+                            close_event = 1;
                         }
                         break;
                 }
