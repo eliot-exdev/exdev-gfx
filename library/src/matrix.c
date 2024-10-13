@@ -51,19 +51,15 @@ void matrix_copy(const Matrix_t src, Matrix_t dst) {
 }
 
 void matrix_mul_matrix(const Matrix_t a, const Matrix_t b, Matrix_t dst) {
-    Matrix_t tm;
+    Matrix_t tmp;
 
     for (int row = 0; row < 4; ++row) {
         for (int column = 0; column < 4; ++column) {
-            tm[row][column] =
-                    b[row][0] * a[0][column]
-                    + b[row][1] * a[1][column]
-                    + b[row][2] * a[2][column]
-                    + b[row][3] * a[3][column];
+            tmp[row][column] = b[row][0] * a[0][column] + b[row][1] * a[1][column] + b[row][2] * a[2][column] + b[row][3] * a[3][column];
         }
     }
 
-    matrix_copy(tm, dst);
+    matrix_copy(tmp, dst);
 }
 
 void matrix_mul_vector(const Matrix_t m, const Vertex3d_t vec, Vertex3d_t dst) {

@@ -37,7 +37,7 @@ void sw_renderer_8bit_fill_polygon_color(SWRenderer8bit_t *sw,
 
 void sw_renderer_8bit_fill_polygon_texture(SWRenderer8bit_t *sw,
                                            const Vertex3d_t *triangles,
-                                           const Vertex2d_t *uv_coordinates,
+//                                           const Vertex2d_t *uv_coordinates,
                                            int triangles_count,
                                            const Framebuffer8Bit_t *texture,
                                            const Vertex3d_t trans,

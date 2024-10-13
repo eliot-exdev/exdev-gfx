@@ -38,15 +38,15 @@ static inline void project_triangle(SWRenderer_t *sw, const Vertex3d_t src, Vert
     dst[1] = src[1] / src[2] * -sw->pc + sw->cy;
 }
 
-static void flat_shading(const SWRenderer_t *sw, const Vertex3d_t normal, const ColorRGB_t *orig, ColorRGB_t *new) {
-    const float angle = rad_to_deg(vertex3d_angle(normal, sw->light)) / 180.0f;
-    color_rgb_set(new,
-                  orig->r * angle,
-                  orig->g * angle,
-                  orig->b * angle
-    );
-//    log_debug_fmt("angle=%f %f", rad_to_deg(angle), angle);
-}
+//static void flat_shading(const SWRenderer_t *sw, const Vertex3d_t normal, const ColorRGB_t *orig, ColorRGB_t *new) {
+//    const float angle = rad_to_deg(vertex3d_angle(normal, sw->light)) / 180.0f;
+//    color_rgb_set(new,
+//                  orig->r * angle,
+//                  orig->g * angle,
+//                  orig->b * angle
+//    );
+////    log_debug_fmt("angle=%f %f", rad_to_deg(angle), angle);
+//}
 
 static int is_visible(const Vertex2d_t *t) {
     return (t[1][0] - t[0][0]) * (t[2][1] - t[0][1]) - (t[2][0] - t[0][0]) * (t[1][1] - t[0][1]) < 0.0f;

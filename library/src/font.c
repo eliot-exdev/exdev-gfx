@@ -50,6 +50,7 @@ void font_init_mia_1(Font_t *f) {
 
 void font_deinit(Font_t *f) {
     assert(f);
+    (void) f;
 }
 
 const char *font_get_character(const Font_t *f, const char c) {

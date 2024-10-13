@@ -193,7 +193,7 @@ void window_fill_8bit(Window_t *w, const Framebuffer8Bit_t *gb) {
         log_warning("width or height differ");
         return;
     }
-    framebuffer_rgba_fill_8bit(&x11_w->fb, gb, x11_w->palette, 0xff);
+    framebuffer_rgba_fill_8bit(&x11_w->fb, gb, x11_w->palette);
     framebuffer_rgba_swap(&x11_w->fb);
 
     if (!x11_w->img) {

@@ -17,9 +17,9 @@ void matrix_copy(const Matrix_t src, Matrix_t dst);
 
 void matrix_mul_matrix(const Matrix_t a, const Matrix_t b, Matrix_t dst);
 
-void matrix_mul_vector(const Matrix_t m,  const Vertex3d_t vec, Vertex3d_t dst);
+void matrix_mul_vector(const Matrix_t m, const Vertex3d_t vec, Vertex3d_t dst);
 
-void matrix_rotate(const Matrix_t src,  const Vertex3d_t vec, Matrix_t dst);
+void matrix_rotate(const Matrix_t src, const Vertex3d_t vec, Matrix_t dst);
 
 void matrix_rotateX(const Matrix_t src, float rx, Matrix_t dst);
 
