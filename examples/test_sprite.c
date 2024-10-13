@@ -5,8 +5,8 @@
 
 #define WIDTH 640
 #define HEIGHT 480
-#define STEP_SCALE 0.1f
-#define STEP_ROTATE 5.0f
+#define STEP_SCALE 0.05f
+#define STEP_ROTATE 3.0f
 
 static void paint(Window_t *window, Framebuffer8Bit_t *offscreen, Framebuffer8Bit_t *sprite, const float scale, const float rotate) {
     (void) rotate;
@@ -21,6 +21,27 @@ static void paint(Window_t *window, Framebuffer8Bit_t *offscreen, Framebuffer8Bi
     window_fill_8bit(window, offscreen);
 }
 
+static float scale_step = STEP_SCALE;
+static float rotate_step = STEP_ROTATE;
+
+static float updateScale(const float scale) {
+    if (scale > 3.0f) {
+        scale_step = -STEP_SCALE;
+    } else if (scale < 0.1f) {
+        scale_step = +STEP_SCALE;
+    }
+    return scale + scale_step;
+}
+
+static float updateRotate(const float rotate) {
+    if (rotate > 360.0f) {
+        rotate_step = -STEP_ROTATE;
+    } else if (rotate < 0.0f) {
+        rotate_step = +STEP_SCALE;
+    }
+    return rotate + rotate_step;
+}
+
 int main() {
     // variables
     float scale = 1.0f;
@@ -32,8 +53,7 @@ int main() {
     char close_event = 0;
     KeyEvent_t keyEvent;
     int eventCount = 0;
-    float step_scale = 0.0f;
-    float step_rotate = 0.0f;
+
 
     // init
     exdev_base_init();
@@ -61,29 +81,30 @@ int main() {
         eventCount = window_poll_events(window, &close_event, &keyEvent, 1);
         if (eventCount && keyEvent.event == KEY_EVENT_PRESSED && keyEvent.type == KEY_TYPE_ESC) {
             close_event = 1;
-        } else if (eventCount && keyEvent.event == KEY_EVENT_PRESSED && keyEvent.type == KEY_TYPE_LEFT) {
-            step_rotate -= STEP_ROTATE;
-        } else if (eventCount && keyEvent.event == KEY_EVENT_PRESSED && keyEvent.type == KEY_TYPE_RIGHT) {
-            step_rotate += STEP_ROTATE;
-        } else if (eventCount && keyEvent.event == KEY_EVENT_RELEASED && keyEvent.type == KEY_TYPE_LEFT) {
-            step_rotate = 0.0f;
-        } else if (eventCount && keyEvent.event == KEY_EVENT_RELEASED && keyEvent.type == KEY_TYPE_RIGHT) {
-            step_rotate = 0.0f;
-        } else if (eventCount && keyEvent.event == KEY_EVENT_PRESSED && keyEvent.type == KEY_TYPE_CODE &&
-                   keyEvent.code == '-') {
-            step_scale = -STEP_SCALE;
-        } else if (eventCount && keyEvent.event == KEY_EVENT_RELEASED && keyEvent.type == KEY_TYPE_CODE &&
-                   keyEvent.code == '-') {
-            step_scale = 0.0f;
-        } else if (eventCount && keyEvent.event == KEY_EVENT_PRESSED && keyEvent.type == KEY_TYPE_CODE &&
-                   keyEvent.code == '+') {
-            step_scale = STEP_SCALE;
-        } else if (eventCount && keyEvent.event == KEY_EVENT_RELEASED && keyEvent.type == KEY_TYPE_CODE &&
-                   keyEvent.code == '+') {
-            step_scale = 0.0f;
         }
-        scale += step_scale;
-        rotate += step_rotate;
+//        else if (eventCount && keyEvent.event == KEY_EVENT_PRESSED && keyEvent.type == KEY_TYPE_LEFT) {
+//            step_rotate -= STEP_ROTATE;
+//        } else if (eventCount && keyEvent.event == KEY_EVENT_PRESSED && keyEvent.type == KEY_TYPE_RIGHT) {
+//            step_rotate += STEP_ROTATE;
+//        } else if (eventCount && keyEvent.event == KEY_EVENT_RELEASED && keyEvent.type == KEY_TYPE_LEFT) {
+//            step_rotate = 0.0f;
+//        } else if (eventCount && keyEvent.event == KEY_EVENT_RELEASED && keyEvent.type == KEY_TYPE_RIGHT) {
+//            step_rotate = 0.0f;
+//        } else if (eventCount && keyEvent.event == KEY_EVENT_PRESSED && keyEvent.type == KEY_TYPE_CODE &&
+//                   keyEvent.code == '-') {
+//            step_scale = -STEP_SCALE;
+//        } else if (eventCount && keyEvent.event == KEY_EVENT_RELEASED && keyEvent.type == KEY_TYPE_CODE &&
+//                   keyEvent.code == '-') {
+//            step_scale = 0.0f;
+//        } else if (eventCount && keyEvent.event == KEY_EVENT_PRESSED && keyEvent.type == KEY_TYPE_CODE &&
+//                   keyEvent.code == '+') {
+//            step_scale = STEP_SCALE;
+//        } else if (eventCount && keyEvent.event == KEY_EVENT_RELEASED && keyEvent.type == KEY_TYPE_CODE &&
+//                   keyEvent.code == '+') {
+//            step_scale = 0.0f;
+//        }
+        scale = updateScale(scale);
+        rotate= updateRotate(rotate);
     }
 
     // deinit
