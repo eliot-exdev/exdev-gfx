@@ -72,7 +72,8 @@ Color8Bit_t *framebuffer_8bit_pixel_at(const Framebuffer8Bit_t *fb, const int x,
     return fb->buffer + ((y * fb->width) + x);
 }
 
-void framebuffer_8bit_draw_vertical_line(Framebuffer8Bit_t *fb, const int x, int y, int dy, const Color8Bit_t c) {
+void framebuffer_8bit_draw_vertical_line(Framebuffer8Bit_t *fb, const int x, int y, const int dy, const Color8Bit_t c) {
+    assert(fb);
 
     for (; y < dy; ++y) {
         fb->buffer[y * fb->width + x] = c;
