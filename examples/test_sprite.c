@@ -61,6 +61,7 @@ int main() {
 
     TIMESTAMP start = now();
     TIMESTAMP t = 0;
+    int in = 1;
     while (!close_event) {
         // render
         paint(window, &offscreen, &sprite, scale, rotate);
@@ -76,9 +77,19 @@ int main() {
         if (t > DURATION) {
             t = 0;
             start = now();
+            if (in) {
+                in = 0;
+            } else {
+                in = 1;
+            }
         }
-        scale = easing_back_easeInOut((float)t, 1.0f, 2.0f, DURATION);
-        rotate =easing_back_easeInOut((float)t, 0.0f, 360.f, DURATION);
+        if (in) {
+            scale = easing_back_easeInOut((float) t, 1.0f, 2.0f, DURATION);
+            rotate = easing_back_easeInOut((float) t, 0.0f, 360.f, DURATION);
+        } else {
+            scale = easing_back_easeInOut((float) t, 3.0f, -2.0f, DURATION);
+            rotate = easing_back_easeInOut((float) t, 360.0f, -360.0f, DURATION);
+        }
     }
 
     // deinit
