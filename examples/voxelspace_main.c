@@ -166,10 +166,11 @@ static void move(Vertex3d_t p, const char move_flag, const char strafe_flag, con
     }
 
     // rotate
-    vertex2d_rotate(movement, deg_to_rad((float) -phi));
+    Vertex2d_t dst;
+    vertex2d_rotate(movement, dst, deg_to_rad((float) -phi));
 
-    p[0] += movement[0];
-    p[1] += movement[1];
+    p[0] += dst[0];
+    p[1] += dst[1];
 
     // move up/down
     if (p[2] < 120.f && up_down_flag == 1) {
