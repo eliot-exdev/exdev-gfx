@@ -66,10 +66,7 @@ void voxelspace_render(const Vertex3d_t p,
     const float sinphi = sin(phi);
     const float cosphi = cos(phi);
 
-    // Draw from back to the front (high z coordinate to low z coordinate)
     float z = 1.0f;
-//    float dz = 1.0f;
-
     Vertex2d_t pleft;
     int pleft_n[2];
     Vertex2d_t pright;
