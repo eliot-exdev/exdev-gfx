@@ -6,19 +6,18 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <inttypes.h>
 //#include <math.h>
 
 #define PI_ 3.141593f
 
-#define HALF_PI_ 1.570796f
+//#define HALF_PI_ 1.570796f
 //static const float TWO_PI_ = 6.283185f;
 //static const float THREE_HALF_PI_ = 4.7123889f;
 //static const float INV_TWO_PI_ = 0.1591549f;
 
-#define C1 0.99940307f
-#define C2 -0.49558072f
-#define C3 0.03679168f
+//#define C1 0.99940307f
+//#define C2 -0.49558072f
+//#define C3 0.03679168f
 
 int read_line(FILE *fp, char *line, const size_t size) {
     size_t res = 0;
@@ -76,7 +75,7 @@ float rad_to_deg(const float rad) {
 //}
 
 // https://stackoverflow.com/questions/3380628/fast-arc-cos-algorithm
-#define C 0.10501094f
+//#define C 0.10501094f
 
 //float fast_acos(float a) {
 ////    float r, s, t, u;
