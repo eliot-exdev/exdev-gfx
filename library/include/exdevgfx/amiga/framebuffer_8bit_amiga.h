@@ -20,12 +20,10 @@ struct Framebuffer8BitAmiga {
 
 typedef struct Framebuffer8BitAmiga Framebuffer8BitAmiga_t;
 
-void framebuffer_8bit_amiga_init(Framebuffer8BitAmiga_t *fb, const int width, const int height, void * likeWindow);
+void framebuffer_8bit_amiga_init(Framebuffer8BitAmiga_t *fb,  int width,  int height, void * likeWindow);
 void framebuffer_8bit_amiga_deinit(Framebuffer8BitAmiga_t *fb);
 void framebuffer_8bit_amiga_fill(Framebuffer8BitAmiga_t *fb, Color8Bit_t c);
 void framebuffer_8bit_amiga_draw_vertical_line(Framebuffer8BitAmiga_t *fb, int x, int y, int dy, Color8Bit_t c);
-void
-framebuffer_8bit_amiga_draw_text(Framebuffer8BitAmiga_t *fb, const Font_t *f, const char *text, const int text_length, const Color8Bit_t c,
-                           const int x, const int y);
+void framebuffer_8bit_amiga_draw_text(Framebuffer8BitAmiga_t *fb, const Font_t *f, const char *text, int text_length, Color8Bit_t c,int x,  int y);
 
 #endif

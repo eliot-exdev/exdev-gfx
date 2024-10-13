@@ -153,10 +153,9 @@ int framebuffer_8bit_read(Framebuffer8Bit_t *fb, const char *path) {
     }
 
     char line[LINE_LENGTH];
-    size_t line_length = 0;
 
     // check format
-    line_length = read_line(fp, line, LINE_LENGTH);
+    size_t line_length = read_line(fp, line, LINE_LENGTH);
     if (line_length != 3 || strcmp(line, "P2\n") != 0) {
         log_warning_fmt("wrong file format=%s", line);
         return 1;
