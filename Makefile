@@ -18,68 +18,68 @@ CC_GCC=ppc-morphos-gcc-10
 
 PREFIX=ram:exdevgfx
 
-INCLUDES_MOS=-Iinclude
-INCLUDES_AOS=-Iinclude -IWork:workspace/CGraphX/C/Include
+INCLUDES_MOS=-Ilibrary/include
+INCLUDES_AOS=-Ilibrary/include -IWork:workspace/CGraphX/C/Include
 
 all: voxelspace julia other
 
 #--- voxelspace ---#
 voxelspace: voxelspace_mos voxelspace_mos_gcc voxelspace_060
 
-voxelspace_mos: src/vertex3d.c src/matrix.c src/palette.c src/framebuffer.c src/framebuffer_8bit.c src_amiga/window_amiga.c src/font.c src/heightmap.c\
-                src/voxelspace.c src/args.c src/helper.c src_amiga/exdev_base_amiga.c src_amiga/helper_amiga.c examples/voxelspace_main.c
+voxelspace_mos: library/src/vertex3d.c library/src/vertex2d.c library/src/matrix.c library/src/palette.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c library/src/heightmap.c\
+                library/src/voxelspace.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/voxelspace_main.c
 	$(CC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS} ${LD_FLAGS_MOS}
     
-voxelspace_mos_gcc: src/vertex3d.c src/matrix.c src/palette.c src/framebuffer_8bit.c src/framebuffer.c src/vertex2d.c src_amiga/window_amiga.c src/font.c src/heightmap.c\
-                    src/voxelspace.c src/args.c src/helper.c src_amiga/exdev_base_amiga.c src_amiga/helper_amiga.c examples/voxelspace_main.c
+voxelspace_mos_gcc: library/src/vertex3d.c library/src/vertex2d.c library/src/matrix.c library/src/palette.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c library/src/heightmap.c\
+                library/src/voxelspace.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/voxelspace_main.c
 	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
 
-voxelspace_060: src/vertex3d.c src/matrix.c src/palette.c src/framebuffer_8bit.c src_amiga/window_amiga.c src/font.c src/heightmap.c\
-                src/voxelspace.c src/args.c src/helper.c src_amiga/exdev_base_amiga.c src_amiga/helper_amiga.c examples/voxelspace_main.c
+voxelspace_060: library/src/vertex3d.c library/src/vertex2d.c library/src/matrix.c library/src/palette.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c library/src/heightmap.c\
+                library/src/voxelspace.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/voxelspace_main.c
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060} -DLOW_RESOLUTION
 
 #--- julia ---#
 julia: julia_mos julia_060 julia_nofpu
 
-julia_mos: src/vertex2d.c src/framebuffer.c src_amiga/window_amiga.c src/julia.c src/args.c src/palette.c\
-           src_amiga/exdev_base_amiga.c src/helper.c examples/julia_main.c
+julia_mos: library/src/vertex2d.c library/src/framebuffer.c library/src_amiga/window_amiga.c library/src/julia.c library/src/args.c library/src/palette.c\
+           library/src_amiga/exdev_base_amiga.c library/src/helper.c examples/julia_main.c
 	$(CC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS} ${LD_FLAGS_MOS}
 
-julia_mos_gcc: src/vertex2d.c src/framebuffer.c src_amiga/window_amiga.c src/julia.c src/args.c src/palette.c\
-               src_amiga/exdev_base_amiga.c src/helper.c examples/julia_main.c
+julia_mos_gcc: library/src/vertex2d.c library/src/framebuffer.c library/src_amiga/window_amiga.c library/src/julia.c library/src/args.c library/src/palette.c\
+           library/src_amiga/exdev_base_amiga.c library/src/helper.c examples/julia_main.c
 	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
 
-julia_060: src/vertex2d.c src/framebuffer.c src_amiga/window_amiga.c src/julia.c src/args.c src/palette.c\
-           src_amiga/exdev_base_amiga.c src/helper.c examples/julia_main.c
+julia_060: library/src/vertex2d.c library/src/framebuffer.c library/src_amiga/window_amiga.c library/src/julia.c library/src/args.c library/src/palette.c\
+           library/src_amiga/exdev_base_amiga.c library/src/helper.c examples/julia_main.c
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060}
 
-julia_nofpu: src/vertex2d.c src/framebuffer.c src_amiga/window_amiga.c src/julia.c src/args.c src/palette.c\
-             src_amiga/exdev_base_amiga.c src/helper.c examples/julia_main.c
+julia_nofpu: library/src/vertex2d.c library/src/framebuffer.c library/src_amiga/window_amiga.c library/src/julia.c library/src/args.c library/src/palette.c\
+           library/src_amiga/exdev_base_amiga.c library/src/helper.c examples/julia_main.c
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_NO_FPU} ${LD_FLAGS_NO_FPU}
 
 #--- other ---#
 other: render_palette_mos render_palette_060
-render_palette_mos: src/framebuffer_8bit.c src/framebuffer.c src_amiga/window_amiga.c src/palette.c\
-               src/helper.c src_amiga/exdev_base_amiga.c examples/render_palette.c
+render_palette_mos: library/src/framebuffer_8bit.c library/src/framebuffer.c library/src_amiga/window_amiga.c library/src/palette.c\
+               library/src/helper.c library/src_amiga/exdev_base_amiga.c examples/render_palette.c
 	$(CC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS} ${LD_FLAGS_MOS}
 
-render_palette_060: src/framebuffer_8bit.c src/framebuffer.c src_amiga/window_amiga.c src/palette.c\
-               src/helper.c src_amiga/exdev_base_amiga.c examples/render_palette.c
+render_palette_060: library/src/framebuffer_8bit.c library/src/framebuffer.c library/src_amiga/window_amiga.c library/src/palette.c\
+               library/src/helper.c library/src_amiga/exdev_base_amiga.c examples/render_palette.c
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060}
 
 #--- test_3d ---#
 test_3d: test_3d_mos_gcc test_3d_mos test_3d_060
 
-test_3d_mos_gcc: src/framebuffer_8bit.c src/framebuffer.c src/matrix.c src_amiga/window_amiga.c src/font.c src/helper.c  src_amiga/helper_amiga.c src_amiga/exdev_base_amiga.c\
-                 src/vertex3d.c src/vertex2d.c src/args.c src/sw_renderer_8bit.c src/palette.c examples/test_3d.c
+test_3d_mos_gcc: library/src/framebuffer_8bit.c library/src/framebuffer.c library/src/matrix.c library/src_amiga/window_amiga.c library/src/font.c library/src/helper.c library/src_amiga/helper_amiga.c library/src_amiga/exdev_base_amiga.c\
+                 library/src/vertex3d.c library/src/vertex2d.c library/src/args.c library/src/sw_renderer_8bit.c library/src/palette.c examples/test_3d.c
 	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
     
-test_3d_mos: src/framebuffer_8bit.c src/framebuffer.c src/matrix.c src_amiga/window_amiga.c src/font.c src/helper.c  src_amiga/helper_amiga.c src_amiga/exdev_base_amiga.c\
-             src/vertex3d.c src/vertex2d.c src/args.c src/sw_renderer_8bit.c src/palette.c examples/test_3d.c
+test_3d_mos: library/src/framebuffer_8bit.c library/src/framebuffer.c library/src/matrix.c library/src_amiga/window_amiga.c library/src/font.c library/src/helper.c library/src_amiga/helper_amiga.c library/src_amiga/exdev_base_amiga.c\
+             library/src/vertex3d.c library/src/vertex2d.c library/src/args.c library/src/sw_renderer_8bit.c library/src/palette.c examples/test_3d.c
 	$(CC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS} ${LD_FLAGS_MOS}
     
-test_3d_060: src/framebuffer_8bit.c src/framebuffer.c src/matrix.c src_amiga/window_amiga.c src/font.c src/helper.c  src_amiga/helper_amiga.c src_amiga/exdev_base_amiga.c\
-             src/vertex3d.c src/vertex2d.c src/args.c src/sw_renderer_8bit.c src/palette.c examples/test_3d.c
+test_3d_060: library/src/framebuffer_8bit.c library/src/framebuffer.c library/src/matrix.c library/src_amiga/window_amiga.c library/src/font.c library/src/helper.c library/src_amiga/helper_amiga.c library/src_amiga/exdev_base_amiga.c\
+             library/src/vertex3d.c library/src/vertex2d.c library/src/args.c library/src/sw_renderer_8bit.c library/src/palette.c examples/test_3d.c
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060} -DLOW_RESOLUTION
 
 #--- dist julia ---#
