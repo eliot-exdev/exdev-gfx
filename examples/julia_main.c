@@ -64,8 +64,7 @@ int main(int argc, char **argv) {
     Framebuffer_t fb;
     Julia_t julia;
     Window_t *window;
-    KeyEvent_t keyEvents;
-    MouseEvent_t mouseEvents;
+    Event_t events;
 
     char close_event = 0;
 
@@ -78,28 +77,28 @@ int main(int argc, char **argv) {
     window_fill(window, &fb);
 
     while (!close_event) {
-        window_poll_events(window, &close_event, &keyEvents, &mouseEvents, 1);
-        if (keyEvents.event == KEY_EVENT_PRESSED) {
-            if (keyEvents.type == KEY_TYPE_ESC) {
+        window_poll_events(window, &close_event, &events, 1);
+        if (events.type == EVENT_KEY && events.key_event.event == KEY_EVENT_PRESSED) {
+            if (events.key_event.key == KEY_TYPE_ESC) {
                 close_event = 1;
-            } else if (keyEvents.type == KEY_TYPE_UP) {
+            } else if (events.key_event.key == KEY_TYPE_UP) {
                 julia_move_up(&julia);
                 julia_paint(&julia, &fb);
                 window_fill(window, &fb);
-            } else if (keyEvents.type == KEY_TYPE_DOWN) {
+            } else if (events.key_event.key == KEY_TYPE_DOWN) {
                 julia_move_down(&julia);
                 julia_paint(&julia, &fb);
                 window_fill(window, &fb);
-            } else if (keyEvents.type == KEY_TYPE_LEFT) {
+            } else if (events.key_event.key == KEY_TYPE_LEFT) {
                 julia_move_left(&julia);
                 julia_paint(&julia, &fb);
                 window_fill(window, &fb);
-            } else if (keyEvents.type == KEY_TYPE_RIGHT) {
+            } else if (events.key_event.key == KEY_TYPE_RIGHT) {
                 julia_move_right(&julia);
                 julia_paint(&julia, &fb);
                 window_fill(window, &fb);
-            } else if (keyEvents.type == KEY_TYPE_CODE) {
-                switch (keyEvents.code) {
+            } else if (events.key_event.key == KEY_TYPE_CODE) {
+                switch (events.key_event.code) {
                     case 'q':
                         close_event = 1;
                         break;

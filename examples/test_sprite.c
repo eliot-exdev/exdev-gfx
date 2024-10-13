@@ -24,8 +24,6 @@ static void paint(Window_t *window, Framebuffer8Bit_t *offscreen, Framebuffer8Bi
     window_fill_8bit(window, offscreen);
 }
 
-#define MAX_KEY_EVENTS 1
-
 int main() {
     // variables
     float scale = 1.0f;
@@ -35,8 +33,7 @@ int main() {
     Palette8Bit_t palette;
     Window_t *window = NULL;
     char close_event = 0;
-    KeyEvent_t keyEvent;
-    MouseEvent_t mouseEvent;
+    Event_t event;
 
     // init
     exdev_base_init();
@@ -63,19 +60,19 @@ int main() {
         paint(window, &offscreen, &sprite, scale, rotate);
 
         // handle events
-        window_poll_events(window, &close_event, &keyEvent, &mouseEvent, MAX_KEY_EVENTS);
+        window_poll_events(window, &close_event, &event, 1);
 
-        if (keyEvent.event == KEY_EVENT_PRESSED && keyEvent.type == KEY_TYPE_ESC) {
+        if (event.type == EVENT_KEY && event.key_event.event == KEY_EVENT_PRESSED && event.key_event.key == KEY_TYPE_ESC) {
             close_event = 1;
         }
 
-        if (mouseEvent.event == MOUSE_EVENT_BUTTON_PRESSED) {
-            if (mouseEvent.button == MOUSE_BUTTON_0) {
-                posSprite1[0] = mouseEvent.position_x;
-                posSprite1[1] = mouseEvent.position_y;
-            } else if (mouseEvent.button == MOUSE_BUTTON_1) {
-                posSprite2[0] = mouseEvent.position_x;
-                posSprite2[1] = mouseEvent.position_y;
+        if (event.type == EVENT_MOUSE && event.mouse_event.event == MOUSE_EVENT_BUTTON_PRESSED) {
+            if ( event.mouse_event.button == MOUSE_BUTTON_0) {
+                posSprite1[0] =  event.mouse_event.position_x;
+                posSprite1[1] =  event.mouse_event.position_y;
+            } else if ( event.mouse_event.button == MOUSE_BUTTON_1) {
+                posSprite2[0] =  event.mouse_event.position_x;
+                posSprite2[1] =  event.mouse_event.position_y;
             }
         }
 

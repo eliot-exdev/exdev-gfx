@@ -36,6 +36,6 @@ void window_fill_8bit(Window_t *w, const Framebuffer8Bit_t *gb);
 
 void window_update_palette(Window_t *w, const Palette8Bit_t *p);
 
-void window_poll_events(Window_t *w, char *closeEvent, KeyEvent_t *keyEvents, MouseEvent_t *mouseEvents, int maxEvents);
+int window_poll_events(Window_t *w, char *closeEvent, Event_t *events, int maxEvents);
 
 #endif //EXDEVGFX2_WINDOW_LINUX_H

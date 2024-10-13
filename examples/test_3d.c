@@ -30,7 +30,6 @@ unsigned char versiontag[] = "\0$VER: " VERSION;
 #define HEIGHT 240
 #define TRIANGLE_SIZE 75
 #endif
-#define MAX_EVENTS 2
 
 static void print_help() {
     printf("voxelspace [ARGUMENTS]...\n"
@@ -43,8 +42,7 @@ static void print_help() {
            " x/X                      rotate X axis\n"
            " y/Y                      rotate Y axis\n"
            " z/Z                      rotate Z axis\n"
-           " p/P                      change projection constant\n"
-    );
+           " p/P                      change projection constant\n");
 }
 
 static void print_version() {
@@ -122,44 +120,42 @@ int main(int argc, char **argv) {
     font_init_mia_1(&mia1);
 
     // cube
-    Vertex3d_t cube_triangles[36] = {
-            {-1, -1, -1}, // front
-            {1,  1,  -1},
-            {-1, 1,  -1},
-            {-1, -1, -1},
-            {1,  -1, -1},
-            {1,  1,  -1},
-            {-1, -1, 1}, // left
-            {-1, 1,  -1},
-            {-1, 1,  1},
-            {-1, -1, 1},
-            {-1, -1, -1},
-            {-1, 1,  -1},
-            {1,  -1, 1}, // right
-            {1,  1,  -1},
-            {1,  -1, -1},
-            {1,  -1, 1},
-            {1,  1,  1},
-            {1,  1,  -1},
-            {-1, -1, 1}, // back
-            {-1, 1,  1},
-            {1,  1,  1},
-            {-1, -1, 1},
-            {1,  1,  1},
-            {1,  -1, 1},
-            {-1, 1,  -1}, // top
-            {1,  1,  1},
-            {-1, 1,  1},
-            {-1, 1,  -1},
-            {1,  1,  -1},
-            {1,  1,  1},
-            {-1, -1, -1}, // bottom
-            {-1, -1, 1},
-            {1,  -1, 1},
-            {-1, -1, -1},
-            {1,  -1, 1},
-            {1,  -1, -1}
-    };
+    Vertex3d_t cube_triangles[36] = {{-1, -1, -1}, // front
+                                     {1,  1,  -1},
+                                     {-1, 1,  -1},
+                                     {-1, -1, -1},
+                                     {1,  -1, -1},
+                                     {1,  1,  -1},
+                                     {-1, -1, 1}, // left
+                                     {-1, 1,  -1},
+                                     {-1, 1,  1},
+                                     {-1, -1, 1},
+                                     {-1, -1, -1},
+                                     {-1, 1,  -1},
+                                     {1,  -1, 1}, // right
+                                     {1,  1,  -1},
+                                     {1,  -1, -1},
+                                     {1,  -1, 1},
+                                     {1,  1,  1},
+                                     {1,  1,  -1},
+                                     {-1, -1, 1}, // back
+                                     {-1, 1,  1},
+                                     {1,  1,  1},
+                                     {-1, -1, 1},
+                                     {1,  1,  1},
+                                     {1,  -1, 1},
+                                     {-1, 1,  -1}, // top
+                                     {1,  1,  1},
+                                     {-1, 1,  1},
+                                     {-1, 1,  -1},
+                                     {1,  1,  -1},
+                                     {1,  1,  1},
+                                     {-1, -1, -1}, // bottom
+                                     {-1, -1, 1},
+                                     {1,  -1, 1},
+                                     {-1, -1, -1},
+                                     {1,  -1, 1},
+                                     {1,  -1, -1}};
 //    Vertex3d_t cube_normals[12] = {
 //            {0,  0,  -1}, // front
 //            {0,  0,  -1},
@@ -181,20 +177,12 @@ int main(int argc, char **argv) {
 //                                             {1.0f, 1.0f},
 //                                             {1.0f, 0.0f}};
 
-    Color8Bit_t cube_colors[12] = {
-            RED, RED,
-            GREEN, GREEN,
-            BLUE, BLUE,
-            CYAN, CYAN,
-            WHITE, WHITE,
-            GRAY, GRAY
-    };
+    Color8Bit_t cube_colors[12] = {RED, RED, GREEN, GREEN, BLUE, BLUE, CYAN, CYAN, WHITE, WHITE, GRAY, GRAY};
     Vertex3d_t cube_translation = {0, 0, 5};
     Vertex3d_t cube_rotation = {0, 0, 0};
 
     // work loop
-    KeyEvent_t keyEvents[MAX_EVENTS];
-    MouseEvent_t mouseEvents[MAX_EVENTS];
+    Event_t event;
     char close_event = 0;
     TIMESTAMP before = 0;
     TIMESTAMP after = 0;
@@ -202,60 +190,57 @@ int main(int argc, char **argv) {
     int show_fps = 1;
     while (!close_event) {
         // read inputs
-        window_poll_events(window, &close_event, keyEvents, mouseEvents, MAX_EVENTS);
-        int i=0;
-        while (i < MAX_EVENTS && keyEvents[i].event != KEY_EVENT_INVALID) {
-            if (keyEvents[i].event == KEY_EVENT_PRESSED) {
-                switch (keyEvents[i].type) {
-                    case KEY_TYPE_ESC:
+        window_poll_events(window, &close_event, &event, 1);
+        if (event.type == EVENT_KEY && event.key_event.event == KEY_EVENT_PRESSED) {
+            switch (event.key_event.key) {
+                case KEY_TYPE_ESC:
+                    close_event = 1;
+                    break;
+                case KEY_TYPE_F1:
+                    show_fps = !show_fps;
+                    break;
+                case KEY_TYPE_UP:
+                    cube_translation[1] += MOVE_STEP_SIZE;
+                    break;
+                case KEY_TYPE_DOWN:
+                    cube_translation[1] -= MOVE_STEP_SIZE;
+                    break;
+                case KEY_TYPE_LEFT:
+                    cube_translation[0] -= MOVE_STEP_SIZE;
+                    break;
+                case KEY_TYPE_RIGHT:
+                    cube_translation[0] += MOVE_STEP_SIZE;
+                    break;
+                case KEY_TYPE_CODE: {
+                    if (event.key_event.code == '+') {
+                        cube_translation[2] -= MOVE_STEP_SIZE;
+                    } else if (event.key_event.code == '-') {
+                        cube_translation[2] += MOVE_STEP_SIZE;
+                    } else if (event.key_event.code == 'p') {
+                        swRenderer.pc -= MOVE_STEP_SIZE;
+                        log_info_fmt("pc=%f\n", swRenderer.pc);
+                    } else if (event.key_event.code == 'P') {
+                        swRenderer.pc += MOVE_STEP_SIZE;
+                        log_info_fmt("pc=%f\n", swRenderer.pc);
+                    } else if (event.key_event.code == 'y') {
+                        cube_rotation[1] -= deg_to_rad(ROT_STEP_SIZE);
+                    } else if (event.key_event.code == 'Y') {
+                        cube_rotation[1] += deg_to_rad(ROT_STEP_SIZE);
+                    } else if (event.key_event.code == 'x') {
+                        cube_rotation[0] -= deg_to_rad(ROT_STEP_SIZE);
+                    } else if (event.key_event.code == 'X') {
+                        cube_rotation[0] += deg_to_rad(ROT_STEP_SIZE);
+                    } else if (event.key_event.code == 'z') {
+                        cube_rotation[2] -= deg_to_rad(ROT_STEP_SIZE);
+                    } else if (event.key_event.code == 'Z') {
+                        cube_rotation[2] += deg_to_rad(ROT_STEP_SIZE);
+                    } else if (event.key_event.code == 'q') {
                         close_event = 1;
-                        break;
-                    case KEY_TYPE_F1:
-                        show_fps = !show_fps;
-                        break;
-                    case KEY_TYPE_UP:
-                        cube_translation[1] += MOVE_STEP_SIZE;
-                        break;
-                    case KEY_TYPE_DOWN:
-                        cube_translation[1] -= MOVE_STEP_SIZE;
-                        break;
-                    case KEY_TYPE_LEFT:
-                        cube_translation[0] -= MOVE_STEP_SIZE;
-                        break;
-                    case KEY_TYPE_RIGHT:
-                        cube_translation[0] += MOVE_STEP_SIZE;
-                        break;
-                    case KEY_TYPE_CODE: {
-                        if (keyEvents[i].code == '+') {
-                            cube_translation[2] -= MOVE_STEP_SIZE;
-                        } else if (keyEvents[i].code == '-') {
-                            cube_translation[2] += MOVE_STEP_SIZE;
-                        } else if (keyEvents[i].code == 'p') {
-                            swRenderer.pc -= MOVE_STEP_SIZE;
-                            log_info_fmt("pc=%f\n", swRenderer.pc);
-                        } else if (keyEvents[i].code == 'P') {
-                            swRenderer.pc += MOVE_STEP_SIZE;
-                            log_info_fmt("pc=%f\n", swRenderer.pc);
-                        } else if (keyEvents[i].code == 'y') {
-                            cube_rotation[1] -= deg_to_rad(ROT_STEP_SIZE);
-                        } else if (keyEvents[i].code == 'Y') {
-                            cube_rotation[1] += deg_to_rad(ROT_STEP_SIZE);
-                        } else if (keyEvents[i].code == 'x') {
-                            cube_rotation[0] -= deg_to_rad(ROT_STEP_SIZE);
-                        } else if (keyEvents[i].code == 'X') {
-                            cube_rotation[0] += deg_to_rad(ROT_STEP_SIZE);
-                        } else if (keyEvents[i].code == 'z') {
-                            cube_rotation[2] -= deg_to_rad(ROT_STEP_SIZE);
-                        } else if (keyEvents[i].code == 'Z') {
-                            cube_rotation[2] += deg_to_rad(ROT_STEP_SIZE);
-                        } else if (keyEvents[i].code == 'q') {
-                            close_event = 1;
-                        }
                     }
-                        break;
-                    default:
-                        break;
                 }
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -266,12 +251,8 @@ int main(int argc, char **argv) {
         framebuffer_8bit_fill(&framebuffer, BLACK);
 
         // render cube color
-        sw_renderer_8bit_fill_polygon_color_new(&swRenderer,
-                                                cube_triangles, // first rect will have texture
-                                                12,
-                                                cube_colors,
-                                                cube_translation,
-                                                cube_rotation);
+        sw_renderer_8bit_fill_polygon_color_new(&swRenderer, cube_triangles, // first rect will have texture
+                                                12, cube_colors, cube_translation, cube_rotation);
         // render cube texture
 //        sw_renderer_8bit_fill_polygon_texture(&swRenderer,
 //                                              cube_triangles,
@@ -282,21 +263,12 @@ int main(int argc, char **argv) {
 //                                              cube_rotation);
 
         // render texture
-        framebuffer_8bit_draw_framebuffer(&framebuffer,
-                                          framebuffer.width - texture.width,
-                                          framebuffer.height - texture.height,
-                                          &texture);
+        framebuffer_8bit_draw_framebuffer(&framebuffer, framebuffer.width - texture.width, framebuffer.height - texture.height, &texture);
         // fps
         after = now();
         if (show_fps) {
             sprintf(fps_text, "%li", 1000 / (after - before));
-            framebuffer_8bit_draw_text(&framebuffer,
-                                       &mia1,
-                                       fps_text,
-                                       (int) strlen(fps_text),
-                                       YELLOW,
-                                       10,
-                                       framebuffer.height - 10);
+            framebuffer_8bit_draw_text(&framebuffer, &mia1, fps_text, (int) strlen(fps_text), YELLOW, 10, framebuffer.height - 10);
         }
         before = now();
 

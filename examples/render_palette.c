@@ -54,11 +54,10 @@ int main(int argc, char **argv) {
     window_fill_8bit(window, &fb);
 
     char closeEvent = 0;
-    KeyEvent_t keyEvent;
-    MouseEvent_t mouseEvent;
+    Event_t event;
     while (!closeEvent) {
-        window_poll_events(window, &closeEvent, &keyEvent, &mouseEvent, 1);
-        if (keyEvent.event == KEY_EVENT_PRESSED && keyEvent.type == KEY_TYPE_ESC) {
+        window_poll_events(window, &closeEvent, &event, 1);
+        if (event.type == EVENT_KEY && event.key_event.event == KEY_EVENT_PRESSED && event.key_event.key == KEY_TYPE_ESC) {
             closeEvent = 1;
         }
     }

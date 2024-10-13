@@ -61,7 +61,7 @@ int main() {
     window_fill(window, &gb);
 
     while (!close_event) {
-        window_poll_events(window, &close_event, NULL, NULL, 0);
+        window_poll_events(window, &close_event, NULL, 0);
     }
 
     window_destroy(window);
