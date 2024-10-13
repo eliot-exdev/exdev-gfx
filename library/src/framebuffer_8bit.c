@@ -281,10 +281,7 @@ int framebuffer_8bit_read_from_dat(Framebuffer8Bit_t *fb, const char *path) {
     return 0;
 }
 
-void
-framebuffer_8bit_draw_text(Framebuffer8Bit_t *fb, const Font_t *f, const char *text, const int text_length,
-                           const Color8Bit_t c,
-                           const int x, const int y) {
+void framebuffer_8bit_draw_text(Framebuffer8Bit_t *fb, const Font_t *f, const char *text, const int text_length, const Color8Bit_t c, const int x, const int y) {
     assert(fb);
     assert(f);
     assert(text);
@@ -478,8 +475,7 @@ void framebuffer_8bit_draw_framebuffer(Framebuffer8Bit_t *fb, const int x, const
     }
 }
 
-void
-framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int center_x, const int center_y, const Framebuffer8Bit_t *src, const float scale) {
+void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int center_x, const int center_y, const Framebuffer8Bit_t *src, const float scale) {
     assert(fb);
     assert(src);
 
