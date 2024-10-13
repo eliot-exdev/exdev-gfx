@@ -11,7 +11,6 @@
 #include <exdevgfx/logger.h>
 
 #include <assert.h>
-#include <math.h>
 
 void sw_renderer_init(SWRenderer_t *sw, Framebuffer_t *fb) {
     assert(sw);
