@@ -20,7 +20,7 @@ PREFIX=ram:exdevgfx
 INCLUDES_MOS=-Ilibrary/include -Ilibrary/easing/include
 INCLUDES_AOS=-Ilibrary/include -Ilibrary/easing/include -IWork:workspace/CGraphX/C/Include
 
-all: voxelspace julia other
+all: voxelspace julia test_sprite other
 
 #--- voxelspace ---#
 voxelspace: voxelspace_mos voxelspace_mos_gcc voxelspace_060
@@ -38,6 +38,8 @@ voxelspace_060: library/src/vertex3d.c library/src/events.c library/src/vertex2d
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060} -DLOW_RESOLUTION
 
 #--- test sprite ---#
+test_sprite: test_sprite_mos test_sprite_mos_gcc
+
 test_sprite_mos_gcc: library/src/palette.c library/src/events.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src/font.c library/src/vertex2d.c\
                      library/easing/src/Back.c\
                      library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c library/src_amiga/window_amiga.c examples/test_sprite.c
@@ -49,7 +51,7 @@ test_sprite_mos: library/src/palette.c library/src/events.c  library/src/color.c
 	$(CC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS} ${LD_FLAGS_MOS}
 
 #--- julia ---#
-julia: julia_mos julia_060 julia_nofpu
+julia: julia_mos julia_mos_gcc julia_060
 
 julia_mos: library/src/vertex2d.c library/src/events.c library/src/framebuffer.c library/src/color.c library/src_amiga/window_amiga.c library/src/julia.c library/src/args.c library/src/palette.c\
            library/src_amiga/exdev_base_amiga.c library/src/helper.c examples/julia_main.c
