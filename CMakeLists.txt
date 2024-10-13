@@ -22,12 +22,10 @@ function(StripTarget TARGET_NAME)
 endfunction()
 
 set(CMAKE_C_STANDARD 99)
-add_compile_options(-Wall -Wextra -Werror)
+add_compile_options(-Wall -Wextra -Werror -Wno-pointer-sign)
 
 message(STATUS "MORPHOS=${MORPHOS}")
-if (MORPHOS)
-    add_compile_definitions("__AMIGA__")
-endif ()
+
 
 add_subdirectory(library)
 add_subdirectory(examples)
