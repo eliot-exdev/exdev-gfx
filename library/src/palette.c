@@ -8,14 +8,14 @@
 #include <assert.h>
 #include <stdio.h>
 
-Pen_t PEN_BLACK = {0, 0, 0};
-Pen_t PEN_WHITE = {PEN_MAX, PEN_MAX, PEN_MAX};
-Pen_t PEN_GRAY = {PEN_HALF, PEN_HALF, PEN_HALF};
-Pen_t PEN_RED = {PEN_MAX, 0, 0};
-Pen_t PEN_GREEN = {0, PEN_MAX, 0};
-Pen_t PEN_BLUE = {0, 0, PEN_MAX};
-Pen_t PEN_YELLOW = {PEN_MAX, PEN_MAX, 0};
-Pen_t PEN_CYAN = {0, PEN_MAX, PEN_MAX};
+const Pen_t PEN_BLACK = {0, 0, 0};
+const Pen_t PEN_WHITE = {PEN_MAX, PEN_MAX, PEN_MAX};
+const Pen_t PEN_GRAY = {PEN_HALF, PEN_HALF, PEN_HALF};
+const Pen_t PEN_RED = {PEN_MAX, 0, 0};
+const Pen_t PEN_GREEN = {0, PEN_MAX, 0};
+const Pen_t PEN_BLUE = {0, 0, PEN_MAX};
+const Pen_t PEN_YELLOW = {PEN_MAX, PEN_MAX, 0};
+const Pen_t PEN_CYAN = {0, PEN_MAX, PEN_MAX};
 
 void pen_init(Pen_t *p, const unsigned int r, const unsigned int g, const unsigned int b) {
     assert(p);
