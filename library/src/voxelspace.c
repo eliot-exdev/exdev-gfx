@@ -13,7 +13,10 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <math.h>
+
+#ifndef __AMIGA__
 #include <wchar.h>
+#endif
 // see: https://github.com/s-macke/VoxelSpace
 
 
@@ -75,8 +78,11 @@ void voxelspace_render(const Vertex3d_t p,
     int i = 0, si = 0;
 
     // init ybuffer
+#ifdef __AMIGA__
+    for (i = 0; i < v->fb->width; ++i) { v->ybuffer[i] = v->fb->height; }
+#else
     wmemset(v->ybuffer, v->fb->height, v->fb->width);
-
+#endif
     // render sky
     framebuffer_8bit_fill(v->fb, v->sky_color);
 

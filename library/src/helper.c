@@ -88,7 +88,7 @@ float rad_to_deg(const float rad) {
 //    return acos(a);
 //}
 
-#ifdef __AMIGA__
+#if defined(__AMIGA__) || defined(__MORPHOS__)
 void swap_bytes_int(int *i) {(void)i;}
 #else
 void swap_bytes_int(int *i) {
