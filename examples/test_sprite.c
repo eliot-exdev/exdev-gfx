@@ -3,7 +3,6 @@
 #include <exdevgfx/window.h>
 #include <exdevgfx/logger.h>
 #include <exdevgfx/helper.h>
-#include <exdevgfx/vertex2d.h>
 
 #include <easing/Back.h>
 
@@ -16,7 +15,7 @@ static Vertex2d_t posSprite2 = {WIDTH * 0.66f, HEIGHT * 0.5f};
 
 static void paint(Window_t *window, Framebuffer8Bit_t *offscreen, Framebuffer8Bit_t *sprite, const float scale, const float rotate) {
     // clear buffer + draw
-    framebuffer_8bit_fill(offscreen, 0);
+    framebuffer_8bit_fill(offscreen, 31);
     // render scale
     framebuffer_8bit_draw_framebuffer_scaled(offscreen, posSprite1[0], posSprite1[1], sprite, scale, 0);
     // render rotate
@@ -38,11 +37,11 @@ int main() {
     // init
     exdev_base_init();
     framebuffer_8bit_init(&offscreen, WIDTH, HEIGHT);
-    if (framebuffer_8bit_read_from_dat(&sprite, "assets/texture_8bit.dat")) {
+    if (framebuffer_8bit_read_from_dat(&sprite, "assets/guybrush_8bit.dat")) {
         log_warning("could not read sprite");
         return 1;
     }
-    if (palette_8bit_read_from_dat(&palette, "assets/texture_8bit_palette.dat")) {
+    if (palette_8bit_read_from_dat(&palette, "assets/guybrush_8bit_pallette.dat")) {
         log_warning("could not read palette");
         return 2;
     }
