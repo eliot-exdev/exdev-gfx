@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.13)
 
 project(exdevgfx-examples)
 
@@ -43,7 +43,7 @@ add_executable(julia
 target_link_libraries(julia
         exdevgfx
         )
-StripTarget(julia)
+StripTargetExdev(julia)
 
 add_executable(voxelspace
         voxelspace_main.c
@@ -51,7 +51,7 @@ add_executable(voxelspace
 target_link_libraries(voxelspace
         exdevgfx
         )
-StripTarget(voxelspace)
+StripTargetExdev(voxelspace)
 
 add_executable(test_3d
         test_3d.c
