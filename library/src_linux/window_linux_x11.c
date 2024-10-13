@@ -103,6 +103,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
 //        setFullscreen(x11_w->display,x11_w->window);
     }
 
+    XSync(x11_w->display, 0);
     return (void *) x11_w;
 }
 
