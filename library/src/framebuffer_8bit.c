@@ -476,7 +476,8 @@ void framebuffer_8bit_draw_framebuffer(Framebuffer8Bit_t *fb, const int x, const
     }
 }
 
-void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int center_x, const int center_y, const Framebuffer8Bit_t *src, const float scale) {
+void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int center_x, const int center_y, const Framebuffer8Bit_t *src, const float scale,
+                                              const int alpha) {
     assert(fb);
     assert(src);
 
@@ -498,6 +499,11 @@ void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int c
         return;
     }
 
+    const int alphaEnabled = alpha >= 0;
+    int pos_x = 0;
+    int pos_y = 0;
+    Color8Bit_t pixel = 0;
+
     for (int i = 0; i + x < fb->width && i < max_width; ++i) {
         for (int j = 0; j + y < fb->height && j < max_height; ++j) {
             if (i + x < 0) {
@@ -506,14 +512,18 @@ void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int c
             if (j + y < 0) {
                 continue;
             }
-            const int pos_x = (int) ((float) i * step_x);
-            const int pos_y = (int) ((float) j * step_y);
-            fb->buffer[((j + y) * fb->width) + i + x] = *framebuffer_8bit_pixel_at(src, pos_x, pos_y);
+            pos_x = (int) ((float) i * step_x);
+            pos_y = (int) ((float) j * step_y);
+            pixel = *framebuffer_8bit_pixel_at(src, pos_x, pos_y);
+            if (!alphaEnabled || alpha != pixel) {
+                fb->buffer[((j + y) * fb->width) + i + x] = pixel;
+            }
         }
     }
 }
 
-void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, const int center_x, const int center_y, const Framebuffer8Bit_t *src, float angle) {
+void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, const int center_x, const int center_y, const Framebuffer8Bit_t *src, float angle,
+                                               const int alpha) {
     assert(fb);
     assert(src);
 
@@ -562,13 +572,20 @@ void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, const int 
         return;
     }
 
-    int src_x, src_y;
+    const int alphaEnabled = alpha >= 0;
+    int src_x = 0;
+    int src_y = 0;
+    Color8Bit_t pixel = 0;
+
     for (int x = 0; x < dst_width; ++x) {
         for (int y = 0; y < dst_height; ++y) {
             src_x = (int) (((float) x + minx) * cosine + ((float) y + miny) * sine);
             src_y = (int) (((float) y + miny) * cosine - ((float) x + minx) * sine);
             if (src_x >= 0 && src_x < src->width && src_y >= 0 && src_y < src->height) {
-                *framebuffer_8bit_pixel_at(fb, x + dx, y + dy) = *framebuffer_8bit_pixel_at(src, src_x, src_y);
+                pixel = *framebuffer_8bit_pixel_at(src, src_x, src_y);
+                if(!alphaEnabled || alpha != pixel) {
+                    *framebuffer_8bit_pixel_at(fb, x + dx, y + dy) = pixel;
+                }
             }
         }
     }
