@@ -1,8 +1,5 @@
 #include <exdevgfx/framebuffer.h>
 
-#define EXDEVGFX2_LOG_LEVEL 3
-#include <exdevgfx/logger.h>
-
 #include <stdio.h>
 
 /*

@@ -116,7 +116,8 @@ void framebuffer_8bit_draw_pixel(Framebuffer8Bit_t *fb, int x, int y, Color8Bit_
     *framebuffer_8bit_pixel_at(fb, x, y) = c;
 }
 
-void framebuffer_8bit_fill_rect(Framebuffer8Bit_t *fb, const int x, const int y, const int width, const int height, const Color8Bit_t c) {
+void framebuffer_8bit_fill_rect(Framebuffer8Bit_t *fb, const int x, const int y, const int width, const int height,
+                                const Color8Bit_t c) {
     assert(fb);
 
     for (int i = 0; i < height; ++i) {
@@ -124,7 +125,8 @@ void framebuffer_8bit_fill_rect(Framebuffer8Bit_t *fb, const int x, const int y,
     }
 }
 
-void framebuffer_8bit_draw_rect(Framebuffer8Bit_t *fb, const int x, const int y, const int width, const int height, const Color8Bit_t c) {
+void framebuffer_8bit_draw_rect(Framebuffer8Bit_t *fb, const int x, const int y, const int width, const int height,
+                                const Color8Bit_t c) {
     assert(fb);
 
     framebuffer_8bit_draw_vertical_line(fb, x, y, width, c);
@@ -279,7 +281,8 @@ int framebuffer_8bit_read_from_dat(Framebuffer8Bit_t *fb, const char *path) {
 }
 
 void
-framebuffer_8bit_draw_text(Framebuffer8Bit_t *fb, const Font_t *f, const char *text, const int text_length, const Color8Bit_t c,
+framebuffer_8bit_draw_text(Framebuffer8Bit_t *fb, const Font_t *f, const char *text, const int text_length,
+                           const Color8Bit_t c,
                            const int x, const int y) {
     assert(fb);
     assert(f);
@@ -459,6 +462,7 @@ void framebuffer_8bit_fill_triangle_fast(Framebuffer8Bit_t *fb, const Vertex2d_t
 void framebuffer_8bit_draw_framebuffer(Framebuffer8Bit_t *fb, const int x, const int y, const Framebuffer8Bit_t *src) {
     assert(fb);
     assert(src);
+
     if (x > fb->width) {
         return;
     }
@@ -469,6 +473,42 @@ void framebuffer_8bit_draw_framebuffer(Framebuffer8Bit_t *fb, const int x, const
     for (int i = 0; i + x < fb->width && i < src->width; ++i) {
         for (int j = 0; j + y < fb->height && j < src->height; ++j) {
             fb->buffer[((j + y) * fb->width) + i + x] = src->buffer[j * src->width + i];
+        }
+    }
+}
+
+void
+framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int x, const int y, const Framebuffer8Bit_t *src,
+                                         const float scale) {
+    assert(fb);
+    assert(src);
+
+    if (scale < 0.0f) {
+        return;
+    }
+    if (x > fb->width) {
+        return;
+    }
+    if (y > fb->height) {
+        return;
+    }
+
+    const float max_width = (scale * (float) src->width);
+    const float max_height = (scale * (float) src->height);
+    const float step_x = (float) src->width / (float) max_width;
+    const float step_y = (float) src->height / (float) max_height;
+
+    for (int i = 0; i + x < fb->width && i < max_width; ++i) {
+        for (int j = 0; j + y < fb->height && j < max_height; ++j) {
+            if (i + x < 0) {
+                continue;
+            }
+            if (j + y < 0) {
+                continue;
+            }
+            const float pos_x = (float) i * step_x;
+            const float pos_y = (float) j * step_y;
+            fb->buffer[((j + y) * fb->width) + i + x] = *framebuffer_8bit_pixel_at(src, pos_x, pos_y);
         }
     }
 }
