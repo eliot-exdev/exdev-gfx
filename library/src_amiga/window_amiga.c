@@ -37,24 +37,29 @@ Window_t *window_create(const int width, const int height, const char *title, co
         if (fs == FS_8_BIT) {
             depth = 8;
         }
-        const unsigned long id = BestCModeIDTags(CYBRBIDTG_Depth, depth, CYBRBIDTG_NominalWidth, width, CYBRBIDTG_NominalHeight, height, TAG_DONE);
+        const unsigned long id = BestCModeIDTags(CYBRBIDTG_Depth, depth, CYBRBIDTG_NominalWidth, width,
+                                                 CYBRBIDTG_NominalHeight, height, TAG_DONE);
         log_info_fmt("screen id=0x%08lx", id);
-        if (id == INVALID_ID) {
+        if (id == (unsigned long) INVALID_ID) {
             free(w);
             return NULL;
         }
-        w->screen = OpenScreenTags(NULL, SA_Left, 0, SA_Top, 0, SA_Width, width, SA_Height, height, SA_Depth, depth, SA_Type, CUSTOMSCREEN, SA_DisplayID, id,
+        w->screen = OpenScreenTags(NULL, SA_Left, 0, SA_Top, 0, SA_Width, width, SA_Height, height, SA_Depth, depth,
+                                   SA_Type, CUSTOMSCREEN, SA_DisplayID, id,
                                    SA_Title, title, SA_Exclusive, TRUE, SA_SharePens, TRUE, TAG_DONE);
 
-        w->window = OpenWindowTags(NULL, WA_Left, 0, WA_Top, 0, WA_Width, width, WA_Height, height, WA_CustomScreen, w->screen, WA_IDCMP,
-                                   IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS, WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS,
+        w->window = OpenWindowTags(NULL, WA_Left, 0, WA_Top, 0, WA_Width, width, WA_Height, height, WA_CustomScreen,
+                                   w->screen, WA_IDCMP,
+                                   IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS, WA_Flags,
+                                   WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS,
                                    WA_Title, title, TAG_DONE);
     } else {
         w->screen = NULL;
 
         w->window = OpenWindowTags(NULL, WA_Left, 50, WA_Top, 50, WA_Width, width, WA_Height, height, WA_IDCMP,
                                    IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS, WA_Flags,
-                                   WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_DRAGBAR, WA_Title, title, TAG_DONE);
+                                   WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_DRAGBAR, WA_Title,
+                                   title, TAG_DONE);
     }
 
     //OpenDevice("console.device", -1, (struct IORequest *) &ioreq, 0);
@@ -134,7 +139,7 @@ void window_fill_8bit(Window_t *win, const Framebuffer8Bit_t *gb) {
     WritePixelArray(gb->buffer, 0, 0, gb->width, w->window->RPort, 0, 0, gb->width, gb->height, RECTFMT_LUT8);
 }
 
-LONG deadKeyConvert(struct IntuiMessage *msg, UBYTE *kbuffer, LONG kbsize, struct InputEvent *ievent) {
+LONG deadKeyConvert(struct IntuiMessage *msg, char *kbuffer, LONG kbsize, struct InputEvent *ievent) {
     if (msg->Class != IDCMP_RAWKEY)
         return (-2);
 
@@ -152,7 +157,7 @@ int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const i
     NativeWindow_t *w = (NativeWindow_t *) win;
     struct IntuiMessage *msg = NULL;
     struct InputEvent ievent;
-    UBYTE buffer[BUFFER_SIZE];
+    char buffer[BUFFER_SIZE];
 
     ULONG msgClass;
 
@@ -176,7 +181,8 @@ int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const i
                 log_debug("keye event");
                 events[numEvents].type = EVENT_KEY;
                 if (!(msg->Qualifier & IEQUALIFIER_REPEAT)) {
-                    events[numEvents].key_event.event = msg->Code & IECODE_UP_PREFIX ? KEY_EVENT_RELEASED : KEY_EVENT_PRESSED;
+                    events[numEvents].key_event.event =
+                            msg->Code & IECODE_UP_PREFIX ? KEY_EVENT_RELEASED : KEY_EVENT_PRESSED;
                     if ((msg->Code & ~IECODE_UP_PREFIX) == 0x4C) {
                         events[numEvents].key_event.key = KEY_TYPE_UP;
                         log_debug("arrow up");

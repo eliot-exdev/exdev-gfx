@@ -50,6 +50,7 @@ add_executable(voxelspace
 target_link_libraries(voxelspace
         exdevgfx
         )
+StripTarget(voxelspace)
 
 add_executable(test_3d
         test_3d.c

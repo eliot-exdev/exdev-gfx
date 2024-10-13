@@ -1,0 +1,96 @@
+# some basic setup
+set(TOOLCHAIN_OS MorphOS)
+set(CMAKE_SYSTEM_NAME "Generic")
+set(CMAKE_CROSSCOMPILING True)
+set(CMAKE_SYSTEM_PROCESSOR ppc)
+set(MORPHOS True)
+
+set(MOS_SDK_ROOT "/gg" CACHE PATH "MorphOs SDK root dir")
+set(CMAKE_SYSROOT ${MOS_SDK_ROOT})
+set(CMAKE_PREFIX_PATH ${MOS_SDK_ROOT})
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+# find programs
+find_program(MOS_GCC
+        ppc-morphos-gcc
+        PATH "${MOS_SDK_ROOT}/bin"
+        NO_SYSTEM_ENVIRONMENT_PATH)
+
+find_program(MOS_CPP
+        ppc-morphos-g++
+        PATH "${MOS_SDK_ROOT}/bin"
+        NO_SYSTEM_ENVIRONMENT_PATH)
+
+find_program(MOS_AR
+        ppc-morphos-ar
+        PATH "${MOS_SDK_ROOT}/bin"
+        NO_SYSTEM_ENVIRONMENT_PATH)
+
+find_program(MOS_LINKER
+        ppc-morphos-ld
+        PATH "${MOS_SDK_ROOT}/bin"
+        NO_SYSTEM_ENVIRONMENT_PATH)
+
+find_program(MOS_AR
+        ppc-morphos-ar
+        PATH "${MOS_SDK_ROOT}/bin"
+        NO_SYSTEM_ENVIRONMENT_PATH)
+
+find_program(MOS_NM
+        ppc-morphos-nm
+        PATH "${MOS_SDK_ROOT}/bin"
+        NO_SYSTEM_ENVIRONMENT_PATH)
+
+find_program(MOS_STRIP
+        ppc-morphos-strip
+        PATH "${MOS_SDK_ROOT}/bin"
+        NO_SYSTEM_ENVIRONMENT_PATH)
+
+find_program(MOS_OBJCOPY
+        ppc-morphos-objcopy
+        PATH "${MOS_SDK_ROOT}/bin"
+        NO_SYSTEM_ENVIRONMENT_PATH)
+
+find_program(MOS_RANLIB
+        ppc-morphos-gcc-ranlib-9
+        PATH "${MOS_SDK_ROOT}/bin"
+        NO_SYSTEM_ENVIRONMENT_PATH)
+
+# print info
+message(STATUS "MOS_SDK_ROOT=${MOS_SDK_ROOT}")
+message(STATUS "MOS_GCC=${MOS_GCC}")
+message(STATUS "MOS_CPP=${MOS_CPP}")
+message(STATUS "MOS_LINKER=${MOS_LINKER}")
+message(STATUS "MOS_AR=${MOS_AR}")
+message(STATUS "MOS_NM=${MOS_NM}")
+message(STATUS "MOS_STRIP=${MOS_STRIP}")
+message(STATUS "MOS_OBJCOPY=${MOS_OBJCOPY}")
+message(STATUS "MOS_RANLIB=${MOS_RANLIB}")
+
+# set programs
+set(CMAKE_C_COMPILER ${MOS_GCC})
+set(CMAKE_CXX_COMPILER ${MOS_CPP})
+set(CMAKE_LINKER ${MOS_LINKER})
+set(CMAKE_AR ${MOS_AR})
+set(CMAKE_NM ${MOS_NM})
+set(CMAKE_RANLIB ${MOS_RANLIB})
+set(CMAKE_STRIP ${MOS_STRIP})
+set(CMAKE_OBJCIOY ${MOS_OBJCOPY})
+set(CMAKE_C_COMPILER_AR ${MOS_AR})
+set(CMAKE_CXX_COMPILER_AR ${MOS_AR})
+set(CMAKE_C_COMPILER_RANLIB ${MOS_RANLIB})
+set(CMAKE_CXX_COMPILER_RANLIB ${MOS_RANLIB})
+
+# set compile flags
+set(CMAKE_C_FLAGS "-noixemul -faltivec -mabi=altivec -D__AMIGA__")
+set(CMAKE_CXX_FLAGS "-noixemul -faltivec -mabi=altivec -D__AMIGA__")
+
+# set linker flags
+set(CMAKE_C_LINK_FLAGS "")
+set(CMAKE_CXX_LINK_FLAGS "")
+set(CMAKE_SHARED_LINKER_FLAGS "")
+set(CMAKE_STATIC_LINKER_FLAGS "")
+set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
+set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
