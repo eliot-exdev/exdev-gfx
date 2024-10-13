@@ -15,6 +15,13 @@ A simple voxelspace renderer (do you remember [Comanche](https://en.wikipedia.or
 ![voxelspace](screenshots/voxelspace.png)
 
 # tools
+## convert_palette_to_pgm
+Converts an existing palette to pgm. 
+Usage:
+
+    convert_palette_to_pgm: <palette> <pgm>
+
+![palette](screenshots/palette.png)
 
 # build
 
