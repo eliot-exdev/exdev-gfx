@@ -1,7 +1,7 @@
 C_FLAGS_MOS=-O3 -speed -final -DNDEBUG -D__MORPHOS__
 C_FLAGS_MOS_GCC=-Ofast -noixemul -faltivec -mabi=altivec -DNDEBUG -D__MORPHOS__
 
-C_FLAGS_060=+aos68k -fpu=68060 -cpu=68060 -speed -final -DNDEBUG -D__AMIGA__
+C_FLAGS_060=+aos68k -fpu=68060 -cpu=68060 -O3 -speed -final -DNDEBUG -D__AMIGA__
 C_FLAGS_060_GCC=-O4 -noixemul -DNDEBUG -march=68060 -mcpu=68060 -mtune=68060 -D__AMIGA__
 C_FLAGS_NO_FPU=+aos68k -c99 -cpu=68020 -O4 -speed -final -DNDEBUG -D__AMIGA__
 
