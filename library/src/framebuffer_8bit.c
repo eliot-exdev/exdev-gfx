@@ -281,7 +281,8 @@ int framebuffer_8bit_read_from_dat(Framebuffer8Bit_t *fb, const char *path) {
     return 0;
 }
 
-void framebuffer_8bit_draw_text(Framebuffer8Bit_t *fb, const Font_t *f, const char *text, const int text_length, const Color8Bit_t c, const int x, const int y) {
+void
+framebuffer_8bit_draw_text(Framebuffer8Bit_t *fb, const Font_t *f, const char *text, const int text_length, const Color8Bit_t c, const int x, const int y) {
     assert(fb);
     assert(f);
     assert(text);
@@ -541,12 +542,17 @@ void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, const int 
     const int dst_width = (int) ceil(fabs(maxx) - minx);
     const int dst_height = (int) ceil(fabs(maxy) - miny);
 
-    int dx = (int) ((float) center_x - (float) dst_width * 0.5f);
-    int dy = (int) ((float) center_y - (float) dst_height * 0.5f);
+    int dx;
+    int dy;
     if (angle > 90 && angle < 180) {
         dx = (int) ((float) center_x - (float) dst_height * 0.5f);
+        dy = (int) ((float) center_y - (float) dst_height * 0.5f);
     } else if (angle > 180 && angle < 270) {
+        dx = (int) ((float) center_x - (float) dst_width * 0.5f);
         dy = (int) ((float) center_y - (float) dst_width * 0.5f);
+    } else {
+        dx = (int) ((float) center_x - (float) dst_width * 0.5f);
+        dy = (int) ((float) center_y - (float) dst_height * 0.5f);
     }
 
     if (dx > fb->width) {
