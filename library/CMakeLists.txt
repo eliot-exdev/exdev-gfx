@@ -59,7 +59,7 @@ else ()
             src/voxelspace.c
             src_linux/exdev_base_linux.c
             src_linux/helper_linux.c
-            src_linux/window_linux.c
+            src_linux/window_linux_x11.c
             )
     target_include_directories(${PROJECT_NAME}
             PUBLIC include
