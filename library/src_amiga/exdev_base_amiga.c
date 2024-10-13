@@ -9,7 +9,10 @@
 #include "exdevgfx/logger.h"
 
 #include <devices/console.h>
+#include <proto/console.h>
 #include <devices/timer.h>
+#include <proto/timer.h>
+#include <proto/exec.h>
 
 int exdev_base_initiated = 0;
 
