@@ -262,7 +262,7 @@ int main(int argc, char **argv) {
     char ctrl_strafe = 0; // 0=no, 1=left, 2=right
 
     // show window
-    Window_t window = window_create(WIDTH, HEIGHT, "voxel", FS_8_BIT);
+    Window_t* window = window_create(WIDTH, HEIGHT, "voxel", FS_8_BIT);
     if (!window) {
         log_warning("could not create window or screen");
         exit(0);
