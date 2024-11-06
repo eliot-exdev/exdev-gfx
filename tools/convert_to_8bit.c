@@ -29,7 +29,15 @@ int main(int argc, char **argv) {
     // convert to 8 bit image
     Framebuffer8Bit_t f;
     Palette8Bit_t p;
-    res = framebuffer_8bit_init_from_framebuffer(&f, &p, &fb);
+
+    res = palette_8bit_read_from_dat(&p, path_palette_out);
+    if (res) {
+        log_info("no palette existed, will create new one");
+    } else {
+        log_debug_fmt("num pens existing: %d", p.numPens);
+    }
+
+    res = framebuffer_8bit_init_from_framebuffer(&f, &p, &fb, 0);
     if (res) {
         log_warning("could not convert to 8 bit");
         return res;

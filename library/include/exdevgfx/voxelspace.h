@@ -18,11 +18,12 @@ struct Voxelspace {
     int *ybuffer;
     float scale_height;
     Color8Bit_t sky_color;
+    Framebuffer8Bit_t *sky_texture;
 };
 
 typedef struct Voxelspace Voxelspace_t;
 
-void voxelspace_init(Voxelspace_t *v, Framebuffer8Bit_t *height_map, Framebuffer8Bit_t *color_map, Framebuffer8Bit_t *fb, float scale_height, Color8Bit_t sky_color);
+void voxelspace_init(Voxelspace_t *v, Framebuffer8Bit_t *height_map, Framebuffer8Bit_t *color_map, Framebuffer8Bit_t *fb, float scale_height, Color8Bit_t sky_color, Framebuffer8Bit_t *sky_texture);
 
 void voxelspace_deinit(Voxelspace_t *v);
 

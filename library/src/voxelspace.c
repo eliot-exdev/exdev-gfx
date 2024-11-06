@@ -32,7 +32,8 @@ void voxelspace_init(Voxelspace_t *v,
                      Framebuffer8Bit_t *color_map,
                      Framebuffer8Bit_t *fb,
                      float scale_height,
-                     Color8Bit_t sky_color) {
+                     Color8Bit_t sky_color,
+                     Framebuffer8Bit_t *sky_texture) {
     assert(v);
     assert(height_map);
     assert(color_map);
@@ -47,6 +48,7 @@ void voxelspace_init(Voxelspace_t *v,
     v->scale_height = scale_height;
     v->sky_color = sky_color;
     v->ybuffer = malloc(sizeof(int) * fb->width);
+    v->sky_texture = sky_texture;
 }
 
 void voxelspace_deinit(Voxelspace_t *v) {
@@ -57,9 +59,11 @@ void voxelspace_deinit(Voxelspace_t *v) {
     v->fb = NULL;
     free(v->ybuffer);
     v->ybuffer = NULL;
+    v->sky_texture=NULL;
 }
 
-void voxelspace_render(const Vertex3d_t p, const float phi, const float horizon, const float distance, const float dz, const int skip_x, const Voxelspace_t *v) {
+void
+voxelspace_render(const Vertex3d_t p, const float phi, const float horizon, const float distance, const float dz, const int skip_x, const Voxelspace_t *v) {
     // precalculate viewing angle parameters
     const float sinphi = sin(phi);
     const float cosphi = cos(phi);
@@ -79,7 +83,11 @@ void voxelspace_render(const Vertex3d_t p, const float phi, const float horizon,
     wmemset(v->ybuffer, v->fb->height, v->fb->width);
 #endif
     // render sky
-    framebuffer_8bit_fill(v->fb, v->sky_color);
+    if (!v->sky_texture) {
+        framebuffer_8bit_fill(v->fb, v->sky_color);
+    } else {
+        framebuffer_8bit_draw_framebuffer(v->fb,0,0,v->sky_texture);
+    }
 
     // auto height
     float height = p[2];

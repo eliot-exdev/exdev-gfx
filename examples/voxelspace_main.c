@@ -60,9 +60,16 @@ static const char PALETTE_THREE[] = ASSETS_PREFIX"assets/third_color_map_palette
 static const char PALETTE_FOUR[] = ASSETS_PREFIX"assets/fourth_color_map_palette.dat";
 static const char PALETTE_FIVE[] = ASSETS_PREFIX"assets/fifth_color_map_palette.dat";
 
+static const char SKY_TEXTURE_ONE[] = ASSETS_PREFIX"assets/first_sky.dat";
+static const char SKY_TEXTURE_TWO[] = ASSETS_PREFIX"assets/second_sky.dat";
+static const char SKY_TEXTURE_THREE[] = ASSETS_PREFIX"assets/third_sky.dat";
+static const char SKY_TEXTURE_FOUR[] = ASSETS_PREFIX"assets/fourth_sky.dat";
+static const char SKY_TEXTURE_FIVE[] = ASSETS_PREFIX"assets/fifth_sky.dat";
+
 static const char *heightmap_path = HEIGHTMAP_ONE;
 static const char *colormap_path = COLORMAP_ONE;
 static const char *palette_path = PALETTE_ONE;
+static const char *sky_path = SKY_TEXTURE_ONE;
 
 static float distance = DEFAULT_DISTANCE;
 static char demo_mode = 0;
@@ -116,26 +123,31 @@ static void parse_args(int argc, char **argv) {
                 colormap_path = COLORMAP_ONE;
                 heightmap_path = HEIGHTMAP_ONE;
                 palette_path = PALETTE_ONE;
+                sky_path = SKY_TEXTURE_ONE;
                 break;
             case 2:
                 colormap_path = COLORMAP_TWO;
                 heightmap_path = HEIGHTMAP_TWO;
                 palette_path = PALETTE_TWO;
+                sky_path = SKY_TEXTURE_TWO;
                 break;
             case 3:
                 colormap_path = COLORMAP_THREE;
                 heightmap_path = HEIGHTMAP_THREE;
                 palette_path = PALETTE_THREE;
+                sky_path = SKY_TEXTURE_THREE;
                 break;
             case 4:
                 colormap_path = COLORMAP_FOUR;
                 heightmap_path = HEIGHTMAP_FOUR;
                 palette_path = PALETTE_FOUR;
+                sky_path = SKY_TEXTURE_FOUR;
                 break;
             case 5:
                 colormap_path = COLORMAP_FIVE;
                 heightmap_path = HEIGHTMAP_FIVE;
                 palette_path = PALETTE_FIVE;
+                sky_path = SKY_TEXTURE_FIVE;
                 break;
             default:
                 log_warning_fmt("there is now world %d", world);
@@ -224,6 +236,15 @@ int main(int argc, char **argv) {
         exit(0);
     }
 
+    // read sky texture
+    Framebuffer8Bit_t sky_texture;
+    log_info("--> reading sky texture ...");
+    res = framebuffer_8bit_read_from_dat(&sky_texture, sky_path);
+    log_info_fmt("<--- result reading sky texture=%d", res);
+    if (res) {
+        exit(0);
+    }
+
     // setup framebuffer to render
     struct Framebuffer8Bit fb;
     framebuffer_8bit_init(&fb, WIDTH, HEIGHT);
@@ -237,7 +258,7 @@ int main(int argc, char **argv) {
 
     // create voxelspace
     Voxelspace_t v;
-    voxelspace_init(&v, &height_map, &color_map, &fb, SCALE_HEIGHT, palette.numPens - 2);
+    voxelspace_init(&v, &height_map, &color_map, &fb, SCALE_HEIGHT, palette.numPens - 2, &sky_texture);
 
     // cleanup
     framebuffer_8bit_deinit(&height_map);
@@ -402,6 +423,7 @@ int main(int argc, char **argv) {
     window_destroy(window);
     voxelspace_deinit(&v);
     font_deinit(&mia1);
+    framebuffer_8bit_deinit(&sky_texture);
     log_info("<-- cleanup done");
 
     return exdev_base_deinit();

@@ -23,12 +23,14 @@ void framebuffer_8bit_init(Framebuffer8Bit_t *fb, const int width, const int hei
     fb->buffer = (Color8Bit_t *) malloc(width * height);
 }
 
-int framebuffer_8bit_init_from_framebuffer(Framebuffer8Bit_t *f, Palette8Bit_t *p, const Framebuffer_t *fb) {
+int framebuffer_8bit_init_from_framebuffer(Framebuffer8Bit_t *f, Palette8Bit_t *p, const Framebuffer_t *fb, const int init_palette) {
     assert(f);
     assert(p);
     assert(fb);
 
-    palette_8bit_init(p, 0);
+    if (init_palette) {
+        palette_8bit_init(p, 0);
+    }
     framebuffer_8bit_init(f, fb->width, fb->height);
 
     for (int x = 0; x < f->width; ++x) {
