@@ -513,6 +513,55 @@ void framebuffer_8bit_draw_framebuffer(Framebuffer8Bit_t *fb, const int x, const
     }
 }
 
+void framebuffer_8bit_draw_framebuffer_flip_vertical(Framebuffer8Bit_t *fb, int x, int y, const Framebuffer8Bit_t *src) {
+    assert(fb);
+    assert(src);
+
+    if (x > fb->width) {
+        return;
+    }
+    if (y > fb->height) {
+        return;
+    }
+
+    for (int i = 0; i + x < fb->width && i < src->width; ++i) {
+        for (int j = 0; j + y < fb->height && j < src->height; ++j) {
+            fb->buffer[((j + y) * fb->width) + i + x] = src->buffer[j * src->width + src->width - i - 1];
+        }
+    }
+}
+
+void framebuffer_8bit_draw_framebuffer_shifted(Framebuffer8Bit_t *fb, int x_shifted, const int to_y, const Framebuffer8Bit_t *src) {
+    assert(fb);
+    assert(src);
+
+    if (x_shifted < 0) {
+        x_shifted = src->width + x_shifted;
+    }
+    if (x_shifted >= src->width) {
+        x_shifted = x_shifted % src->width;
+    }
+
+    int width_right = src->width - x_shifted;
+
+    if(width_right>fb->width){
+        width_right=fb->width;
+    }
+    for (int y = 0; y < to_y; ++y) {
+        memcpy(framebuffer_8bit_pixel_at(fb, 0, y), framebuffer_8bit_pixel_at(src, x_shifted, y), width_right);
+    }
+
+    if (width_right == fb->width) {
+        // we are done
+        return;
+    }
+
+    const int width_left = fb->width - width_right;
+    for (int y = 0; y <to_y; ++y) {
+        memcpy(framebuffer_8bit_pixel_at(fb, width_right, y), framebuffer_8bit_pixel_at(src, 0, y), width_left);
+    }
+}
+
 void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int center_x, const int center_y, const Framebuffer8Bit_t *src, const float scale,
                                               const int alpha) {
     assert(fb);

@@ -59,6 +59,10 @@ void framebuffer_8bit_fill_triangle_fast(Framebuffer8Bit_t *fb, const Vertex2d_t
 
 void framebuffer_8bit_draw_framebuffer(Framebuffer8Bit_t *fb, int x, int y, const Framebuffer8Bit_t *src);
 
+void framebuffer_8bit_draw_framebuffer_flip_vertical(Framebuffer8Bit_t *fb, int x, int y, const Framebuffer8Bit_t *src);
+
+void framebuffer_8bit_draw_framebuffer_shifted(Framebuffer8Bit_t *fb, int x_shifted, int to_y,const Framebuffer8Bit_t *src);
+
 void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, int center_x, int center_y, const Framebuffer8Bit_t *src, float scale, int alpha);
 
 void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, int center_x, int center_y, const Framebuffer8Bit_t *src, float angle, int alpha);
