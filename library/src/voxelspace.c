@@ -59,12 +59,13 @@ void voxelspace_deinit(Voxelspace_t *v) {
     v->fb = NULL;
     free(v->ybuffer);
     v->ybuffer = NULL;
-    v->sky_texture=NULL;
+    v->sky_texture = NULL;
 }
 
 void
-voxelspace_render(const Vertex3d_t p, const float phi, const float horizon, const float distance, const float dz, const int skip_x, const Voxelspace_t *v) {
+voxelspace_render(const Vertex3d_t p, const float rot, const float horizon, const float distance, const float dz, const int skip_x, const Voxelspace_t *v) {
     // precalculate viewing angle parameters
+    const float phi = deg_to_rad(rot);
     const float sinphi = sin(phi);
     const float cosphi = cos(phi);
 
@@ -86,7 +87,16 @@ voxelspace_render(const Vertex3d_t p, const float phi, const float horizon, cons
     if (!v->sky_texture) {
         framebuffer_8bit_fill(v->fb, v->sky_color);
     } else {
-        framebuffer_8bit_draw_framebuffer(v->fb,0,0,v->sky_texture);
+        int x_shifted=0;
+        if(rot<0){
+            x_shifted = (int) ((float) -rot / 360.0f * (float) v->sky_texture->width);
+        }else{
+            x_shifted = (int) ((float) rot / 360.0f * (float) v->sky_texture->width);
+        }
+        if (rot > 0) {
+            x_shifted = v->sky_texture->width - x_shifted;
+        }
+        framebuffer_8bit_draw_framebuffer_shifted(v->fb, x_shifted, 200,v->sky_texture);
     }
 
     // auto height

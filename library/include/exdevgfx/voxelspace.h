@@ -27,7 +27,7 @@ void voxelspace_init(Voxelspace_t *v, Framebuffer8Bit_t *height_map, Framebuffer
 
 void voxelspace_deinit(Voxelspace_t *v);
 
-void voxelspace_render(const Vertex3d_t p, float phi, float horizon, float distance, float dz, int skip_x, const Voxelspace_t *v);
+void voxelspace_render(const Vertex3d_t p, float rot, float horizon, float distance, float dz, int skip_x, const Voxelspace_t *v);
 
 #ifdef __cplusplus
 }

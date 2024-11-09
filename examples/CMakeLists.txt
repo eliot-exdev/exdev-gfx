@@ -74,6 +74,13 @@ target_link_libraries(test_palette
         exdevgfx
         )
 
+add_executable(test_flip_vertical
+        test_flip_vertical.c
+)
+target_link_libraries(test_flip_vertical
+        exdevgfx
+)
+
 add_executable(test_sprite
         test_sprite.c
         )

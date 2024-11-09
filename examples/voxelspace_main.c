@@ -156,7 +156,7 @@ static void parse_args(int argc, char **argv) {
     }
 }
 
-static void move(Vertex3d_t p, const char move_flag, const char strafe_flag, const char up_down_flag, const int phi) {
+static void move(Vertex3d_t p, const char move_flag, const char strafe_flag, const char up_down_flag, const int rot) {
     if (move_flag == 0 && strafe_flag == 0 && up_down_flag == 0) {
         return;
     }
@@ -179,7 +179,7 @@ static void move(Vertex3d_t p, const char move_flag, const char strafe_flag, con
 
     // rotate
     Vertex2d_t dst;
-    vertex2d_rotate(movement, dst, deg_to_rad((float) -phi));
+    vertex2d_rotate(movement, dst, deg_to_rad((float) -rot));
 
     p[0] += dst[0];
     p[1] += dst[1];
@@ -405,7 +405,7 @@ int main(int argc, char **argv) {
         log_debug("--> render");
         p[0] = normalize_float(p[0], v.heightmap.height);
         p[1] = normalize_float(p[1], v.heightmap.width);
-        voxelspace_render(p, deg_to_rad((float) rotation), horizon, distance, (float) dz, skip_x, &v);
+        voxelspace_render(p, rotation, horizon, distance, (float) dz, skip_x, &v);
 
         after = now();
         // draw text
