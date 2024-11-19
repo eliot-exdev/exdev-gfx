@@ -23,8 +23,10 @@
 
 #ifdef LOW_RESOLUTION
 #define AUTO_HEIGHT_OVER_GROUND 5.f
+#define SKY_TEXTURE_HEIGHT 100
 #else
 #define AUTO_HEIGHT_OVER_GROUND 10.f
+#define SKY_TEXTURE_HEIGHT 180
 #endif
 
 void voxelspace_init(Voxelspace_t *v,
@@ -87,16 +89,16 @@ voxelspace_render(const Vertex3d_t p, const float rot, const float horizon, cons
     if (!v->sky_texture) {
         framebuffer_8bit_fill(v->fb, v->sky_color);
     } else {
-        int x_shifted=0;
-        if(rot<0){
+        int x_shifted = 0;
+        if (rot < 0) {
             x_shifted = (int) ((float) -rot / 360.0f * (float) v->sky_texture->width);
-        }else{
+        } else {
             x_shifted = (int) ((float) rot / 360.0f * (float) v->sky_texture->width);
         }
         if (rot > 0) {
             x_shifted = v->sky_texture->width - x_shifted;
         }
-        framebuffer_8bit_draw_framebuffer_shifted(v->fb, x_shifted, 200,v->sky_texture);
+        framebuffer_8bit_draw_framebuffer_shifted(v->fb, x_shifted, SKY_TEXTURE_HEIGHT, v->sky_texture);
     }
 
     // auto height
