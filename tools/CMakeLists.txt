@@ -23,6 +23,13 @@ target_link_libraries(convert_pgm_to_dat
         PRIVATE exdevgfx
         )
 
+add_executable(halve_8bit
+        halve_8bit.c
+)
+target_link_libraries(halve_8bit
+        PRIVATE exdevgfx
+)
+
 add_executable(convert_to_8bit
         convert_to_8bit.c
         )
