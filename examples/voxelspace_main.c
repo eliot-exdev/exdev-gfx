@@ -60,11 +60,19 @@ static const char PALETTE_THREE[] = ASSETS_PREFIX"assets/third_color_map_palette
 static const char PALETTE_FOUR[] = ASSETS_PREFIX"assets/fourth_color_map_palette.dat";
 static const char PALETTE_FIVE[] = ASSETS_PREFIX"assets/fifth_color_map_palette.dat";
 
+#ifdef LOW_RESOLUTION
+static const char SKY_TEXTURE_ONE[] = ASSETS_PREFIX"assets/first_sky_lowres.dat";
+static const char SKY_TEXTURE_TWO[] = ASSETS_PREFIX"assets/second_sky_lowres.dat";
+static const char SKY_TEXTURE_THREE[] = ASSETS_PREFIX"assets/third_sky_lowres.dat";
+static const char SKY_TEXTURE_FOUR[] = ASSETS_PREFIX"assets/fourth_sky_lowres.dat";
+static const char SKY_TEXTURE_FIVE[] = ASSETS_PREFIX"assets/fifth_sky_lowres.dat";
+#else
 static const char SKY_TEXTURE_ONE[] = ASSETS_PREFIX"assets/first_sky.dat";
 static const char SKY_TEXTURE_TWO[] = ASSETS_PREFIX"assets/second_sky.dat";
 static const char SKY_TEXTURE_THREE[] = ASSETS_PREFIX"assets/third_sky.dat";
 static const char SKY_TEXTURE_FOUR[] = ASSETS_PREFIX"assets/fourth_sky.dat";
 static const char SKY_TEXTURE_FIVE[] = ASSETS_PREFIX"assets/fifth_sky.dat";
+#endif
 
 static const char *heightmap_path = HEIGHTMAP_ONE;
 static const char *colormap_path = COLORMAP_ONE;
