@@ -1,0 +1,99 @@
+# some basic setup
+# requires cross toolchain from: https://github.com/bebbo/amiga-gcc.git
+set(TOOLCHAIN_OS AmigaOs)
+set(CMAKE_SYSTEM_NAME "Generic")
+set(CMAKE_CROSSCOMPILING True)
+set(CMAKE_SYSTEM_PROCESSOR 68k)
+set(AMIGAOS True)
+
+set(AMIGA_SDK_ROOT "/opt/amiga" CACHE PATH "Amiga SDK root dir")
+set(CMAKE_SYSROOT ${AMIGA_SDK_ROOT}/m68k-amigaos)
+set(CMAKE_PREFIX_PATH ${AMIGA_SDK_ROOT})
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+
+# find programs
+find_program(AMIGA_GCC
+        m68k-amigaos-gcc
+        PATH "${AMIGA_SDK_ROOT}/bin"
+        NO_SYSTEM_ENVIRONMENT_PATH)
+
+find_program(AMIGA_CPP
+        m68k-amigaos-c++
+        PATH "${AMIGA_SDK_ROOT}/bin"
+        NO_SYSTEM_ENVIRONMENT_PATH)
+
+find_program(AMIGA_AR
+        m68k-amigaos-ar
+        PATH "${AMIGA_SDK_ROOT}/bin"
+        NO_SYSTEM_ENVIRONMENT_PATH)
+
+find_program(AMIGA_LINKER
+        m68k-amigaos-ld
+        PATH "${AMIGA_SDK_ROOT}/bin"
+        NO_SYSTEM_ENVIRONMENT_PATH)
+
+find_program(AMIGA_NM
+        m68k-amigaos-nm
+        PATH "${AMIGA_SDK_ROOT}/bin"
+        NO_SYSTEM_ENVIRONMENT_PATH)
+
+find_program(AMIGA_STRIP
+        m68k-amigaos-strip
+        PATH "${AMIGA_SDK_ROOT}/bin"
+        NO_SYSTEM_ENVIRONMENT_PATH)
+
+find_program(AMIGA_OBJCOPY
+        m68k-amigaos-objcopy
+        PATH "${AMIGA_SDK_ROOT}/bin"
+        NO_SYSTEM_ENVIRONMENT_PATH)
+
+find_program(AMIGA_RANLIB
+        m68k-amigaos-ranlib
+        PATH "${AMIGA_SDK_ROOT}/bin"
+        NO_SYSTEM_ENVIRONMENT_PATH)
+
+# print info
+message(STATUS "AMIGA_SDK_ROOT=${AMIGA_SDK_ROOT}")
+message(STATUS "AMIGA_GCC=${AMIGA_GCC}")
+message(STATUS "AMIGA_CPP=${AMIGA_CPP}")
+message(STATUS "AMIGA_LINKER=${AMIGA_LINKER}")
+message(STATUS "AMIGA_AR=${AMIGA_AR}")
+message(STATUS "AMIGA_NM=${AMIGA_NM}")
+message(STATUS "AMIGA_STRIP=${AMIGA_STRIP}")
+message(STATUS "AMIGA_OBJCOPY=${AMIGA_OBJCOPY}")
+message(STATUS "AMIGA_RANLIB=${AMIGA_RANLIB}")
+
+# set programs
+set(CMAKE_C_COMPILER ${AMIGA_GCC})
+set(CMAKE_CXX_COMPILER ${AMIGA_CPP})
+set(CMAKE_LINKER ${AMIGA_LINKER})
+set(CMAKE_AR ${AMIGA_AR})
+set(CMAKE_NM ${AMIGA_NM})
+set(CMAKE_RANLIB ${AMIGA_RANLIB})
+set(CMAKE_STRIP ${AMIGA_STRIP})
+set(CMAKE_OBJCIOY ${AMIGA_OBJCOPY})
+set(CMAKE_C_COMPILER_AR ${AMIGA_AR})
+set(CMAKE_CXX_COMPILER_AR ${AMIGA_AR})
+set(CMAKE_C_COMPILER_RANLIB ${AMIGA_RANLIB})
+set(CMAKE_CXX_COMPILER_RANLIB ${AMIGA_RANLIB})
+
+# set compile flags
+set(CMAKE_C_FLAGS "-noixemul -m68060 -Wa,-march=68060,-mcpu=68060")
+set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG")
+set(CMAKE_CXX_FLAGS "-noixemul -m68060 -Wa,-march=68060,-mcpu=68060")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+
+add_compile_definitions(__AMIGAOS__)
+
+# set linker flags
+set(CMAKE_C_LINK_FLAGS "")
+set(CMAKE_CXX_LINK_FLAGS "")
+set(CMAKE_SHARED_LINKER_FLAGS "")
+set(CMAKE_STATIC_LINKER_FLAGS "")
+set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
+set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
