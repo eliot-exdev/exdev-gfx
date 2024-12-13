@@ -601,7 +601,7 @@ int framebuffer_save_as_dat(const Framebuffer_t *fb, const char *path) {
 
     const size_t res = fwrite((const char *) fb->buffer, framebuffer_num_bytes(fb), 1, fp);
     if (res != 1) {
-        log_warning_fmt("could not write all bytes, res=%lu", res);
+        log_warning_fmt("could not write all bytes, res=%u", res);
         fclose(fp);
         return 1;
     }
@@ -626,13 +626,13 @@ int framebuffer_read_from_dat(Framebuffer_t *fb, const char *path) {
     int width = 0, height = 0;
     size_t res = fread(&width, sizeof(int), 1, fp);
     if (res != 1) {
-        log_warning_fmt("could not read all bytes, res=%lu", res);
+        log_warning_fmt("could not read all bytes, res=%u", res);
         fclose(fp);
         return 1;
     }
     res = fread(&height, sizeof(int), 1, fp);
     if (res != 1) {
-        log_warning_fmt("could not read all bytes, res=%lu", res);
+        log_warning_fmt("could not read all bytes, res=%u", res);
         fclose(fp);
         return 1;
     }
@@ -643,7 +643,7 @@ int framebuffer_read_from_dat(Framebuffer_t *fb, const char *path) {
     framebuffer_init(fb, width, height);
     res = fread(fb->buffer, framebuffer_num_bytes(fb), 1, fp);
     if (res != 1) {
-        log_warning_fmt("could not read all bytes, res=%lu", res);
+        log_warning_fmt("could not read all bytes, res=%u", res);
         fclose(fp);
         return 1;
     }

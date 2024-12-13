@@ -24,10 +24,18 @@ struct Library *GadToolsBase = 0;
 //#define DEVICE_TYPE Library
 
 struct IOStdReq console_ioreq;
+#ifdef __MORPHOS__
 struct Library *ConsoleDevice = 0;
+#elif __AMIGA__
+struct Device *ConsoleDevice = 0;
+#endif
 
 struct IORequest timer_ioreq;
+#ifdef __MORPHOS__
 struct Library *TimerBase = 0;
+#elif __AMIGA__
+struct Device *TimerBase = 0;
+#endif
 
 int exdev_base_init() {
     if (exdev_base_initiated) {
@@ -55,11 +63,17 @@ int exdev_base_init() {
 //    }
 
     OpenDevice("console.device", -1, (struct IORequest *) &console_ioreq, 0);
+#ifdef __MORPHOS__
     ConsoleDevice = (struct Library *) console_ioreq.io_Device;
-
+#elif __AMIGA__
+    ConsoleDevice = (struct Device *) console_ioreq.io_Device;
+#endif
     OpenDevice("timer.device", 0, &timer_ioreq, 0);
+#ifdef __MORPHOS__
     TimerBase = (struct Library *) timer_ioreq.io_Device;
-
+#elif __AMIGA__
+    TimerBase = (struct Device *) timer_ioreq.io_Device;
+#endif
     exdev_base_initiated = 1;
     log_info("<-- exdev_base_init()");
     return 0;

@@ -122,7 +122,7 @@ int palette_8bit_save_as_dat(const Palette8Bit_t *p, const char *path) {
     size_t res = fwrite(&tmp, sizeof(int), 1, fp);
 
     if (res != 1) {
-        log_warning_fmt("could not write num pens, res=%lu", res);
+        log_warning_fmt("could not write num pens, res=%u", res);
         fclose(fp);
         return 1;
     }
@@ -132,7 +132,7 @@ int palette_8bit_save_as_dat(const Palette8Bit_t *p, const char *path) {
         swap_bytes_int(&tmp);
         res = fwrite(&tmp, sizeof(int), 1, fp);
         if (res != 1) {
-            log_warning_fmt("could not write r, res=%lu", res);
+            log_warning_fmt("could not write r, res=%u", res);
             fclose(fp);
             return 2;
         }
@@ -141,7 +141,7 @@ int palette_8bit_save_as_dat(const Palette8Bit_t *p, const char *path) {
         swap_bytes_int(&tmp);
         res = fwrite(&tmp, sizeof(int), 1, fp);
         if (res != 1) {
-            log_warning_fmt("could not write g, res=%lu", res);
+            log_warning_fmt("could not write g, res=%u", res);
             fclose(fp);
             return 3;
         }
@@ -150,7 +150,7 @@ int palette_8bit_save_as_dat(const Palette8Bit_t *p, const char *path) {
         swap_bytes_int(&tmp);
         res = fwrite(&tmp, sizeof(int), 1, fp);
         if (res != 1) {
-            log_warning_fmt("could not write b, res=%lu", res);
+            log_warning_fmt("could not write b, res=%u", res);
             fclose(fp);
             return 4;
         }
@@ -176,7 +176,7 @@ int palette_8bit_read_from_dat(Palette8Bit_t *p, const char *path) {
     int tmp = 0;
     size_t res = fread(&tmp, sizeof(int), 1, fp);
     if (res != 1) {
-        log_warning_fmt("could not read num pens, res=%lu", res);
+        log_warning_fmt("could not read num pens, res=%u", res);
         fclose(fp);
         return 1;
     }
@@ -187,7 +187,7 @@ int palette_8bit_read_from_dat(Palette8Bit_t *p, const char *path) {
     for (int i = 0; i < p->numPens; ++i) {
         res = fread(&tmp, sizeof(int), 1, fp);
         if (res != 1) {
-            log_warning_fmt("could not read r, res=%lu", res);
+            log_warning_fmt("could not read r, res=%u", res);
             fclose(fp);
             return 2;
         }
@@ -196,7 +196,7 @@ int palette_8bit_read_from_dat(Palette8Bit_t *p, const char *path) {
 
         res = fread(&tmp, sizeof(int), 1, fp);
         if (res != 1) {
-            log_warning_fmt("could not read g, res=%lu", res);
+            log_warning_fmt("could not read g, res=%u", res);
             fclose(fp);
             return 3;
         }
@@ -205,7 +205,7 @@ int palette_8bit_read_from_dat(Palette8Bit_t *p, const char *path) {
 
         res = fread(&tmp, sizeof(int), 1, fp);
         if (res != 1) {
-            log_warning_fmt("could not read b, res=%lu", res);
+            log_warning_fmt("could not read b, res=%u", res);
             fclose(fp);
             return 4;
         }

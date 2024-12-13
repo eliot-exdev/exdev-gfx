@@ -52,6 +52,9 @@ target_link_libraries(voxelspace
         exdevgfx
         )
 StripTargetExdev(voxelspace)
+if(AMIGAOS)
+        target_compile_definitions(voxelspace PRIVATE LOW_RESOLUTION)
+endif ()
 
 add_executable(test_3d
         test_3d.c

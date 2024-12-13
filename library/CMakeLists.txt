@@ -5,8 +5,7 @@ find_package(X11 REQUIRED)
 
 add_subdirectory(easing)
 
-
-if (MORPHOS)
+if (MORPHOS OR AMIGAOS)
     add_library(${PROJECT_NAME} STATIC
             src/args.c
             src/color.c
@@ -36,8 +35,11 @@ if (MORPHOS)
             PUBLIC m
             )
     target_compile_options(${PROJECT_NAME}
-            PUBLIC -Wno-format
+            PUBLIC -Wno-format -Wno-int-conversion
             )
+    if(AMIGAOS)
+        target_compile_definitions(${PROJECT_NAME} PRIVATE LOW_RESOLUTION)
+    endif ()
 else ()
     add_library(${PROJECT_NAME} STATIC
             src/args.c
@@ -70,7 +72,7 @@ else ()
             PUBLIC m
             )
     target_compile_options(${PROJECT_NAME}
-            PUBLIC -Wno-c2x-extensions -Wno-unused-variable -fPIC
+            PUBLIC -Wno-c2x-extensions -Wno-unused-variable -fPIC -Wno-format
             )
 endif ()
 
