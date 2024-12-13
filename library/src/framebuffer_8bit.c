@@ -67,6 +67,7 @@ void framebuffer_8bit_fill(Framebuffer8Bit_t *fb, Color8Bit_t c) {
 }
 
 Color8Bit_t *framebuffer_8bit_pixel_at(const Framebuffer8Bit_t *fb, const int x, const int y) {
+    assert(fb);
     assert(x < fb->width);
     assert(y < fb->height);
     assert(x >= 0);
