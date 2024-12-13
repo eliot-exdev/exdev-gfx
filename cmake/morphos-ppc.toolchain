@@ -1,4 +1,5 @@
 # some basic setup
+# requires cross toolchain from: https://bigfoot.morphos-team.net/files/setup-cross-sdk.sh
 set(TOOLCHAIN_OS MorphOS)
 set(CMAKE_SYSTEM_NAME "Generic")
 set(CMAKE_CROSSCOMPILING True)
@@ -33,11 +34,6 @@ find_program(MOS_AR
 
 find_program(MOS_LINKER
         ppc-morphos-ld
-        PATH "${MOS_SDK_ROOT}/bin"
-        NO_SYSTEM_ENVIRONMENT_PATH)
-
-find_program(MOS_AR
-        ppc-morphos-ar
         PATH "${MOS_SDK_ROOT}/bin"
         NO_SYSTEM_ENVIRONMENT_PATH)
 
@@ -80,7 +76,7 @@ set(CMAKE_AR ${MOS_AR})
 set(CMAKE_NM ${MOS_NM})
 set(CMAKE_RANLIB ${MOS_RANLIB})
 set(CMAKE_STRIP ${MOS_STRIP})
-set(CMAKE_OBJCIOY ${MOS_OBJCOPY})
+set(CMAKE_OBJCOPY ${MOS_OBJCOPY})
 set(CMAKE_C_COMPILER_AR ${MOS_AR})
 set(CMAKE_CXX_COMPILER_AR ${MOS_AR})
 set(CMAKE_C_COMPILER_RANLIB ${MOS_RANLIB})
