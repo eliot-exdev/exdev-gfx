@@ -124,7 +124,8 @@ void window_update_palette(Window_t *win, const Palette8Bit_t *p) {
     }
 }
 
-static LONG deadKeyConvert(const struct IntuiMessage *msg, char *kbuffer, const LONG kbsize, struct InputEvent *ievent) {
+#define KEY_BUFFER_SIZE 8
+static LONG deadKeyConvert(const struct IntuiMessage *msg, char *kbuffer, struct InputEvent *ievent) {
     if (msg->Class != IDCMP_RAWKEY)
         return (-2);
 
@@ -132,16 +133,14 @@ static LONG deadKeyConvert(const struct IntuiMessage *msg, char *kbuffer, const 
     ievent->ie_Code = msg->Code & ~IECODE_UP_PREFIX;
     ievent->ie_Qualifier = msg->Qualifier;
     ievent->ie_position.ie_addr = *((APTR *) msg->IAddress);
-    return RawKeyConvert(ievent, kbuffer, kbsize, NULL);
+    return RawKeyConvert(ievent, kbuffer, KEY_BUFFER_SIZE, NULL);
 }
-
-#define BUFFER_SIZE 8
 
 int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const int maxEvents) {
     NativeWindow_t *w = (NativeWindow_t *) win;
     struct IntuiMessage *msg = NULL;
     struct InputEvent ievent;
-    char buffer[BUFFER_SIZE];
+    char buffer[KEY_BUFFER_SIZE];
 
     ULONG msgClass;
 
@@ -211,8 +210,8 @@ int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const i
                         events[numEvents].key_event.key = KEY_TYPE_F10;
                         log_debug("F10");
                     } else {
-                        memset(buffer, 0, BUFFER_SIZE);
-                        const long int numChars = deadKeyConvert(msg, buffer, BUFFER_SIZE, &ievent);
+                        memset(buffer, 0, KEY_BUFFER_SIZE);
+                        const long int numChars = deadKeyConvert(msg, buffer, &ievent);
                         log_debug_fmt("numChars=%ld", numChars);
                         if (numChars == 1) {
                             events[numEvents].key_event.key = KEY_TYPE_CODE;
