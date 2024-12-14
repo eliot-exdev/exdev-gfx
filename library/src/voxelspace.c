@@ -82,7 +82,7 @@ voxelspace_render(const Vertex3d_t p, const float rot, const float horizon, cons
 #ifdef __VBCC__
     for (i = 0; i < v->fb->width; ++i) { v->ybuffer[i] = v->fb->height; }
 #else
-    wmemset(v->ybuffer, v->fb->height, v->fb->width);
+    wmemset((wchar_t*)v->ybuffer, v->fb->height, v->fb->width);
 #endif
     // render sky
     if (!v->sky_texture) {
