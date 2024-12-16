@@ -195,9 +195,9 @@ static void move(Vertex3d_t p, const char move_flag, const char strafe_flag, con
     p[1] += dst[1];
 
     // move up/down
-    if (p[2] < MAX_HEIGHT && up_down_flag == 1) {
+    if (up_down_flag == 1 && p[2] < MAX_HEIGHT) {
         p[2] += MOVEMENT_STEP_SIZE;
-    } else if (p[2] > MIN_HEIGHT && up_down_flag == 2) {
+    } else if (up_down_flag == 2 && p[2] > MIN_HEIGHT) {
         p[2] -= MOVEMENT_STEP_SIZE;
     }
 }
