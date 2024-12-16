@@ -92,8 +92,8 @@ float rad_to_deg(const float rad) {
 void swap_bytes_int(int *i) {(void)i;}
 #else
 void swap_bytes_int(int *i) {
-    int tmp = *i;
-    char *in = (char *) &tmp;
+    const int tmp = *i;
+    const char *in = (char *) &tmp;
     char *out = (char *) i;
 
     out[0] = in[3];
@@ -103,15 +103,14 @@ void swap_bytes_int(int *i) {
 }
 #endif
 
-float normalize_float(float f, int s) {
-    const float sf = (float) s;
+float normalize_float(float f, const float d) {
     if (f < 0) {
         while (f < 0) {
-            f += sf;
+            f += d;
         }
     } else {
-        while (f > sf) {
-            f -= sf;
+        while (f > d) {
+            f -= d;
         }
     }
     return f;

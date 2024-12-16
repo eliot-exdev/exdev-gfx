@@ -40,7 +40,7 @@ static inline int normalize_int(int i, const int s) {
     return i < 0 ? (s + i) : i;
 }
 
-float normalize_float(float f, int s);
+float normalize_float(float f, float d);
 
 #ifdef __cplusplus
 }

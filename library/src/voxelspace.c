@@ -56,7 +56,6 @@ void voxelspace_deinit(Voxelspace_t *v) {
     assert(v);
 
     heightmap_deinit(&v->heightmap);
-    framebuffer_8bit_deinit(v->fb);
     v->fb = NULL;
     free(v->ybuffer);
     v->ybuffer = NULL;

@@ -164,6 +164,8 @@ static void parse_args(int argc, char **argv) {
     }
 }
 
+#define MAX_HEIGHT 120.0f
+#define MIN_HEIGHT 5.0f
 static void move(Vertex3d_t p, const char move_flag, const char strafe_flag, const char up_down_flag, const int rot) {
     if (move_flag == 0 && strafe_flag == 0 && up_down_flag == 0) {
         return;
@@ -193,9 +195,9 @@ static void move(Vertex3d_t p, const char move_flag, const char strafe_flag, con
     p[1] += dst[1];
 
     // move up/down
-    if (p[2] < 120.f && up_down_flag == 1) {
+    if (p[2] < MAX_HEIGHT && up_down_flag == 1) {
         p[2] += MOVEMENT_STEP_SIZE;
-    } else if (p[2] > 5.f && up_down_flag == 2) {
+    } else if (p[2] > MIN_HEIGHT && up_down_flag == 2) {
         p[2] -= MOVEMENT_STEP_SIZE;
     }
 }
@@ -285,8 +287,8 @@ int main(int argc, char **argv) {
 #else
     int dz = 1;
 #endif
-    Vertex3d_t p;
-    vertex3d_set(p, 550, 320, 70);
+    Vertex3d_t position;
+    vertex3d_set(position, 512, 512, 80);
 
     char ctrl_move = 0; // 0=no, 1=forward, 2=backward
     char ctrl_rotate = 0; // 0=no, 1=right, 2=left
@@ -392,7 +394,7 @@ int main(int argc, char **argv) {
             ctrl_rotate = 0;
             ctrl_up_down = 0;
             ctrl_strafe = 0;
-            p[2] = -1.0f; // use auto height
+            position[2] = -1.0f; // use auto height
         }
 
         switch (ctrl_rotate) {
@@ -407,14 +409,13 @@ int main(int argc, char **argv) {
         }
 
         // update
-
-        move(p, ctrl_move, ctrl_strafe, ctrl_up_down, rotation);
+        move(position, ctrl_move, ctrl_strafe, ctrl_up_down, rotation);
 
         // render
         log_debug("--> render");
-        p[0] = normalize_float(p[0], v.heightmap.height);
-        p[1] = normalize_float(p[1], v.heightmap.width);
-        voxelspace_render(p, rotation, horizon, distance, (float) dz, skip_x, &v);
+        position[0] = normalize_float(position[0], (float) v.heightmap.height);
+        position[1] = normalize_float(position[1], (float) v.heightmap.width);
+        voxelspace_render(position, rotation, horizon, distance, (float) dz, skip_x, &v);
 
         after = now();
         // draw text
@@ -433,6 +434,7 @@ int main(int argc, char **argv) {
     voxelspace_deinit(&v);
     font_deinit(&mia1);
     framebuffer_8bit_deinit(&sky_texture);
+    framebuffer_8bit_deinit(&fb);
     log_info("<-- cleanup done");
 
     return exdev_base_deinit();
