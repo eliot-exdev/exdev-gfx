@@ -62,6 +62,8 @@ int palette_8bit_find_pen(const Palette8Bit_t *palette, const Pen_t *pen);
 
 int palette_8bit_save_as_dat(const Palette8Bit_t *p, const char *path);
 
+int palette_8bit_save_as_jasc(const Palette8Bit_t *p, const char *path);
+
 int palette_8bit_read_from_dat(Palette8Bit_t *p, const char *path);
 
 #ifdef __cplusplus

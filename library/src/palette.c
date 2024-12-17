@@ -160,6 +160,48 @@ int palette_8bit_save_as_dat(const Palette8Bit_t *p, const char *path) {
     return 0;
 }
 
+int palette_8bit_save_as_jasc(const Palette8Bit_t *p, const char *path) {
+    assert(p);
+    assert(path);
+
+    FILE *fp;
+    fp = fopen(path, "w");
+    if (!fp) {
+        log_warning_fmt("could not open file=%s", path);
+        return 1;
+    }
+
+    // write header
+    int res = fprintf(fp, "JASC-PAL\n0100\n");
+    if (res < 0) {
+        log_warning("could not write header");
+        fclose(fp);
+        return 1;
+    }
+
+    // write number of pens
+    res = fprintf(fp, "%d\n", p->numPens);
+    if (res < 0) {
+        log_warning("could not write num pens");
+        fclose(fp);
+        return 2;
+    }
+
+    ColorRGB_t color;
+    for (int i = 0; i < p->numPens; ++i) {
+        pen_to_color_rgb(palette_8bit_get_pen_const(p, i), &color);
+        res = fprintf(fp, "%d %d %d\n", color.r, color.g, color.b);
+        if (res < 0) {
+            log_warning("could not write pen");
+            fclose(fp);
+            return 3;
+        }
+    }
+
+    fclose(fp);
+    return 0;
+}
+
 int palette_8bit_read_from_dat(Palette8Bit_t *p, const char *path) {
     assert(p);
     assert(path);
