@@ -32,11 +32,13 @@ unsigned char versiontag[] = "\0$VER: " VERSION;
 #define HEIGHT 240
 #define DEFAULT_DISTANCE 200.0f
 #define SCALE_HEIGHT 80.0f
+#define HORIZON 60.0f
 #else
 #define WIDTH 640
 #define HEIGHT 480
 #define DEFAULT_DISTANCE 320.0f
 #define SCALE_HEIGHT 160.0f
+#define HORIZON 120.0f
 #endif
 
 #define ROTATION_STEP_SIZE 4.0f
@@ -278,7 +280,6 @@ int main(int argc, char **argv) {
 
     // local variables
     int rotation = 0;
-    float horizon = 120.0f;
     int show_fps = 1;
     int skip_x = 0;
     TIMESTAMP before = 0, after = 0;
@@ -415,7 +416,7 @@ int main(int argc, char **argv) {
         log_debug("--> render");
         position[0] = normalize_float(position[0], (float) v.heightmap.height);
         position[1] = normalize_float(position[1], (float) v.heightmap.width);
-        voxelspace_render(position, rotation, horizon, distance, (float) dz, skip_x, &v);
+        voxelspace_render(position, rotation, HORIZON, distance, (float) dz, skip_x, &v);
 
         after = now();
         // draw text
