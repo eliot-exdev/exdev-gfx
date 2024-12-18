@@ -11,7 +11,6 @@ target_link_libraries(convert_ppm_to_dat
 
 add_executable(convert_dat_to_ppm
         convert_dat_to_ppm.c
-        convert_palette_to_jasc.c
 )
 target_link_libraries(convert_dat_to_ppm
         PRIVATE exdevgfx
