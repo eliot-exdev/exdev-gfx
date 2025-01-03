@@ -138,11 +138,9 @@ static LONG deadKeyConvert(const struct IntuiMessage *msg, char *kbuffer, struct
 
 int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const int maxEvents) {
     NativeWindow_t *w = (NativeWindow_t *) win;
-    struct IntuiMessage *msg = NULL;
+    struct IntuiMessage *msg = NULL; // since V39 it should be struct ExtIntuiMessage *
     struct InputEvent ievent;
     char buffer[KEY_BUFFER_SIZE];
-
-    ULONG msgClass;
 
     int numEvents = 0;
     event_init(events, maxEvents);
@@ -153,8 +151,7 @@ int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const i
 
     while (numEvents < maxEvents && (msg = GT_GetIMsg(w->window->UserPort))) {
         log_debug("--> got message");
-        msgClass = msg->Class;
-        switch (msgClass) {
+        switch (msg->Class) {
             case IDCMP_CLOSEWINDOW:
                 *closeEvent = TRUE;
                 log_debug("window close event");
