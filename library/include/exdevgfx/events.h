@@ -52,8 +52,9 @@ enum mouse_event {
 
 enum mouse_button_type {
     MOUSE_BUTTON_NONE,
-    MOUSE_BUTTON_0,
-    MOUSE_BUTTON_1
+    MOUSE_BUTTON_0,  // left
+    MOUSE_BUTTON_1,  // right
+    MOUSE_BUTTON_2   // middle
 };
 
 struct MouseEvent {

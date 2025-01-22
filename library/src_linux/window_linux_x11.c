@@ -8,6 +8,7 @@
 #define EXDEVGFX2_LOG_LEVEL 1
 
 #include "exdevgfx/logger.h"
+#include "exdevgfx/logger.h"
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -97,7 +98,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
 
     if (fs != FS_NO) {
         log_warning("full screen is currently not supported on linux");
-//        setFullscreen(x11_w->display,x11_w->window);
+        //        setFullscreen(x11_w->display,x11_w->window);
     }
 
     XSync(x11_w->display, 0);
@@ -111,7 +112,7 @@ void window_destroy(Window_t *w) {
     x11_w->img = NULL;
     XDestroyWindow(x11_w->display, x11_w->window);
     XCloseDisplay(x11_w->display);
-//    framebuffer_rgba_deinit(&x11_w->fb); // is not needed, because XDestroyImage clears the buffer
+    //    framebuffer_rgba_deinit(&x11_w->fb); // is not needed, because XDestroyImage clears the buffer
     free(x11_w);
 }
 
@@ -318,6 +319,8 @@ int window_poll_events(Window_t *w, char *closeEvent, Event_t *events, const int
                 events[numEvents].mouse_event.button = MOUSE_BUTTON_0;
             } else if (event.xbutton.button == 3) {
                 events[numEvents].mouse_event.button = MOUSE_BUTTON_1;
+            } else if (event.xbutton.button == 2) {
+                events[numEvents].mouse_event.button = MOUSE_BUTTON_2;
             } else {
                 events[numEvents].mouse_event.button = MOUSE_BUTTON_NONE;
             }

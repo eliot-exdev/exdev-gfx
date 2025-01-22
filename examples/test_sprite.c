@@ -20,7 +20,7 @@
 
 #define WIDTH 640
 #define HEIGHT 480
-#define DURATION 4000 // in ms
+#define DURATION 4000// in ms
 #define NUM_FUNCTIONS 11
 
 static Vertex2d_t posSprite1 = {WIDTH * 0.33f, HEIGHT * 0.5f};
@@ -113,6 +113,8 @@ int main() {
             } else if (event.mouse_event.button == MOUSE_BUTTON_1) {
                 posSprite2[0] = event.mouse_event.position_x;
                 posSprite2[1] = event.mouse_event.position_y;
+            } else if (event.mouse_event.button == MOUSE_BUTTON_2) {
+                log_info("middle mouse button pressed");
             }
         }
 

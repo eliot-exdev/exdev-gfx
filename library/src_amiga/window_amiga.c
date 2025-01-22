@@ -104,14 +104,14 @@ int window_get_inner_height(const Window_t *win) {
 
 void window_fill(Window_t *win, const Framebuffer_t *gb) {
     NativeWindow_t *w = (NativeWindow_t *) win;
-//    WritePixelArray(gb->buffer, 0, 0, gb->width * 3, w->window->RPort, 0, 0, gb->width, gb->height, RECTFMT_RGB);
+    //    WritePixelArray(gb->buffer, 0, 0, gb->width * 3, w->window->RPort, 0, 0, gb->width, gb->height, RECTFMT_RGB);
     WriteChunkyPixels(w->window->RPort, 0, 0, gb->width * 3, gb->height * 3, (unsigned char *) gb->buffer, gb->width);
 }
 
 void window_fill_8bit(Window_t *win, const Framebuffer8Bit_t *gb) {
     NativeWindow_t *w = (NativeWindow_t *) win;
     assert(w->screen);
-//    WritePixelArray(gb->buffer, 0, 0, gb->width, w->window->RPort, 0, 0, gb->width, gb->height, RECTFMT_LUT8);
+    //    WritePixelArray(gb->buffer, 0, 0, gb->width, w->window->RPort, 0, 0, gb->width, gb->height, RECTFMT_LUT8);
     WriteChunkyPixels(w->window->RPort, 0, 0, gb->width, gb->height, gb->buffer, gb->width);
 }
 
@@ -138,7 +138,7 @@ static LONG deadKeyConvert(const struct IntuiMessage *msg, char *kbuffer, struct
 
 int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const int maxEvents) {
     NativeWindow_t *w = (NativeWindow_t *) win;
-    struct IntuiMessage *msg = NULL; // since V39 it should be struct ExtIntuiMessage *
+    struct IntuiMessage *msg = NULL;// since V39 it should be struct ExtIntuiMessage *
     struct InputEvent ievent;
     char buffer[KEY_BUFFER_SIZE];
 
@@ -147,7 +147,7 @@ int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const i
 
     memset(&ievent, 0, sizeof(struct InputEvent));
 
-//    Wait(1L << w->window->UserPort->mp_SigBit);
+    //    Wait(1L << w->window->UserPort->mp_SigBit);
 
     while (numEvents < maxEvents && (msg = GT_GetIMsg(w->window->UserPort))) {
         log_debug("--> got message");
@@ -237,6 +237,14 @@ int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const i
                     case MENUUP:
                         events[numEvents].mouse_event.event = MOUSE_EVENT_BUTTON_RELEASED;
                         events[numEvents].mouse_event.button = MOUSE_BUTTON_1;
+                        break;
+                    case MIDDLEDOWN:
+                        events[numEvents].mouse_event.event = MOUSE_EVENT_BUTTON_PRESSED;
+                        events[numEvents].mouse_event.button = MOUSE_BUTTON_2;
+                        break;
+                    case MIDDLEUP:
+                        events[numEvents].mouse_event.event = MOUSE_EVENT_BUTTON_RELEASED;
+                        events[numEvents].mouse_event.button = MOUSE_BUTTON_2;
                         break;
                     default:
                         events[numEvents].mouse_event.event = MOUSE_EVENT_INVALID;
