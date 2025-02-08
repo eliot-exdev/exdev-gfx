@@ -215,6 +215,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    log_info_fmt("resolution=%d:%d", WIDTH, HEIGHT);
     log_info_fmt("heightmap path=%s", heightmap_path);
     log_info_fmt("colormap path=%s", colormap_path);
     log_info_fmt("palette path=%s", palette_path);
