@@ -2,15 +2,13 @@ C_FLAGS_MOS=-O3 -speed -final -DNDEBUG -D__MORPHOS__
 C_FLAGS_MOS_GCC=-Ofast -noixemul -mcpu=G4 -maltivec -mabi=altivec -DNDEBUG -D__MORPHOS__
 
 C_FLAGS_060=+aos68k -fpu=68060 -cpu=68060 -O3 -speed -final -DNDEBUG -D__AMIGA__
-C_FLAGS_060_GCC=-O4 -noixemul -DNDEBUG -march=68060 -mcpu=68060 -mtune=68060 -D__AMIGA__
-C_FLAGS_NO_FPU=+aos68k -c99 -cpu=68020 -O4 -speed -final -DNDEBUG -D__AMIGA__
+C_FLAGS_030_FPU=+aos68k -fpu=68881 -cpu=68030 -O3 -speed -final -DNDEBUG -D__AMIGA__
 
 LD_FLAGS_MOS=-lm -lamiga
 LD_FLAGS_MOS_GCC=-lm
 
-LD_FLAGS_060=-lm060 -lamiga
-LD_FLAGS_060_GCC=-lm
-LD_FLAGS_NO_FPU=-lmsoft -lamiga
+LD_FLAGS_060=-lm060 
+LD_FLAGS_030_FPU=-lm881 -lamiga
 
 CC=vc
 CC_GCC=ppc-morphos-gcc-11
@@ -18,12 +16,12 @@ CC_GCC=ppc-morphos-gcc-11
 PREFIX=ram:exdevgfx
 
 INCLUDES_MOS=-Ilibrary/include -Ilibrary/easing/include
-INCLUDES_AOS=-Ilibrary/include -Ilibrary/easing/include -IWork:workspace/CGraphX/C/Include
+INCLUDES_AOS=-Ilibrary/include -Ilibrary/easing/include
 
 all: voxelspace julia test_sprite other
 
 #--- voxelspace ---#
-voxelspace: voxelspace_mos voxelspace_mos_gcc voxelspace_060
+voxelspace: voxelspace_mos voxelspace_mos_gcc voxelspace_060 voxelspace_030_fpu
 
 voxelspace_mos: library/src/vertex3d.c library/src/events.c library/src/vertex2d.c library/src/matrix.c library/src/palette.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c library/src/heightmap.c\
                 library/src/voxelspace.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/voxelspace_main.c
@@ -37,6 +35,10 @@ voxelspace_060: library/src/vertex3d.c library/src/events.c library/src/vertex2d
                 library/src/voxelspace.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/voxelspace_main.c
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060} -DLOW_RESOLUTION
 
+voxelspace_030_fpu: library/src/vertex3d.c library/src/events.c library/src/vertex2d.c library/src/matrix.c library/src/palette.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c library/src/heightmap.c\
+                library/src/voxelspace.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/voxelspace_main.c
+	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_030_FPU} ${LD_FLAGS_030_FPU} -DLOW_RESOLUTION
+	
 #--- test sprite ---#
 test_sprite: test_sprite_mos test_sprite_mos_gcc
 
