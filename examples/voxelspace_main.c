@@ -168,6 +168,7 @@ static void parse_args(int argc, char **argv) {
 
 #define MAX_HEIGHT 120.0f
 #define MIN_HEIGHT 5.0f
+
 static void move(Vertex3d_t p, const char move_flag, const char strafe_flag, const char up_down_flag, const int rot) {
     if (move_flag == 0 && strafe_flag == 0 && up_down_flag == 0) {
         return;
@@ -419,11 +420,15 @@ int main(int argc, char **argv) {
         position[1] = normalize_float(position[1], (float) v.heightmap.width);
         voxelspace_render(position, rotation, HORIZON, distance, (float) dz, skip_x, &v);
 
-        after = now();
         // draw text
         if (show_fps) {
-            sprintf(fps_text, "%li", 1000 / (after - before));
-            framebuffer_8bit_draw_text(&fb, &mia1, fps_text, strlen(fps_text), font_color, 10, fb.height - 10);
+            after = now();
+            long time_elapsed = after - before;
+            if (time_elapsed == 0) {
+                time_elapsed = 1;
+            }
+            sprintf(fps_text, "%li", 1000 / time_elapsed);
+            framebuffer_8bit_draw_text(&fb, &mia1, fps_text, strlen(fps_text), font_color, 20, HEIGHT - 20);
         }
         before = now();
         window_fill_8bit(window, &fb);
