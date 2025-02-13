@@ -4,7 +4,7 @@
 
 #include "exdevgfx/window.h"
 
-//#define EXDEVGFX2_LOG_LEVEL 1
+#define EXDEVGFX2_LOG_LEVEL 2
 
 #include "exdevgfx/logger.h"
 #include "exdevgfx/exdev_base.h"
@@ -19,6 +19,10 @@
 #include <devices/keymap.h>
 #include <proto/console.h>
 #include <proto/gadtools.h>
+#include <libraries/asl.h>
+#include <utility/tagitem.h>
+#include <proto/asl.h>
+
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -37,14 +41,73 @@ Window_t *window_create(const int width, const int height, const char *title, co
         if (fs == FS_8_BIT) {
             depth = 8;
         }
-        const unsigned long id = BestModeID(BIDTAG_Depth, depth, BIDTAG_DesiredWidth, width, BIDTAG_DesiredHeight, height, TAG_DONE);
-        log_info_fmt("screen id=0x%08lx", id);
-        if (id == (unsigned long) INVALID_ID) {
+
+        struct TagItem smrtags[8];
+        smrtags[0].ti_Tag = ASLSM_TitleText;
+        smrtags[0].ti_Data = (ULONG) "Select screen mode";
+        smrtags[1].ti_Tag = ASLSM_DoWidth;
+        smrtags[1].ti_Data = TRUE;
+        smrtags[2].ti_Tag = ASLSM_DoHeight;
+        smrtags[2].ti_Data = TRUE;
+        smrtags[3].ti_Tag = ASLSM_DoDepth;
+        smrtags[3].ti_Data = TRUE;
+        smrtags[4].ti_Tag = ASLSM_MinWidth;
+        smrtags[4].ti_Data = width;
+        smrtags[5].ti_Tag = ASLSM_MinHeight;
+        smrtags[5].ti_Data = height;
+        smrtags[6].ti_Tag = ASLSM_MinDepth;
+        smrtags[6].ti_Data = depth;
+        smrtags[7].ti_Tag = TAG_END;
+
+        struct ScreenModeRequester *smr = 0;
+        unsigned long screen_id = (unsigned long) INVALID_ID;
+        int screen_width = 0;
+        int screen_height = 0;
+        int screen_depth = 0;
+        smr = (struct ScreenModeRequester *) AllocAslRequest(ASL_ScreenModeRequest, smrtags);
+        if (AslRequest(smr, 0L)) {
+            screen_id = smr->sm_DisplayID;
+            screen_width = smr->sm_DisplayWidth;
+            screen_height = smr->sm_DisplayHeight;
+            screen_depth = smr->sm_DisplayDepth;
+        } else {
+            log_warning("no screen mode selected by user");
+            FreeAslRequest(smr);
             free(w);
             return NULL;
         }
-        w->screen = OpenScreenTags(NULL, SA_Left, 0, SA_Top, 0, SA_Width, width, SA_Height, height, SA_Depth, depth,
-                                   SA_Type, CUSTOMSCREEN, SA_DisplayID, id,
+
+        FreeAslRequest(smr);
+
+//        const unsigned long id = BestModeID(BIDTAG_Depth, depth, BIDTAG_DesiredWidth, width, BIDTAG_DesiredHeight, height, TAG_DONE);
+        if (screen_id == (unsigned long) INVALID_ID) {
+            free(w);
+            log_warning("invalid screen id");
+            return NULL;
+        }
+        log_info_fmt("screen_id=0x%08lx", screen_id);
+        log_info_fmt("screen_width=%d", screen_width);
+        log_info_fmt("screen_height=%d", screen_height);
+        log_info_fmt("screen_depth=%d", screen_depth);
+
+        if (screen_width < width) {
+            free(w);
+            log_warning("screen width is to small");
+            return NULL;
+        }
+        if (screen_height < height) {
+            free(w);
+            log_warning("screen height is to small");
+            return NULL;
+        }
+        if (screen_depth < depth) {
+            free(w);
+            log_warning("screen depth is to small");
+            return NULL;
+        }
+
+        w->screen = OpenScreenTags(NULL, SA_Left, 0, SA_Top, 0, SA_Width, screen_width, SA_Height, screen_height, SA_Depth, screen_depth,
+                                   SA_Type, CUSTOMSCREEN, SA_DisplayID, screen_id,
                                    SA_Title, title, SA_Exclusive, TRUE, SA_SharePens, TRUE, SA_ShowTitle, FALSE, TAG_DONE);
 
         w->window = OpenWindowTags(NULL, WA_Left, 0, WA_Top, 0, WA_Width, width, WA_Height, height,
@@ -125,6 +188,7 @@ void window_update_palette(Window_t *win, const Palette8Bit_t *p) {
 }
 
 #define KEY_BUFFER_SIZE 8
+
 static LONG deadKeyConvert(const struct IntuiMessage *msg, char *kbuffer, struct InputEvent *ievent) {
     if (msg->Class != IDCMP_RAWKEY)
         return (-2);

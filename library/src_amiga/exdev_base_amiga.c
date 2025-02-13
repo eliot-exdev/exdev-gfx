@@ -8,11 +8,14 @@
 
 #include "exdevgfx/logger.h"
 
-#include <devices/console.h>
-#include <proto/console.h>
-#include <devices/timer.h>
+//#include <devices/console.h>
+//#include <proto/console.h>
+//#include <devices/timer.h>
 #include <proto/timer.h>
 #include <proto/exec.h>
+//#include <libraries/asl.h>
+//#include <utility/tagitem.h>
+//#include <proto/asl.h>
 
 int exdev_base_initiated = 0;
 
@@ -20,7 +23,7 @@ struct IntuitionBase *IntuitionBase = 0;
 struct GfxBase *GfxBase = 0;
 struct Library *GadToolsBase = 0;
 //struct Library *CyberGfxBase = 0;
-
+struct Library *AslBase = 0;
 //#define DEVICE_TYPE Library
 
 struct IOStdReq console_ioreq;
@@ -55,6 +58,11 @@ int exdev_base_init() {
     GadToolsBase = (struct Library *) OpenLibrary("gadtools.library", 0L);
     if (!GadToolsBase) {
         return 3;
+    }
+
+    AslBase = (struct Library *) OpenLibrary("asl.library", 40L);
+    if (!AslBase) {
+        return 4;
     }
 
 //    CyberGfxBase = (struct Library *) OpenLibrary("cybergraphics.library", 41L);
@@ -92,6 +100,11 @@ int exdev_base_deinit() {
 //        CloseLibrary((struct Library *) CyberGfxBase);
 //        CyberGfxBase = 0;
 //    }
+
+    if (AslBase) {
+        CloseLibrary((struct Library *) AslBase);
+        AslBase = 0;
+    }
 
     if (GadToolsBase) {
         CloseLibrary((struct Library *) GadToolsBase);
