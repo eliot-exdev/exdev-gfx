@@ -43,7 +43,7 @@ int pen_equals(const Pen_t *p1, const Pen_t *p2);
 
 struct Palette8Bit {
     int numPens;
-    Pen_t pens[256];
+    Pen_t pens[255];
 };
 
 typedef struct Palette8Bit Palette8Bit_t;

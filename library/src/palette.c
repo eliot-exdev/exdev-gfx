@@ -60,7 +60,7 @@ void palette_8bit_init(Palette8Bit_t *p, const int numPens) {
     assert(numPens <= 256);
 
     p->numPens = numPens;
-    for (unsigned char i = 0; i < numPens; ++i) {
+    for (int i = 0; i < numPens; ++i) {
         pen_init(&p->pens[i], 0, 0, 0);
     }
 }
