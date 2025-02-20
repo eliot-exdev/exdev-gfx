@@ -65,10 +65,10 @@ int exdev_base_init() {
         return 4;
     }
 
-//    CyberGfxBase = (struct Library *) OpenLibrary("cybergraphics.library", 41L);
-//    if (!CyberGfxBase) {
-//        return 4;
-//    }
+    //    CyberGfxBase = (struct Library *) OpenLibrary("cybergraphics.library", 41L);
+    //    if (!CyberGfxBase) {
+    //        return 4;
+    //    }
 
     OpenDevice("console.device", -1, (struct IORequest *) &console_ioreq, 0);
 #ifdef __MORPHOS__
@@ -76,12 +76,14 @@ int exdev_base_init() {
 #elif __AMIGA__
     ConsoleDevice = (struct Device *) console_ioreq.io_Device;
 #endif
+
     OpenDevice("timer.device", 0, &timer_ioreq, 0);
 #ifdef __MORPHOS__
     TimerBase = (struct Library *) timer_ioreq.io_Device;
 #elif __AMIGA__
     TimerBase = (struct Device *) timer_ioreq.io_Device;
 #endif
+
     exdev_base_initiated = 1;
     log_info("<-- exdev_base_init()");
     return 0;
@@ -94,12 +96,13 @@ int exdev_base_deinit() {
     log_info("--> exdev_base_deinit()");
 
     CloseDevice(&timer_ioreq);
+
     CloseDevice((struct IORequest *) &console_ioreq);
 
-//    if (CyberGfxBase) {
-//        CloseLibrary((struct Library *) CyberGfxBase);
-//        CyberGfxBase = 0;
-//    }
+    //    if (CyberGfxBase) {
+    //        CloseLibrary((struct Library *) CyberGfxBase);
+    //        CyberGfxBase = 0;
+    //    }
 
     if (AslBase) {
         CloseLibrary((struct Library *) AslBase);
