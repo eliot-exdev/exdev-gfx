@@ -42,22 +42,16 @@ Window_t *window_create(const int width, const int height, const char *title, co
             depth = 8;
         }
 
-        struct TagItem smrtags[8];
+        struct TagItem smrtags[5];
         smrtags[0].ti_Tag = ASLSM_TitleText;
         smrtags[0].ti_Data = (ULONG) "Select screen mode";
-        smrtags[1].ti_Tag = ASLSM_DoWidth;
-        smrtags[1].ti_Data = TRUE;
-        smrtags[2].ti_Tag = ASLSM_DoHeight;
-        smrtags[2].ti_Data = TRUE;
-        smrtags[3].ti_Tag = ASLSM_DoDepth;
-        smrtags[3].ti_Data = TRUE;
-        smrtags[4].ti_Tag = ASLSM_MinWidth;
-        smrtags[4].ti_Data = width;
-        smrtags[5].ti_Tag = ASLSM_MinHeight;
-        smrtags[5].ti_Data = height;
-        smrtags[6].ti_Tag = ASLSM_MinDepth;
-        smrtags[6].ti_Data = depth;
-        smrtags[7].ti_Tag = TAG_END;
+        smrtags[1].ti_Tag = ASLSM_MinWidth;
+        smrtags[1].ti_Data = width;
+        smrtags[2].ti_Tag = ASLSM_MinHeight;
+        smrtags[2].ti_Data = height;
+        smrtags[3].ti_Tag = ASLSM_MinDepth;
+        smrtags[3].ti_Data = depth;
+        smrtags[4].ti_Tag = TAG_END;
 
         struct ScreenModeRequester *smr = 0;
         unsigned long screen_id = (unsigned long) INVALID_ID;
