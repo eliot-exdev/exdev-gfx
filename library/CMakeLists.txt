@@ -3,7 +3,9 @@ cmake_minimum_required(VERSION 3.13)
 project(exdevgfx)
 find_package(X11 REQUIRED)
 
+# add external libraries
 add_subdirectory(easing)
+add_subdirectory(fpmath)
 
 if (MORPHOS OR AMIGAOS)
     add_library(${PROJECT_NAME} STATIC
@@ -75,8 +77,6 @@ else ()
             PUBLIC -Wno-c2x-extensions -Wno-unused-variable -fPIC -Wno-format
             )
 endif ()
-
-
 
 install(TARGETS ${PROJECT_NAME}
         LIBRARY DESTINATION lib
