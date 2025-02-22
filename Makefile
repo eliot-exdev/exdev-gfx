@@ -4,11 +4,11 @@ C_FLAGS_MOS_GCC=-Ofast -noixemul -mcpu=G4 -maltivec -mabi=altivec -DNDEBUG -D__M
 C_FLAGS_060=+aos68k -fpu=68060 -cpu=68060 -O3 -speed -final -DNDEBUG -D__AMIGA__
 C_FLAGS_030_FPU=+aos68k -fpu=68881 -cpu=68030 -O3 -speed -final -DNDEBUG -D__AMIGA__
 
-LD_FLAGS_MOS=-lm -lamiga
+LD_FLAGS_MOS=-lm
 LD_FLAGS_MOS_GCC=-lm
 
 LD_FLAGS_060=-lm060 
-LD_FLAGS_030_FPU=-lm881 -lamiga
+LD_FLAGS_030_FPU=-lm881
 
 CC=vc
 CC_GCC=ppc-morphos-gcc-11
