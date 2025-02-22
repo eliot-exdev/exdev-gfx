@@ -42,9 +42,12 @@ Window_t *window_create(const int width, const int height, const char *title, co
             depth = 8;
         }
 
+        char TITLE_TEXT[256];
+        sprintf(TITLE_TEXT, "Select screen mode (%dx%dx%d)", width, height, depth);
+
         struct TagItem smrtags[5];
         smrtags[0].ti_Tag = ASLSM_TitleText;
-        smrtags[0].ti_Data = (ULONG) "Select screen mode";
+        smrtags[0].ti_Data = (ULONG) TITLE_TEXT;
         smrtags[1].ti_Tag = ASLSM_MinWidth;
         smrtags[1].ti_Data = width;
         smrtags[2].ti_Tag = ASLSM_MinHeight;
