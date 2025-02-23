@@ -33,6 +33,22 @@ int main() {
         printf("f: %f, ff: %f\n", f, ff);
     }
 
+    // test float to int rounding
+    {
+        printf("-> rounding\n");
+        const float f = 42.4f;
+        const exdev_fp_t fp = exdev_float_to_fp(f);
+        const int i = exdev_fp_to_int(fp);
+        assert(i == 42);
+        printf("f:%f, i: %d\n", f, i);
+
+        const float ff = 42.6f;
+        const exdev_fp_t fpp = exdev_float_to_fp(f);
+        const int ii = exdev_fp_to_int(fpp);
+        assert(ii == 42);
+        printf("ff:%f, ii: %d\n", ff, ii);
+    }
+
     // test add
     {
         printf("-> add\n");

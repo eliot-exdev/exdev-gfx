@@ -11,5 +11,5 @@ add_executable(fpmath_test
 target_link_libraries(fpmath_test
         PRIVATE fpmath
 )
-target_link_libraries(fpmath_test
-        PRIVATE m)
+target_compile_definitions(fpmath_test PRIVATE EXDEV_FP_MATH)
+target_link_libraries(fpmath_test PRIVATE m)

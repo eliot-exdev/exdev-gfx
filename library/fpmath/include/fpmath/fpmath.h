@@ -6,6 +6,12 @@
 #ifndef EXDEVGFX_BASE_FPMATH_H
 #define EXDEVGFX_BASE_FPMATH_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef EXDEV_FP_MATH
+
 #define FPT_WBITS 17
 
 #include <fpmath/fptc.h>
@@ -38,5 +44,11 @@ typedef fpt exdev_fp_t;
 #define exdev_fp_cos(F) fpt_cos(F)
 #define exdev_fp_sqrt(A) fpt_sqrt(A)
 #define exdev_fp_abs(A) fpt_abs(A)
+#endif //EXDEV_FP_MATH
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //EXDEVGFX_BASE_FPMATH_H
+
