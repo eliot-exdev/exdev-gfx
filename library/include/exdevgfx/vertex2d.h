@@ -12,17 +12,17 @@ extern "C" {
 
 #include <exdevgfx/types.h>
 
-typedef FLOAT Vertex2d_t[2];
+typedef EXDEV_FLOAT Vertex2d_t[2];
 
 void vertex2d_init(Vertex2d_t v);
 
-void vertex2d_set(Vertex2d_t v, FLOAT x, FLOAT y);
+void vertex2d_set(Vertex2d_t v, EXDEV_FLOAT x, EXDEV_FLOAT y);
 
 void vertex2d_copy(const Vertex2d_t src, Vertex2d_t dst);
 
-FLOAT vertex2d_cross(const Vertex2d_t a, const Vertex2d_t b);
+EXDEV_FLOAT vertex2d_cross(const Vertex2d_t a, const Vertex2d_t b);
 
-void vertex2d_rotate(const Vertex2d_t src, Vertex2d_t dst, FLOAT a);
+void vertex2d_rotate(const Vertex2d_t src, Vertex2d_t dst, EXDEV_FLOAT a);
 
 #ifdef __cplusplus
 }

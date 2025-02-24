@@ -21,6 +21,7 @@ typedef fpt exdev_fp_t;
 // constants
 #define EXDEV_FP_ZERO FPT_ZERO
 #define EXDEV_FP_ONE FPT_ONE
+#define EXDEV_FP_ONE_HALF FPT_ONE_HALF
 #define EXDEV_FP_MINUS_ONE (-EXDEV_FP_ONE)
 
 #define EXDEV_FP_PI FPT_PI

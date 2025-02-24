@@ -6,9 +6,10 @@
 
 #include <stdio.h>
 #include <string.h>
-//#include <math.h>
 
-#define PI_ 3.141593f
+#ifndef EXDEV_FP_MATH
+#include <math.h>
+#endif
 
 //#define HALF_PI_ 1.570796f
 //static const float TWO_PI_ = 6.283185f;
@@ -34,12 +35,20 @@ int read_line(FILE *fp, char *line, const size_t size) {
     return read_bytes;
 }
 
-float deg_to_rad(const float deg) {
-    return deg * PI_ / 180.0f;
+EXDEV_FLOAT deg_to_rad(const EXDEV_FLOAT deg) {
+#ifdef EXDEV_FP_MATH
+    return exdev_fp_div(exdev_fp_mul(deg, EXDEV_FP_PI), exdev_int_to_fp(180));
+#else
+    return deg * M_PI / 180.0f;
+#endif
 }
 
-float rad_to_deg(const float rad) {
-    return rad * 180.0f / PI_;
+EXDEV_FLOAT rad_to_deg(const EXDEV_FLOAT rad) {
+#ifdef EXDEV_FP_MATH
+    return exdev_fp_mul(exdev_fp_mul(rad, exdev_int_to_fp(180)), EXDEV_FP_PI);
+#else
+    return rad * 180.0f / M_PI;
+#endif
 }
 
 // https://github.com/divideconcept/FastTrigo/blob/master/fasttrigo.cpp
@@ -91,6 +100,7 @@ float rad_to_deg(const float rad) {
 #if defined(__AMIGA__) || defined(__MORPHOS__)
 void swap_bytes_int(int *i) {(void)i;}
 #else
+
 void swap_bytes_int(int *i) {
     const int tmp = *i;
     const char *in = (char *) &tmp;
@@ -101,9 +111,10 @@ void swap_bytes_int(int *i) {
     out[2] = in[1];
     out[3] = in[0];
 }
+
 #endif
 
-float normalize_float(float f, const float d) {
+EXDEV_FLOAT normalize_float(EXDEV_FLOAT f, const EXDEV_FLOAT d) {
     if (f < 0) {
         while (f < 0) {
             f += d;

@@ -3,6 +3,7 @@
  */
 
 #include "exdevgfx/vertex3d.h"
+#include "exdevgfx/logger.h"
 
 #ifndef EXDEV_FP_MATH
 #include <math.h>
@@ -14,7 +15,7 @@ void vertex3d_init(Vertex3d_t v) {
     v[2] = 0;
 }
 
-void vertex3d_set(Vertex3d_t v, FLOAT x, FLOAT y, FLOAT z) {
+void vertex3d_set(Vertex3d_t v, EXDEV_FLOAT x, EXDEV_FLOAT y, EXDEV_FLOAT z) {
     v[0] = x;
     v[1] = y;
     v[2] = z;
@@ -26,7 +27,7 @@ void vertex3d_copy(const Vertex3d_t src, Vertex3d_t dst) {
     dst[2] = src[2];
 }
 
-void vertex3d_mul(const Vertex3d_t src, const FLOAT f, Vertex3d_t res) {
+void vertex3d_mul(const Vertex3d_t src, const EXDEV_FLOAT f, Vertex3d_t res) {
 #ifdef EXDEV_FP_MATH
     res[0] = exdev_fp_mul(src[0], f);
     res[1] = exdev_fp_mul(src[1], f);
@@ -38,7 +39,7 @@ void vertex3d_mul(const Vertex3d_t src, const FLOAT f, Vertex3d_t res) {
 #endif
 }
 
-void vertex3d_div(const Vertex3d_t src, const FLOAT f, Vertex3d_t res) {
+void vertex3d_div(const Vertex3d_t src, const EXDEV_FLOAT f, Vertex3d_t res) {
 #ifdef EXDEV_FP_MATH
     res[0] = exdev_fp_div(src[0], f);
     res[1] = exdev_fp_div(src[1], f);
@@ -86,7 +87,7 @@ void vertex3d_cross(const Vertex3d_t a, const Vertex3d_t b, Vertex3d_t res) {
 #endif
 }
 
-FLOAT vertex3d_dot(const Vertex3d_t a, const Vertex3d_t b) {
+EXDEV_FLOAT vertex3d_dot(const Vertex3d_t a, const Vertex3d_t b) {
 #ifdef EXDEV_FP_MATH
     return exdev_fp_add(exdev_fp_add(exdev_fp_mul(a[0], b[0]), exdev_fp_mul(a[1], b[1])), exdev_fp_mul(a[2], b[2]));
 #else
@@ -94,7 +95,7 @@ FLOAT vertex3d_dot(const Vertex3d_t a, const Vertex3d_t b) {
 #endif
 }
 
-FLOAT vertex3d_norm(const Vertex3d_t src) {
+EXDEV_FLOAT vertex3d_norm(const Vertex3d_t src) {
 #ifdef EXDEV_FP_MATH
     return exdev_fp_sqrt(vertex3d_dot(src, src));
 #else
@@ -102,10 +103,12 @@ FLOAT vertex3d_norm(const Vertex3d_t src) {
 #endif
 }
 
-FLOAT vertex3d_angle(const Vertex3d_t a, const Vertex3d_t b) {
+EXDEV_FLOAT vertex3d_angle(const Vertex3d_t a, const Vertex3d_t b) {
 #ifdef EXDEV_FP_MATH
-    (void)a;
-    (void)b;
+    // TODO: implement me!
+    (void) a;
+    (void) b;
+    log_warning("vertex3d_angle() not implemented yet!");
     return 0;
 #else
     const float angle = acos(vertex3d_dot(a, b) / (vertex3d_norm(a) * vertex3d_norm(b)));
@@ -116,14 +119,14 @@ FLOAT vertex3d_angle(const Vertex3d_t a, const Vertex3d_t b) {
 #endif
 }
 
-FLOAT vertex3d_distance(const Vertex3d_t a, const Vertex3d_t b) {
+EXDEV_FLOAT vertex3d_distance(const Vertex3d_t a, const Vertex3d_t b) {
     Vertex3d_t tmp;
     vertex3d_sub(a, b, tmp);
     return vertex3d_norm(tmp);
 }
 
 void vertex3d_normalize(const Vertex3d_t src, Vertex3d_t dst) {
-    const FLOAT f = vertex3d_norm(src);
+    const EXDEV_FLOAT f = vertex3d_norm(src);
 #ifdef EXDEV_FP_MATH
     dst[0] = exdev_fp_div(src[0], f);
     dst[1] = exdev_fp_div(src[1], f);

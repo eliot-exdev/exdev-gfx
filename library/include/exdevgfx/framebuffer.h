@@ -13,7 +13,11 @@
 extern "C" {
 #endif
 
+#ifdef EXDEV_FP_MATH
+#define edgeFunction(a, b, c) (exdev_fp_mul((c[0] - a[0]) , (b[1] - a[1])) - exdev_fp_mul((c[1] - a[1]) , (b[0] - a[0])))
+#else
 #define edgeFunction(a, b, c) ((c[0] - a[0]) * (b[1] - a[1]) - (c[1] - a[1]) * (b[0] - a[0]))
+#endif
 
 struct Framebuffer {
     int width;
@@ -76,8 +80,7 @@ int framebuffer_read_from_dat(Framebuffer_t *fb, const char *path);
 
 void framebuffer_draw_text(Framebuffer_t *fb, const Font_t *f, const char *text, int text_length, const ColorRGBA_t *c, int x, int y);
 
-void framebuffer_draw_text_rgb(Framebuffer_t *fb, const Font_t *f, const char *text, unsigned int text_length, const ColorRGB_t *c, int x,
-                               int y);
+void framebuffer_draw_text_rgb(Framebuffer_t *fb, const Font_t *f, const char *text, unsigned int text_length, const ColorRGB_t *c, int x, int y);
 
 #ifdef __cplusplus
 }

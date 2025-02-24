@@ -30,19 +30,38 @@ unsigned char versiontag[] = "\0$VER: " VERSION;
 #ifdef LOW_RESOLUTION
 #define WIDTH 320
 #define HEIGHT 240
+
+#ifdef EXDEV_FP_MATH
+#define DEFAULT_DISTANCE exdev_int_to_fp(200)
+#define SCALE_HEIGHT exdev_int_to_fp(80)
+#define HORIZON exdev_int_to_fp(60)
+#else
 #define DEFAULT_DISTANCE 200.0f
 #define SCALE_HEIGHT 80.0f
 #define HORIZON 60.0f
+#endif
 #else
 #define WIDTH 640
 #define HEIGHT 480
-#define DEFAULT_DISTANCE 320.0f
-#define SCALE_HEIGHT 160.0f
-#define HORIZON 120.0f
+
+#ifdef EXDEV_FP_MATH
+#define DEFAULT_DISTANCE exdev_int_to_fp(320)
+#define SCALE_HEIGHT exdev_int_to_fp(160)
+#define HORIZON exdev_int_to_fp(120)
+#else
+#define DEFAULT_DISTANCE 320.f
+#define SCALE_HEIGHT 160.f
+#define HORIZON 120.f
+#endif
 #endif
 
-#define ROTATION_STEP_SIZE 4.0f
-#define MOVEMENT_STEP_SIZE 3.0f
+#define ROTATION_STEP_SIZE 4
+
+#ifdef EXDEV_FP_MATH
+#define MOVEMENT_STEP_SIZE exdev_int_to_fp(3)
+#else
+#define MOVEMENT_STEP_SIZE 3
+#endif
 
 static const char COLORMAP_ONE[] = ASSETS_PREFIX"assets/first_color_map_8bit.dat";
 static const char COLORMAP_TWO[] = ASSETS_PREFIX"assets/second_color_map_8bit.dat";
@@ -81,7 +100,7 @@ static const char *colormap_path = COLORMAP_ONE;
 static const char *palette_path = PALETTE_ONE;
 static const char *sky_path = SKY_TEXTURE_ONE;
 
-static float distance = DEFAULT_DISTANCE;
+static EXDEV_FLOAT distance = DEFAULT_DISTANCE;
 static char demo_mode = 0;
 
 static void print_help() {
@@ -166,15 +185,21 @@ static void parse_args(int argc, char **argv) {
     }
 }
 
+#ifdef EXDEV_FP_MATH
+#define MAX_HEIGHT exdev_int_to_fp(120)
+#define MIN_HEIGHT exdev_int_to_fp(5)
+#else
 #define MAX_HEIGHT 120.0f
 #define MIN_HEIGHT 5.0f
+#endif
 
 static void move(Vertex3d_t p, const char move_flag, const char strafe_flag, const char up_down_flag, const int rot) {
     if (move_flag == 0 && strafe_flag == 0 && up_down_flag == 0) {
         return;
     }
 
-    Vertex2d_t movement = {0.f, 0.f};
+    Vertex2d_t movement;
+    vertex2d_init(movement);
 
     // move forward/backward
     if (move_flag == 1) {
@@ -192,8 +217,11 @@ static void move(Vertex3d_t p, const char move_flag, const char strafe_flag, con
 
     // rotate
     Vertex2d_t dst;
-    vertex2d_rotate(movement, dst, deg_to_rad((float) -rot));
-
+#ifdef EXDEV_FP_MATH
+    vertex2d_rotate(movement, dst, deg_to_rad(exdev_int_to_fp(-rot)));
+#else
+    vertex2d_rotate(movement, dst, deg_to_rad((EXDEV_FLOAT) -rot));
+#endif
     p[0] += dst[0];
     p[1] += dst[1];
 
@@ -284,15 +312,18 @@ int main(int argc, char **argv) {
     int rotation = 0;
     int show_fps = 1;
     int skip_x = 0;
-    TIMESTAMP before = 0, after = 0;
+    EXDEV_TIMESTAMP before = 0, after = 0;
 #ifdef LOW_RESOLUTION
     int dz = 5;
 #else
     int dz = 1;
 #endif
     Vertex3d_t position;
-    vertex3d_set(position, 512, 512, 80);
-
+#ifdef EXDEV_FP_MATH
+    vertex3d_set(position, exdev_int_to_fp(512), exdev_int_to_fp(512), exdev_int_to_fp(80));
+#else
+    vertex3d_set(position, 512.f, 512.f, 80.f);
+#endif
     char ctrl_move = 0; // 0=no, 1=forward, 2=backward
     char ctrl_rotate = 0; // 0=no, 1=right, 2=left
     char ctrl_up_down = 0; // 0=no, 1=up, 2=down
@@ -342,14 +373,26 @@ int main(int argc, char **argv) {
                         --dz;
                     break;
                 case KEY_TYPE_F4:
+#ifdef EXDEV_FP_MATH
+                    if (distance >= exdev_int_to_fp(30)) {
+                        distance -= exdev_int_to_fp(10);
+                    }
+#else
                     if (distance >= 30.0f) {
                         distance -= 10.f;
                     }
+#endif
                     break;
                 case KEY_TYPE_F5:
+#ifdef EXDEV_FP_MATH
+                    if (distance <= exdev_int_to_fp(600)) {
+                        distance += exdev_int_to_fp(10);
+                    }
+#else
                     if (distance <= 600.0f) {
                         distance += 10.f;
                     }
+#endif
                     break;
                 case KEY_TYPE_F6:
                     skip_x = !skip_x;
@@ -416,10 +459,15 @@ int main(int argc, char **argv) {
 
         // render
         log_debug("--> render");
-        position[0] = normalize_float(position[0], (float) v.heightmap.height);
-        position[1] = normalize_float(position[1], (float) v.heightmap.width);
-        voxelspace_render(position, rotation, HORIZON, distance, (float) dz, skip_x, &v);
-
+#ifdef EXDEV_FP_MATH
+        position[0] = normalize_float(position[0], exdev_int_to_fp(v.heightmap.height));
+        position[1] = normalize_float(position[1], exdev_int_to_fp(v.heightmap.width));
+        voxelspace_render(position, exdev_int_to_fp(rotation), HORIZON, distance, exdev_int_to_fp(dz), skip_x, &v);
+#else
+        position[0] = normalize_float(position[0], (EXDEV_FLOAT)v.heightmap.height);
+        position[1] = normalize_float(position[1], (EXDEV_FLOAT)v.heightmap.width);
+        voxelspace_render(position, rotation, HORIZON, distance, (EXDEV_FLOAT)dz, skip_x, &v);
+#endif
         // draw text
         if (show_fps) {
             after = now();

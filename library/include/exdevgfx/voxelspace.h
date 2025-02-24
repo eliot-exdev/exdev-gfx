@@ -16,18 +16,18 @@ struct Voxelspace {
     Heightmap_t heightmap;
     Framebuffer8Bit_t *fb;
     int *ybuffer;
-    float scale_height;
+    EXDEV_FLOAT scale_height;
     Color8Bit_t sky_color;
     Framebuffer8Bit_t *sky_texture;
 };
 
 typedef struct Voxelspace Voxelspace_t;
 
-void voxelspace_init(Voxelspace_t *v, Framebuffer8Bit_t *height_map, Framebuffer8Bit_t *color_map, Framebuffer8Bit_t *fb, float scale_height, Color8Bit_t sky_color, Framebuffer8Bit_t *sky_texture);
+void voxelspace_init(Voxelspace_t *v, Framebuffer8Bit_t *height_map, Framebuffer8Bit_t *color_map, Framebuffer8Bit_t *fb, EXDEV_FLOAT scale_height, Color8Bit_t sky_color, Framebuffer8Bit_t *sky_texture);
 
 void voxelspace_deinit(Voxelspace_t *v);
 
-void voxelspace_render(const Vertex3d_t p, float rot, float horizon, float distance, float dz, int skip_x, const Voxelspace_t *v);
+void voxelspace_render(const Vertex3d_t p, EXDEV_FLOAT rot, EXDEV_FLOAT horizon, EXDEV_FLOAT distance, EXDEV_FLOAT dz, int skip_x, const Voxelspace_t *v);
 
 #ifdef __cplusplus
 }

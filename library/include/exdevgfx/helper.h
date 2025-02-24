@@ -5,17 +5,17 @@
 #ifndef EXDEVGFX2_HELPER_H
 #define EXDEVGFX2_HELPER_H
 
-#include <stdio.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define TIMESTAMP long
+#include <exdevgfx/types.h>
 
-float deg_to_rad(float deg);
+#include <stdio.h>
 
-float rad_to_deg(float rad);
+EXDEV_FLOAT deg_to_rad(EXDEV_FLOAT deg);
+
+EXDEV_FLOAT rad_to_deg(EXDEV_FLOAT rad);
 
 #define min(a, b) (a < b ? a : b)
 
@@ -23,24 +23,16 @@ float rad_to_deg(float rad);
 
 int read_line(FILE *fp, char *line, size_t size);
 
-//float fast_sin(float f);
-//
-//float fast_cos(float f);
-//
-//float fast_sqrt(float f);
-//
-//float fast_acos(float f);
-
 void swap_bytes_int(int *i);
 
-TIMESTAMP now();
+EXDEV_TIMESTAMP now();
 
 static inline int normalize_int(int i, const int s) {
     i = i % s;
     return i < 0 ? (s + i) : i;
 }
 
-float normalize_float(float f, float d);
+EXDEV_FLOAT normalize_float(EXDEV_FLOAT f, EXDEV_FLOAT d);
 
 #ifdef __cplusplus
 }

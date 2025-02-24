@@ -3,29 +3,48 @@
  */
 
 #include "exdevgfx/matrix.h"
-//#include "exdevgfx/helper.h"
+
+#ifndef EXDEV_FP_MATH
 #include <math.h>
+#endif
 
 void matrix_init(Matrix_t m) {
+
+#ifdef EXDEV_FP_MATH
+    m[0][0] = exdev_int_to_fp(1);
+#else
     m[0][0] = 1;
+#endif
     m[0][1] = 0;
     m[0][2] = 0;
     m[0][3] = 0;
 
     m[1][0] = 0;
+#ifdef EXDEV_FP_MATH
+    m[1][1] = exdev_int_to_fp(1);
+#else
     m[1][1] = 1;
+#endif
     m[1][2] = 0;
     m[1][3] = 0;
 
     m[2][0] = 0;
     m[2][1] = 0;
+#ifdef EXDEV_FP_MATH
+    m[2][2] = exdev_int_to_fp(1);
+#else
     m[2][2] = 1;
+#endif
     m[2][3] = 0;
 
     m[3][0] = 0;
     m[3][1] = 0;
     m[3][2] = 0;
+#ifdef EXDEV_FP_MATH
+    m[3][3] = exdev_int_to_fp(1);
+#else
     m[3][3] = 1;
+#endif
 }
 
 void matrix_copy(const Matrix_t src, Matrix_t dst) {
@@ -55,7 +74,14 @@ void matrix_mul_matrix(const Matrix_t a, const Matrix_t b, Matrix_t dst) {
 
     for (int row = 0; row < 4; ++row) {
         for (int column = 0; column < 4; ++column) {
+#ifdef EXDEV_FP_MATH
+            tmp[row][column] = exdev_fp_mul(b[row][0], a[0][column]) +
+                               exdev_fp_mul(b[row][1], a[1][column]) +
+                               exdev_fp_mul(b[row][2], a[2][column]) +
+                               exdev_fp_mul(b[row][3], a[3][column]);
+#else
             tmp[row][column] = b[row][0] * a[0][column] + b[row][1] * a[1][column] + b[row][2] * a[2][column] + b[row][3] * a[3][column];
+#endif
         }
     }
 
@@ -63,9 +89,15 @@ void matrix_mul_matrix(const Matrix_t a, const Matrix_t b, Matrix_t dst) {
 }
 
 void matrix_mul_vector(const Matrix_t m, const Vertex3d_t vec, Vertex3d_t dst) {
+#ifdef EXDEV_FP_MATH
+    dst[0] = exdev_fp_mul(vec[0], m[0][0]) + exdev_fp_mul(vec[1], m[0][1]) + exdev_fp_mul(vec[2], m[0][2]) + m[0][3];
+    dst[1] = exdev_fp_mul(vec[0], m[1][0]) + exdev_fp_mul(vec[1], m[1][1]) + exdev_fp_mul(vec[2], m[1][2]) + m[1][3];
+    dst[2] = exdev_fp_mul(vec[0], m[2][0]) + exdev_fp_mul(vec[1], m[2][1]) + exdev_fp_mul(vec[2], m[2][2]) + m[2][3];
+#else
     dst[0] = vec[0] * m[0][0] + vec[1] * m[0][1] + vec[2] * m[0][2] + m[0][3];
     dst[1] = vec[0] * m[1][0] + vec[1] * m[1][1] + vec[2] * m[1][2] + m[1][3];
     dst[2] = vec[0] * m[2][0] + vec[1] * m[2][1] + vec[2] * m[2][2] + m[2][3];
+#endif
 }
 
 void matrix_rotate(const Matrix_t src, const Vertex3d_t vec, Matrix_t dst) {
@@ -74,10 +106,14 @@ void matrix_rotate(const Matrix_t src, const Vertex3d_t vec, Matrix_t dst) {
     matrix_rotateZ(src, vec[2], dst);
 }
 
-void matrix_rotateX(const Matrix_t src, const float rx, Matrix_t dst) {
-    const float c = cos(rx);
-    const float s = sin(rx);
-
+void matrix_rotateX(const Matrix_t src, const EXDEV_FLOAT rx, Matrix_t dst) {
+#ifdef EXDEV_FP_MATH
+    const EXDEV_FLOAT c = exdev_fp_cos(rx);
+    const EXDEV_FLOAT s = exdev_fp_sin(rx);
+#else
+    const EXDEV_FLOAT c = cos(rx);
+    const EXDEV_FLOAT s = sin(rx);
+#endif
     MATRIX_DEFAULT(rm);
     rm[1][1] = c;
     rm[1][2] = -s;
@@ -87,9 +123,14 @@ void matrix_rotateX(const Matrix_t src, const float rx, Matrix_t dst) {
     matrix_mul_matrix(src, rm, dst);
 }
 
-void matrix_rotateY(const Matrix_t src, const float ry, Matrix_t dst) {
-    const float c = cos(ry);
-    const float s = sin(ry);
+void matrix_rotateY(const Matrix_t src, const EXDEV_FLOAT ry, Matrix_t dst) {
+#ifdef EXDEV_FP_MATH
+    const EXDEV_FLOAT c = exdev_fp_cos(ry);
+    const EXDEV_FLOAT s = exdev_fp_sin(ry);
+#else
+    const EXDEV_FLOAT c = cos(ry);
+    const EXDEV_FLOAT s = sin(ry);
+#endif
 
     MATRIX_DEFAULT(rm);
     rm[0][0] = c;
@@ -100,10 +141,14 @@ void matrix_rotateY(const Matrix_t src, const float ry, Matrix_t dst) {
     matrix_mul_matrix(src, rm, dst);
 }
 
-void matrix_rotateZ(const Matrix_t src, const float rz, Matrix_t dst) {
-    const float c = cos(rz);
-    const float s = sin(rz);
-
+void matrix_rotateZ(const Matrix_t src, const EXDEV_FLOAT rz, Matrix_t dst) {
+#ifdef EXDEV_FP_MATH
+    const EXDEV_FLOAT c = exdev_fp_cos(rz);
+    const EXDEV_FLOAT s = exdev_fp_sin(rz);
+#else
+    const EXDEV_FLOAT c = cos(rz);
+    const EXDEV_FLOAT s = sin(rz);
+#endif
     MATRIX_DEFAULT(rm);
     rm[0][0] = c;
     rm[0][1] = -s;

@@ -45,6 +45,7 @@ void heightmap_init_with_framebuffer(Heightmap_t *hm, const Framebuffer8Bit_t *h
 
 HeightmapValue_t *heightmap_value_at(const Heightmap_t *hm, const int x, const int y) {
     assert(hm);
+    assert(hm->values);
     assert(x < hm->width);
     assert(y < hm->height);
     assert(x >= 0);

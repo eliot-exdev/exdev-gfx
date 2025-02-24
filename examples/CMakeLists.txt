@@ -59,12 +59,12 @@ elseif (MORPHOS)
         set_target_properties(voxelspace PROPERTIES OUTPUT_NAME "voxelspace_mos_ppc")
 endif ()
 
-add_executable(test_3d
-        test_3d.c
-        )
-target_link_libraries(test_3d
-        exdevgfx
-        )
+#add_executable(test_3d
+#        test_3d.c
+#        )
+#target_link_libraries(test_3d
+#        exdevgfx
+#        )
 
 add_executable(render_palette
         render_palette.c
@@ -93,6 +93,7 @@ add_executable(test_sprite
 target_link_libraries(test_sprite
         exdevgfx
         easing
+        m
         )
 
 install(TARGETS julia voxelspace

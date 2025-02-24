@@ -256,36 +256,56 @@ void framebuffer_fill_rect_rgb(Framebuffer_t *fb, int x, int y, int width, int h
 }
 
 struct FloatColorRGBA {
-    float r;
-    float g;
-    float b;
-    float a;
+    EXDEV_FLOAT r;
+    EXDEV_FLOAT g;
+    EXDEV_FLOAT b;
+    EXDEV_FLOAT a;
 };
 typedef struct FloatColorRGBA FloatColorRGBA_t;
 
 static inline void color_rgba_to_float_color_rgba(const ColorRGBA_t *src, FloatColorRGBA_t *dst) {
+#ifdef EXDEV_FP_MATH
+    dst->r = exdev_fp_div(exdev_int_to_fp(src->r), exdev_int_to_fp(255));
+    dst->g = exdev_fp_div(exdev_int_to_fp(src->g), exdev_int_to_fp(255));
+    dst->b = exdev_fp_div(exdev_int_to_fp(src->b), exdev_int_to_fp(255));
+    dst->a = exdev_fp_div(exdev_int_to_fp(src->a), exdev_int_to_fp(255));
+#else
     dst->r = (float) src->r / 255.f;
     dst->g = (float) src->g / 255.f;
     dst->b = (float) src->b / 255.f;
     dst->a = (float) src->a / 255.f;
+#endif
 }
 
 static inline void float_color_rgba_to_color_rgba(const FloatColorRGBA_t *src, ColorRGBA_t *dst) {
+#ifdef EXDEV_FP_MATH
+    dst->r = (unsigned char) exdev_fp_to_int(exdev_fp_mul(src->r, exdev_int_to_fp(255)));
+    dst->g = (unsigned char) exdev_fp_to_int(exdev_fp_mul(src->g, exdev_int_to_fp(255)));
+    dst->b = (unsigned char) exdev_fp_to_int(exdev_fp_mul(src->b, exdev_int_to_fp(255)));
+    dst->a = (unsigned char) exdev_fp_to_int(exdev_fp_mul(src->a, exdev_int_to_fp(255)));
+#else
     dst->r = (unsigned char) (src->r * 255);
     dst->g = (unsigned char) (src->g * 255);
     dst->b = (unsigned char) (src->b * 255);
     dst->a = (unsigned char) (src->a * 255);
+#endif
 }
+
+#ifdef EXDEV_FP_MATH
+#define edgeFunction(a, b, c) (exdev_fp_mul((c[0] - a[0]) , (b[1] - a[1])) - exdev_fp_mul((c[1] - a[1]) , (b[0] - a[0])))
+#else
+#define edgeFunction(a, b, c) ((c[0] - a[0]) * (b[1] - a[1]) - (c[1] - a[1]) * (b[0] - a[0]))
+#endif
 
 void framebuffer_fill_triangle(Framebuffer_t *fb, Vertex2d_t *triangle, const ColorRGBA_t *colors) {
     int j, i;
     Vertex2d_t p;
-    float w0, w1, w2;
+    EXDEV_FLOAT w0, w1, w2;
     ColorRGBA_t color;
     int xmin, xmax, ymin, ymax;
     FloatColorRGBA_t floatColor;
     FloatColorRGBA_t floatColors[3];
-    const float area = edgeFunction(triangle[0], triangle[1], triangle[2]);
+    const EXDEV_FLOAT area = edgeFunction(triangle[0], triangle[1], triangle[2]);
 
     color_rgba_to_float_color_rgba(&colors[0], &floatColors[0]);
     color_rgba_to_float_color_rgba(&colors[1], &floatColors[1]);
@@ -302,6 +322,19 @@ void framebuffer_fill_triangle(Framebuffer_t *fb, Vertex2d_t *triangle, const Co
             w0 = edgeFunction(triangle[1], triangle[2], p);
             w1 = edgeFunction(triangle[2], triangle[0], p);
             w2 = edgeFunction(triangle[0], triangle[1], p);
+#ifdef EXDEV_FP_MATH
+            if (w0 >= 0 && w1 >= 0 && w2 >= 0) {
+                w0 = exdev_fp_div(w0, area);
+                w1 = exdev_fp_div(w1, area);
+                w2 = exdev_fp_div(w2, area);
+                floatColor.r = exdev_fp_mul(w0, floatColors[0].r) + exdev_fp_mul(w1, floatColors[1].r) + exdev_fp_mul(w2, floatColors[2].r);
+                floatColor.g = exdev_fp_mul(w0, floatColors[0].g) + exdev_fp_mul(w1, floatColors[1].g) + exdev_fp_mul(w2, floatColors[2].g);
+                floatColor.b = exdev_fp_mul(w0, floatColors[0].b) + exdev_fp_mul(w1, floatColors[1].b) + exdev_fp_mul(w2, floatColors[2].b);
+                floatColor.a = exdev_fp_mul(w0, floatColors[0].a) + exdev_fp_mul(w1, floatColors[1].a) + exdev_fp_mul(w2, floatColors[2].a);
+                float_color_rgba_to_color_rgba(&floatColor, &color);
+                framebuffer_draw_pixel(fb, i, j, &color);
+            }
+#else
             if (w0 >= 0 && w1 >= 0 && w2 >= 0) {
                 w0 /= area;
                 w1 /= area;
@@ -313,6 +346,7 @@ void framebuffer_fill_triangle(Framebuffer_t *fb, Vertex2d_t *triangle, const Co
                 float_color_rgba_to_color_rgba(&floatColor, &color);
                 framebuffer_draw_pixel(fb, i, j, &color);
             }
+#endif
         }
     }
 }
@@ -343,10 +377,14 @@ void framebuffer_fill_triangle_rgb(Framebuffer_t *fb, const Vertex2d_t *triangle
         ymax = fb->height;
     }
 
-    float w0, w1, w2;
+    EXDEV_FLOAT w0, w1, w2;
     for (int j = ymin; j < ymax; ++j) {
         for (int i = xmin; i < xmax; ++i) {
+#ifdef EXDEV_FP_MATH
+            const Vertex2d_t p = {exdev_int_to_fp(i), exdev_int_to_fp(j)};
+#else
             const Vertex2d_t p = {(float) i, (float) j};
+#endif
             w0 = edgeFunction(triangle[1], triangle[2], p);
             w1 = edgeFunction(triangle[2], triangle[0], p);
             w2 = edgeFunction(triangle[0], triangle[1], p);
@@ -358,8 +396,8 @@ void framebuffer_fill_triangle_rgb(Framebuffer_t *fb, const Vertex2d_t *triangle
 }
 
 // https://www-users.mat.uni.torun.pl//~wrona/3d_tutor/tri_fillers.html
-static inline void vertex2d_swap(const float **a, const float **b) {
-    const float *tmp = *a;
+static inline void vertex2d_swap(const EXDEV_FLOAT **a, const EXDEV_FLOAT **b) {
+    const EXDEV_FLOAT *tmp = *a;
     *a = *b;
     *b = tmp;
 }
@@ -372,9 +410,9 @@ static inline void vertex2d_swap(const float **a, const float **b) {
 #define Cy v3[1]
 
 void framebuffer_fill_triangle_fast(Framebuffer_t *fb, const Vertex2d_t *triangle, const ColorRGB_t *color) {
-    const float *v1 = triangle[0];
-    const float *v2 = triangle[1];
-    const float *v3 = triangle[2];
+    const EXDEV_FLOAT *v1 = triangle[0];
+    const EXDEV_FLOAT *v2 = triangle[1];
+    const EXDEV_FLOAT *v3 = triangle[2];
 
     if (v1[1] > v2[1])
         vertex2d_swap(&v1, &v2);
@@ -383,28 +421,46 @@ void framebuffer_fill_triangle_fast(Framebuffer_t *fb, const Vertex2d_t *triangl
     if (v1[1] > v2[1])
         vertex2d_swap(&v1, &v2);
 
-    float dx1 = 0, dx2 = 0, dx3 = 0;
+    EXDEV_FLOAT dx1 = 0, dx2 = 0, dx3 = 0;
+#ifdef EXDEV_FP_MATH
     if (By - Ay > 0)
-        dx1 = (Bx - Ax) / (By - Ay);
+        dx1 = exdev_fp_div((Bx - Ax), (By - Ay));
     if (Cy - Ay > 0)
-        dx2 = (Cx - Ax) / (Cy - Ay);
+        dx2 = exdev_fp_div((Cx - Ax), (Cy - Ay));
     if (Cy - By > 0)
-        dx3 = (Cx - Bx) / (Cy - By);
-
-    float Sx = Ax, Sy = Ay, Ex = Ax, Ey = By;
+        dx3 = exdev_fp_div((Cx - Bx), (Cy - By));
+#else
+        if (By - Ay > 0)
+            dx1 = (Bx - Ax) / (By - Ay);
+        if (Cy - Ay > 0)
+            dx2 = (Cx - Ax) / (Cy - Ay);
+        if (Cy - By > 0)
+            dx3 = (Cx - Bx) / (Cy - By);
+#endif
+    EXDEV_FLOAT Sx = Ax, Sy = Ay, Ex = Ax, Ey = By;
     if (Ax <= Bx) {
         while (Sy < Ey) {
             Sx += dx2;
             Ex += dx1;
+#ifdef EXDEV_FP_MATH
+            framebuffer_draw_horizontal_line(fb, exdev_fp_to_int(Sx), exdev_fp_to_int(Sy), exdev_fp_to_int (Ex - Sx), color);
+            Sy = exdev_fp_add(Sy, exdev_int_to_fp(1));
+#else
             framebuffer_draw_horizontal_line(fb, (int) Sx, (int) Sy, (int) (Ex - Sx), color);
             ++Sy;
+#endif
         }
     } else {
         while (Sy < Ey) {
             Sx += dx1;
             Ex += dx2;
+#ifdef EXDEV_FP_MATH
+            framebuffer_draw_horizontal_line(fb, exdev_fp_to_int(Sx), exdev_fp_to_int(Sy), exdev_fp_to_int (Ex - Sx), color);
+            Sy = exdev_fp_add(Sy, exdev_int_to_fp(1));
+#else
             framebuffer_draw_horizontal_line(fb, (int) Sx, (int) Sy, (int) (Ex - Sx), color);
             ++Sy;
+#endif
         }
     }
 
@@ -415,16 +471,26 @@ void framebuffer_fill_triangle_fast(Framebuffer_t *fb, const Vertex2d_t *triangl
         while (Sy < Ey) {
             Sx += dx3;
             Ex += dx2;
+#ifdef EXDEV_FP_MATH
+            framebuffer_draw_horizontal_line(fb, exdev_fp_to_int(Sx), exdev_fp_to_int(Sy), exdev_fp_to_int (Ex - Sx), color);
+            Sy = exdev_fp_add(Sy, exdev_int_to_fp(1));
+#else
             framebuffer_draw_horizontal_line(fb, (int) Sx, (int) Sy, (int) (Ex - Sx), color);
             ++Sy;
+#endif
         }
     } else {
         Ex = Bx;
         while (Sy < Ey) {
             Sx += dx2;
             Ex += dx3;
+#ifdef EXDEV_FP_MATH
+            framebuffer_draw_horizontal_line(fb, exdev_fp_to_int(Sx), exdev_fp_to_int(Sy), exdev_fp_to_int (Ex - Sx), color);
+            Sy = exdev_fp_add(Sy, exdev_int_to_fp(1));
+#else
             framebuffer_draw_horizontal_line(fb, (int) Sx, (int) Sy, (int) (Ex - Sx), color);
             ++Sy;
+#endif
         }
     }
 }
@@ -467,11 +533,11 @@ int framebuffer_num_pixels(const Framebuffer_t *fb) {
 }
 
 int framebuffer_num_bytes(const Framebuffer_t *fb) {
-    return fb->width * fb->height * sizeof(ColorRGB_t);
+    return fb->width * fb->height * (int) sizeof(ColorRGB_t);
 }
 
 int framebuffer_num_bytes_per_line(const Framebuffer_t *fb) {
-    return fb->width * sizeof(ColorRGB_t);
+    return fb->width * (int) sizeof(ColorRGB_t);
 }
 
 int framebuffer_save(const Framebuffer_t *fb, const char *path) {
@@ -652,9 +718,7 @@ int framebuffer_read_from_dat(Framebuffer_t *fb, const char *path) {
     return 0;
 }
 
-void
-framebuffer_draw_text(Framebuffer_t *fb, const Font_t *f, const char *text, const int text_length, const ColorRGBA_t *c,
-                      const int x, const int y) {
+void framebuffer_draw_text(Framebuffer_t *fb, const Font_t *f, const char *text, const int text_length, const ColorRGBA_t *c, const int x, const int y) {
     assert(fb);
     assert(f);
     assert(text);
@@ -672,8 +736,7 @@ framebuffer_draw_text(Framebuffer_t *fb, const Font_t *f, const char *text, cons
     }
 }
 
-void framebuffer_draw_text_rgb(Framebuffer_t *fb, const Font_t *f, const char *text, unsigned int text_length, const ColorRGB_t *c, int x,
-                               int y) {
+void framebuffer_draw_text_rgb(Framebuffer_t *fb, const Font_t *f, const char *text, unsigned int text_length, const ColorRGB_t *c, int x, int y) {
     assert(fb);
     assert(f);
     assert(text);

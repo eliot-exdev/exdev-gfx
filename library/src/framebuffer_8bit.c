@@ -68,6 +68,7 @@ void framebuffer_8bit_fill(Framebuffer8Bit_t *fb, Color8Bit_t c) {
 
 Color8Bit_t *framebuffer_8bit_pixel_at(const Framebuffer8Bit_t *fb, const int x, const int y) {
     assert(fb);
+    assert(fb->buffer);
     assert(x < fb->width);
     assert(y < fb->height);
     assert(x >= 0);
@@ -338,47 +339,47 @@ framebuffer_8bit_draw_text(Framebuffer8Bit_t *fb, const Font_t *f, const char *t
     }
 }
 
-void framebuffer_8bit_fill_triangle(Framebuffer8Bit_t *fb, const Vertex2d_t *triangle, const Color8Bit_t c) {
-    int xmin = min(min(triangle[0][0], triangle[1][0]), triangle[2][0]);
-    int xmax = max(max(triangle[0][0], triangle[1][0]), triangle[2][0]);
-    int ymin = min(min(triangle[0][1], triangle[1][1]), triangle[2][1]);
-    int ymax = max(max(triangle[0][1], triangle[1][1]), triangle[2][1]);
-
-    if (xmax <= 0 || xmin >= fb->width) {
-        return;
-    }
-    if (ymax <= 0 || ymin >= fb->height) {
-        return;
-    }
-
-    if (xmin < 0) {
-        xmin = 0;
-    }
-    if (xmax >= fb->width) {
-        xmax = fb->width - 1;
-    }
-    if (ymin < 0) {
-        ymin = 0;
-    }
-    if (ymax >= fb->height) {
-        ymax = fb->height - 1;
-    }
-
-    float w0, w1, w2;
-    Vertex2d_t p;
-    for (int j = ymin; j <= ymax; ++j) {
-        for (int i = xmin; i <= xmax; ++i) {
-            p[0] = (float) i;
-            p[1] = (float) j;
-            w0 = edgeFunction(triangle[1], triangle[2], p);
-            w1 = edgeFunction(triangle[2], triangle[0], p);
-            w2 = edgeFunction(triangle[0], triangle[1], p);
-            if (w0 > 0 && w1 > 0 && w2 > 0) {
-                *framebuffer_8bit_pixel_at(fb, i, j) = c;
-            }
-        }
-    }
-}
+//void framebuffer_8bit_fill_triangle(Framebuffer8Bit_t *fb, const Vertex2d_t *triangle, const Color8Bit_t c) {
+//    int xmin = min(min(triangle[0][0], triangle[1][0]), triangle[2][0]);
+//    int xmax = max(max(triangle[0][0], triangle[1][0]), triangle[2][0]);
+//    int ymin = min(min(triangle[0][1], triangle[1][1]), triangle[2][1]);
+//    int ymax = max(max(triangle[0][1], triangle[1][1]), triangle[2][1]);
+//
+//    if (xmax <= 0 || xmin >= fb->width) {
+//        return;
+//    }
+//    if (ymax <= 0 || ymin >= fb->height) {
+//        return;
+//    }
+//
+//    if (xmin < 0) {
+//        xmin = 0;
+//    }
+//    if (xmax >= fb->width) {
+//        xmax = fb->width - 1;
+//    }
+//    if (ymin < 0) {
+//        ymin = 0;
+//    }
+//    if (ymax >= fb->height) {
+//        ymax = fb->height - 1;
+//    }
+//
+//    float w0, w1, w2;
+//    Vertex2d_t p;
+//    for (int j = ymin; j <= ymax; ++j) {
+//        for (int i = xmin; i <= xmax; ++i) {
+//            p[0] = (float) i;
+//            p[1] = (float) j;
+//            w0 = edgeFunction(triangle[1], triangle[2], p);
+//            w1 = edgeFunction(triangle[2], triangle[0], p);
+//            w2 = edgeFunction(triangle[0], triangle[1], p);
+//            if (w0 > 0 && w1 > 0 && w2 > 0) {
+//                *framebuffer_8bit_pixel_at(fb, i, j) = c;
+//            }
+//        }
+//    }
+//}
 
 #define Ax v1[0]
 #define Ay v1[1]
@@ -387,69 +388,69 @@ void framebuffer_8bit_fill_triangle(Framebuffer8Bit_t *fb, const Vertex2d_t *tri
 #define Cx v3[0]
 #define Cy v3[1]
 
-static inline void vertex2d_swap(const float **a, const float **b) {
-    const float *tmp = *a;
+static inline void vertex2d_swap(const EXDEV_FLOAT **a, const EXDEV_FLOAT **b) {
+    const EXDEV_FLOAT *tmp = *a;
     *a = *b;
     *b = tmp;
 }
 
-void framebuffer_8bit_fill_triangle_fast(Framebuffer8Bit_t *fb, const Vertex2d_t *triangle, const Color8Bit_t c) {
-    const float *v1 = triangle[0];
-    const float *v2 = triangle[1];
-    const float *v3 = triangle[2];
-
-    if (v1[1] > v2[1])
-        vertex2d_swap(&v1, &v2);
-    if (v2[1] > v3[1])
-        vertex2d_swap(&v2, &v3);
-    if (v1[1] > v2[1])
-        vertex2d_swap(&v1, &v2);
-
-    float dx1 = 0, dx2 = 0, dx3 = 0;
-    if (By - Ay > 0)
-        dx1 = (Bx - Ax) / (By - Ay);
-    if (Cy - Ay > 0)
-        dx2 = (Cx - Ax) / (Cy - Ay);
-    if (Cy - By > 0)
-        dx3 = (Cx - Bx) / (Cy - By);
-
-    float Sx = Ax, Sy = Ay, Ex = Ax, Ey = By;
-    if (Ax <= Bx) {
-        while (Sy < Ey) {
-            framebuffer_8bit_draw_horizontal_line(fb, (int) Sx, (int) Sy, (int) (Ex - Sx), c);
-            Sx += dx2;
-            Ex += dx1;
-            ++Sy;
-        }
-    } else {
-        while (Sy < Ey) {
-            framebuffer_8bit_draw_horizontal_line(fb, (int) Sx, (int) Sy, (int) (Ex - Sx), c);
-            Sx += dx1;
-            Ex += dx2;
-            ++Sy;
-        }
-    }
-
-    Sy = By;
-    Ey = Cy;
-    if (Bx <= Cx) {
-        Sx = Bx;
-        while (Sy < Ey) {
-            framebuffer_8bit_draw_horizontal_line(fb, (int) Sx, (int) Sy, (int) (Ex - Sx), c);
-            Sx += dx3;
-            Ex += dx2;
-            ++Sy;
-        }
-    } else {
-        Ex = Bx;
-        while (Sy < Ey) {
-            framebuffer_8bit_draw_horizontal_line(fb, (int) Sx, (int) Sy, (int) (Ex - Sx), c);
-            Sx += dx2;
-            Ex += dx3;
-            ++Sy;
-        }
-    }
-}
+//void framebuffer_8bit_fill_triangle_fast(Framebuffer8Bit_t *fb, const Vertex2d_t *triangle, const Color8Bit_t c) {
+//    const float *v1 = triangle[0];
+//    const float *v2 = triangle[1];
+//    const float *v3 = triangle[2];
+//
+//    if (v1[1] > v2[1])
+//        vertex2d_swap(&v1, &v2);
+//    if (v2[1] > v3[1])
+//        vertex2d_swap(&v2, &v3);
+//    if (v1[1] > v2[1])
+//        vertex2d_swap(&v1, &v2);
+//
+//    float dx1 = 0, dx2 = 0, dx3 = 0;
+//    if (By - Ay > 0)
+//        dx1 = (Bx - Ax) / (By - Ay);
+//    if (Cy - Ay > 0)
+//        dx2 = (Cx - Ax) / (Cy - Ay);
+//    if (Cy - By > 0)
+//        dx3 = (Cx - Bx) / (Cy - By);
+//
+//    float Sx = Ax, Sy = Ay, Ex = Ax, Ey = By;
+//    if (Ax <= Bx) {
+//        while (Sy < Ey) {
+//            framebuffer_8bit_draw_horizontal_line(fb, (int) Sx, (int) Sy, (int) (Ex - Sx), c);
+//            Sx += dx2;
+//            Ex += dx1;
+//            ++Sy;
+//        }
+//    } else {
+//        while (Sy < Ey) {
+//            framebuffer_8bit_draw_horizontal_line(fb, (int) Sx, (int) Sy, (int) (Ex - Sx), c);
+//            Sx += dx1;
+//            Ex += dx2;
+//            ++Sy;
+//        }
+//    }
+//
+//    Sy = By;
+//    Ey = Cy;
+//    if (Bx <= Cx) {
+//        Sx = Bx;
+//        while (Sy < Ey) {
+//            framebuffer_8bit_draw_horizontal_line(fb, (int) Sx, (int) Sy, (int) (Ex - Sx), c);
+//            Sx += dx3;
+//            Ex += dx2;
+//            ++Sy;
+//        }
+//    } else {
+//        Ex = Bx;
+//        while (Sy < Ey) {
+//            framebuffer_8bit_draw_horizontal_line(fb, (int) Sx, (int) Sy, (int) (Ex - Sx), c);
+//            Sx += dx2;
+//            Ex += dx3;
+//            ++Sy;
+//        }
+//    }
+//}
 
 //void framebuffer_8bit_fill_triangle_texture(Framebuffer8Bit_t *fb, const Vertex2d_t *triangle, const Framebuffer8Bit_t *texture) {
 //    int xmin = min(min(triangle[0][0], triangle[1][0]), triangle[2][0]);
@@ -545,8 +546,8 @@ void framebuffer_8bit_draw_framebuffer_shifted(Framebuffer8Bit_t *fb, int x_shif
 
     int width_right = src->width - x_shifted;
 
-    if(width_right>fb->width){
-        width_right=fb->width;
+    if (width_right > fb->width) {
+        width_right = fb->width;
     }
     for (int y = 0; y < to_y; ++y) {
         memcpy(framebuffer_8bit_pixel_at(fb, 0, y), framebuffer_8bit_pixel_at(src, x_shifted, y), width_right);
@@ -558,33 +559,52 @@ void framebuffer_8bit_draw_framebuffer_shifted(Framebuffer8Bit_t *fb, int x_shif
     }
 
     const int width_left = fb->width - width_right;
-    for (int y = 0; y <to_y; ++y) {
+    for (int y = 0; y < to_y; ++y) {
         memcpy(framebuffer_8bit_pixel_at(fb, width_right, y), framebuffer_8bit_pixel_at(src, 0, y), width_left);
     }
 }
 
-void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int center_x, const int center_y, const Framebuffer8Bit_t *src, const float scale,
+void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb,
+                                              const int center_x,
+                                              const int center_y,
+                                              const Framebuffer8Bit_t *src,
+                                              const EXDEV_FLOAT scale,
                                               const int alpha) {
     assert(fb);
     assert(src);
 
+#ifdef EXDEV_FP_MATH
+    if (scale <= exdev_int_to_fp(0)) {
+        return;
+    }
+#else
     if (scale <= 0.0f) {
         return;
     }
+#endif
     if (center_x >= fb->width) {
         return;
     }
     if (center_y >= fb->height) {
         return;
     }
-
-    const float max_width = (scale * (float) src->width);
-    const float max_height = (scale * (float) src->height);
-    const float step_x = (float) src->width / max_width;
-    const float step_y = (float) src->height / max_height;
-    const int x = (int) ((float) center_x - (float) max_width * 0.5f);
-    const int y = (int) ((float) center_y - (float) max_height * 0.5f);
-
+#ifdef EXDEV_FP_MATH
+    const EXDEV_FLOAT width_fp = exdev_int_to_fp(src->width);
+    const EXDEV_FLOAT height_fp = exdev_int_to_fp(src->height);
+    const EXDEV_FLOAT max_width = exdev_fp_mul(scale, width_fp);
+    const EXDEV_FLOAT max_height = exdev_fp_mul(scale, height_fp);
+    const EXDEV_FLOAT step_x = exdev_fp_div(width_fp, max_width);
+    const EXDEV_FLOAT step_y = exdev_fp_div(height_fp, max_height);
+    const int x = exdev_fp_to_int(exdev_int_to_fp(center_x) - exdev_fp_mul(max_width, EXDEV_FP_ONE_HALF));
+    const int y = exdev_fp_to_int(exdev_int_to_fp(center_y) - exdev_fp_mul(max_height, EXDEV_FP_ONE_HALF));
+#else
+    const EXDEV_FLOAT max_width = (scale * (EXDEV_FLOAT) src->width);
+    const EXDEV_FLOAT max_height = (scale * (EXDEV_FLOAT) src->height);
+    const EXDEV_FLOAT step_x = (EXDEV_FLOAT) src->width / max_width;
+    const EXDEV_FLOAT step_y = (EXDEV_FLOAT) src->height / max_height;
+    const int x = (int) ((EXDEV_FLOAT) center_x - (EXDEV_FLOAT) max_width * 0.5f);
+    const int y = (int) ((EXDEV_FLOAT) center_y - (EXDEV_FLOAT) max_height * 0.5f);
+#endif
 
     const int alphaEnabled = alpha >= 0;
     int pos_x = 0;
@@ -599,8 +619,13 @@ void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int c
             if (j + y < 0) {
                 continue;
             }
+#ifdef EXDEV_FP_MATH
+            pos_x = exdev_fp_to_int(exdev_fp_mul(exdev_int_to_fp(i), step_x));
+            pos_y = exdev_fp_to_int(exdev_fp_mul(exdev_int_to_fp(j), step_y));
+#else
             pos_x = (int) ((float) i * step_x);
             pos_y = (int) ((float) j * step_y);
+#endif
             pixel = *framebuffer_8bit_pixel_at(src, pos_x, pos_y);
             if (!alphaEnabled || alpha != pixel) {
                 fb->buffer[((j + y) * fb->width) + i + x] = pixel;
@@ -609,7 +634,11 @@ void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int c
     }
 }
 
-void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, const int center_x, const int center_y, const Framebuffer8Bit_t *src, float angle,
+void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb,
+                                               const int center_x,
+                                               const int center_y,
+                                               const Framebuffer8Bit_t *src,
+                                               EXDEV_FLOAT angle,
                                                const int alpha) {
     assert(fb);
     assert(src);
@@ -621,15 +650,25 @@ void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, const int 
         return;
     }
 
-    const float radians = deg_to_rad(-angle);
-    const float cos_a = (float) cos(radians);
-    const float sin_a = (float) sin(radians);
-
+#ifdef EXDEV_FP_MATH
+    const EXDEV_FLOAT radians = deg_to_rad(-angle);
+    const EXDEV_FLOAT cos_a = exdev_fp_cos(radians);
+    const EXDEV_FLOAT sin_a = exdev_fp_sin(radians);
+#else
+    const EXDEV_FLOAT radians = deg_to_rad(-angle);
+    const EXDEV_FLOAT cos_a = (float) cos(radians);
+    const EXDEV_FLOAT sin_a = (float) sin(radians);
+#endif
     int max_length_x = 0;
     int max_length_y = 0;
     {
-        const float width_half = (float) src->width * 0.5f;
-        const float height_half = (float) src->height * 0.5f;
+#ifdef EXDEV_FP_MATH
+        const EXDEV_FLOAT width_half = exdev_fp_mul(exdev_fp_to_int(src->width), EXDEV_FP_ONE_HALF);
+        const EXDEV_FLOAT height_half = exdev_fp_mul(exdev_fp_to_int(src->height), EXDEV_FP_ONE_HALF);
+#else
+        const EXDEV_FLOAT width_half = (float) src->width * 0.5f;
+        const EXDEV_FLOAT height_half = (float) src->height * 0.5f;
+#endif
         const Vertex2d_t upper_left = {-width_half, height_half};
         const Vertex2d_t upper_right = {width_half, height_half};
         const Vertex2d_t lower_left = {-width_half, -height_half};
@@ -657,12 +696,18 @@ void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, const int 
 //    const int max_length_x = (int) ((float) (max(src->width, src->height)) * 1.2f); // this might be too low
 //    const int max_length_y = (int) ((float) (max(src->width, src->height)) * 1.2f); // this might be too low
 
-    const int max_length_center_x = (int) ((float) max_length_x * 0.5f);
-    const int max_length_center_y = (int) ((float) max_length_y * 0.5f);
-    const int x_offset = (int) ((float) (max_length_x - src->width) * 0.5f);
-    const int y_offset = (int) ((float) (max_length_y - src->height) * 0.5f);
+#ifdef EXDEV_FP_MATH
+    const int max_length_center_x = exdev_fp_to_int(exdev_fp_mul(exdev_int_to_fp(max_length_x), EXDEV_FP_ONE_HALF));
+    const int max_length_center_y = exdev_fp_to_int(exdev_fp_mul(exdev_int_to_fp(max_length_y), EXDEV_FP_ONE_HALF));
+    const int x_offset = exdev_fp_to_int(exdev_fp_mul(exdev_int_to_fp(max_length_x - src->width), FPT_ONE_HALF));
+    const int y_offset = exdev_fp_to_int(exdev_fp_mul(exdev_int_to_fp(max_length_y - src->height), FPT_ONE_HALF));
+#else
+    const int max_length_center_x = (int) ((EXDEV_FLOAT) max_length_x * 0.5f);
+    const int max_length_center_y = (int) ((EXDEV_FLOAT) max_length_y * 0.5f);
+    const int x_offset = (int) ((EXDEV_FLOAT) (max_length_x - src->width) * 0.5f);
+    const int y_offset = (int) ((EXDEV_FLOAT) (max_length_y - src->height) * 0.5f);
+#endif
     const int alpha_enabled = alpha >= 0;
-
 //    framebuffer_8bit_draw_rect(fb, center_x - max_length_center_x, center_y - max_length_center_y, max_length_x, max_length_y, alpha);
 
     Color8Bit_t pixel = 0;
@@ -672,14 +717,24 @@ void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, const int 
     for (int x = 0; x < max_length_x; ++x) {
         for (int y = 0; y < max_length_y; ++y) {
             // calc x
+#ifdef EXDEV_FP_MATH
+            pos_x = exdev_fp_to_int(
+                    exdev_int_to_fp(max_length_center_x) + exdev_int_to_fp(x - max_length_center_x) * cos_a - exdev_int_to_fp(y - max_length_center_y) * sin_a);
+#else
             pos_x = (int) ((float) max_length_center_x + (float) (x - max_length_center_x) * cos_a - (float) (y - max_length_center_y) * sin_a);
+#endif
             pos_x -= x_offset;
             if (pos_x < 0 || pos_x >= src->width) {
                 continue;
             }
 
             // calc y
+#ifdef EXDEV_FP_MATH
+            pos_y = exdev_fp_to_int(
+                    exdev_int_to_fp(max_length_center_y) + exdev_int_to_fp(x - max_length_center_x) * sin_a + exdev_int_to_fp(y - max_length_center_y) * cos_a);
+#else
             pos_y = (int) ((float) max_length_center_y + (float) (x - max_length_center_x) * sin_a + (float) (y - max_length_center_y) * cos_a);
+#endif
             pos_y -= y_offset;
             if (pos_y < 0 || pos_y >= src->height) {
                 continue;

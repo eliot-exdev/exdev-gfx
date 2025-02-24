@@ -14,7 +14,9 @@ extern "C" {
 #else
 typedef float exdev_fp_t;
 #endif
-#define FLOAT exdev_fp_t
+
+#define EXDEV_FLOAT exdev_fp_t
+#define EXDEV_TIMESTAMP long
 
 #ifdef __cplusplus
 }

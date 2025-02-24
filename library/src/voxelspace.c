@@ -11,7 +11,10 @@
 
 #include <stdlib.h>
 #include <assert.h>
+
+#ifndef EXDEV_FP_MATH
 #include <math.h>
+#endif
 
 #ifndef __VBCC__
 
@@ -21,10 +24,18 @@
 // see: https://github.com/s-macke/VoxelSpace
 
 #ifdef LOW_RESOLUTION
+#ifdef EXDEV_FP_MATH
+#define AUTO_HEIGHT_OVER_GROUND exdev_int_to_fp(5)
+#else
 #define AUTO_HEIGHT_OVER_GROUND 5.f
+#endif
 #define SKY_TEXTURE_HEIGHT 100
 #else
+#ifdef EXDEV_FP_MATH
+#define AUTO_HEIGHT_OVER_GROUND exdev_int_to_fp(10)
+#else
 #define AUTO_HEIGHT_OVER_GROUND 10.f
+#endif
 #define SKY_TEXTURE_HEIGHT 200
 #endif
 
@@ -32,7 +43,7 @@ void voxelspace_init(Voxelspace_t *v,
                      Framebuffer8Bit_t *height_map,
                      Framebuffer8Bit_t *color_map,
                      Framebuffer8Bit_t *fb,
-                     float scale_height,
+                     EXDEV_FLOAT scale_height,
                      Color8Bit_t sky_color,
                      Framebuffer8Bit_t *sky_texture) {
     assert(v);
@@ -40,7 +51,6 @@ void voxelspace_init(Voxelspace_t *v,
     assert(color_map);
     assert(fb);
     assert(scale_height > 0);
-
     assert(height_map->height == color_map->height);
     assert(height_map->width == color_map->width);
 
@@ -63,25 +73,30 @@ void voxelspace_deinit(Voxelspace_t *v) {
 }
 
 void
-voxelspace_render(const Vertex3d_t p, const float rot, const float horizon, const float distance, const float dz, const int skip_x, const Voxelspace_t *v) {
+voxelspace_render(const Vertex3d_t p, const EXDEV_FLOAT rot, const EXDEV_FLOAT horizon, const EXDEV_FLOAT distance, const EXDEV_FLOAT dz, const int skip_x, const Voxelspace_t *v) {
     // precalculate viewing angle parameters
-    const float phi = deg_to_rad(rot);
-    const float sinphi = sin(phi);
-    const float cosphi = cos(phi);
-
-    float z = 1.0f;
+    const EXDEV_FLOAT phi = deg_to_rad(rot);
+#ifdef EXDEV_FP_MATH
+    const EXDEV_FLOAT sinphi = exdev_fp_sin(phi);
+    const EXDEV_FLOAT cosphi = exdev_fp_cos(phi);
+    EXDEV_FLOAT z = EXDEV_FP_ONE;
+#else
+    const EXDEV_FLOAT sinphi = sin(phi);
+    const EXDEV_FLOAT cosphi = cos(phi);
+    EXDEV_FLOAT z = 1.0f;
+#endif
     Vertex2d_t pleft;
     int pleft_n[2];
     Vertex2d_t pright;
 
-    float dx, dy;
+    EXDEV_FLOAT dx, dy;
     int i = 0, si = 0;
 
     // init ybuffer
 #ifdef __VBCC__
     for (i = 0; i < v->fb->width; ++i) { v->ybuffer[i] = v->fb->height; }
 #else
-    wmemset((wchar_t*)v->ybuffer, v->fb->height, v->fb->width);
+    wmemset((wchar_t *) v->ybuffer, v->fb->height, v->fb->width);
 #endif
     // render sky
     if (!v->sky_texture) {
@@ -89,9 +104,17 @@ voxelspace_render(const Vertex3d_t p, const float rot, const float horizon, cons
     } else {
         int x_shifted = 0;
         if (rot < 0) {
+#ifdef EXDEV_FP_MATH
+            x_shifted = exdev_fp_to_int(exdev_fp_mul(exdev_fp_div(-rot, exdev_int_to_fp(360)), exdev_int_to_fp(v->sky_texture->width)));
+#else
             x_shifted = (int) ((float) -rot / 360.0f * (float) v->sky_texture->width);
+#endif
         } else {
+#ifdef EXDEV_FP_MATH
+            x_shifted = exdev_fp_to_int(exdev_fp_mul(exdev_fp_div(rot, exdev_int_to_fp(360)), exdev_int_to_fp(v->sky_texture->width)));
+#else
             x_shifted = (int) ((float) rot / 360.0f * (float) v->sky_texture->width);
+#endif
         }
         if (rot > 0) {
             x_shifted = v->sky_texture->width - x_shifted;
@@ -100,9 +123,13 @@ voxelspace_render(const Vertex3d_t p, const float rot, const float horizon, cons
     }
 
     // auto height
-    float height = p[2];
+    EXDEV_FLOAT height = p[2];
     if ((int) height < 0) {
+#ifdef EXDEV_FP_MATH
+        height = exdev_int_to_fp(heightmap_value_at(&v->heightmap, exdev_fp_to_int(p[0]), exdev_int_to_fp(p[1]))->height) + AUTO_HEIGHT_OVER_GROUND;
+#else
         height = (float) heightmap_value_at(&v->heightmap, (int) p[0], (int) p[1])->height + AUTO_HEIGHT_OVER_GROUND;
+#endif
     }
     // log_info_fmt("height=%f", height);
 
@@ -111,6 +138,17 @@ voxelspace_render(const Vertex3d_t p, const float rot, const float horizon, cons
     while (z < distance) {
         log_debug_fmt("z=%f", z);
         // Find line on map. This calculation corresponds to a field of view of 90°
+#ifdef EXDEV_FP_MATH
+        pleft[0] = exdev_fp_mul(-cosphi, z) - exdev_fp_mul(sinphi, z) + p[0];
+        pleft[1] = exdev_fp_mul(sinphi, z) - exdev_fp_mul(cosphi, z) + p[1];
+
+        pright[0] = exdev_fp_mul(cosphi, z) - exdev_fp_mul(sinphi, z) + p[0];
+        pright[1] = exdev_fp_mul(-sinphi, z) - exdev_fp_mul(cosphi, z) + p[1];
+
+        // segment the line
+        dx = exdev_fp_div((pright[0] - pleft[0]), exdev_int_to_fp(v->fb->width));
+        dy = exdev_fp_div((pright[1] - pleft[1]), exdev_int_to_fp(v->fb->width));
+#else
         pleft[0] = (-cosphi * z - sinphi * z) + p[0];
         pleft[1] = (sinphi * z - cosphi * z) + p[1];
 
@@ -120,7 +158,7 @@ voxelspace_render(const Vertex3d_t p, const float rot, const float horizon, cons
         // segment the line
         dx = (pright[0] - pleft[0]) / (float) v->fb->width;
         dy = (pright[1] - pleft[1]) / (float) v->fb->width;
-
+#endif
         // Raster line and draw a vertical line for each segment
         if (skip_x) {
             si = !si;
@@ -131,10 +169,19 @@ voxelspace_render(const Vertex3d_t p, const float rot, const float horizon, cons
         while (i < v->fb->width) {
             // calc height on screen
 //            log_info_fmt("%d %d", pleft_n[0], pleft_n[1]);
+#ifdef EXDEV_FP_MATH
+            pleft_n[0] = normalize_int(exdev_fp_to_int(pleft[0]), v->heightmap.width);
+            pleft_n[1] = normalize_int(exdev_fp_to_int(pleft[1]), v->heightmap.height);
+#else
             pleft_n[0] = normalize_int((int) pleft[0], v->heightmap.width);
             pleft_n[1] = normalize_int((int) pleft[1], v->heightmap.height);
+#endif
             const HeightmapValue_t *value = heightmap_value_at_const(&v->heightmap, pleft_n[0], pleft_n[1]);
+#ifdef EXDEV_FP_MATH
+            height_on_screen = exdev_fp_to_int(exdev_fp_mul(exdev_fp_div(height - exdev_int_to_fp((int) value->height), z), v->scale_height) + horizon);
+#else
             height_on_screen = (int) ((height - (float) value->height) / z * v->scale_height + horizon);
+#endif
             if (height_on_screen < 0) {
                 height_on_screen = 0;
             }
@@ -151,8 +198,13 @@ voxelspace_render(const Vertex3d_t p, const float rot, const float horizon, cons
 
             // next step
             if (skip_x) {
+#ifdef EXDEV_FP_MATH
+                pleft[0] += exdev_fp_mul(dx, exdev_int_to_fp(2));
+                pleft[1] += exdev_fp_mul(dy, exdev_int_to_fp(2));
+#else
                 pleft[0] += dx * 2.0f;
                 pleft[1] += dy * 2.0f;
+#endif
                 i += 2;
             } else {
                 pleft[0] += dx;

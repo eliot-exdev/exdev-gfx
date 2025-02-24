@@ -36,9 +36,11 @@ if (MORPHOS OR AMIGAOS)
     target_include_directories(${PROJECT_NAME}
             PUBLIC include
     )
-    target_link_libraries(${PROJECT_NAME}
-            PUBLIC m
-    )
+    if (NOT EXDEV_ENABLE_FIX_POINT)
+        target_link_libraries(${PROJECT_NAME}
+                PUBLIC m
+        )
+    endif ()
     target_compile_options(${PROJECT_NAME}
             PUBLIC -Wno-format -Wno-int-conversion
     )

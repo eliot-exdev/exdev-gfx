@@ -9,7 +9,11 @@
 
 static struct timeval a;
 
-TIMESTAMP now(){
-  GetSysTime(&a);
-  return a.tv_secs*1000 + a.tv_micro/1000;
+EXDEV_TIMESTAMP now() {
+    GetSysTime(&a);
+#ifdef EXDEV_FP_MATH
+    return a.tv_secs * 1000 + exdev_fp_to_int(exdev_fp_div(exdev_int_to_fp(a.tv_micro), exdev_int_to_fp(1000)));
+#else
+    return a.tv_secs*1000 + a.tv_micro/1000;
+#endif
 }
