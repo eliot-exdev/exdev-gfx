@@ -29,7 +29,7 @@
 #else
 #define AUTO_HEIGHT_OVER_GROUND 5.f
 #endif
-#define SKY_TEXTURE_HEIGHT 100
+#define SKY_TEXTURE_HEIGHT 120
 #else
 #ifdef EXDEV_FP_MATH
 #define AUTO_HEIGHT_OVER_GROUND exdev_int_to_fp(10)
