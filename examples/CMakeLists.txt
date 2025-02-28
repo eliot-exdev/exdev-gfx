@@ -54,9 +54,6 @@ target_link_libraries(voxelspace
 StripTargetExdev(voxelspace)
 if(AMIGAOS)
         target_compile_definitions(voxelspace PRIVATE LOW_RESOLUTION)
-        set_target_properties(voxelspace PROPERTIES OUTPUT_NAME "voxelspace_amiga_060")
-elseif (MORPHOS)
-        set_target_properties(voxelspace PROPERTIES OUTPUT_NAME "voxelspace_mos_ppc")
 endif ()
 
 #add_executable(test_3d

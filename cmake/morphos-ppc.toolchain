@@ -84,9 +84,9 @@ set(CMAKE_CXX_COMPILER_RANLIB ${MOS_RANLIB})
 
 # set compile flags
 set(CMAKE_C_FLAGS "-noixemul -mcpu=G4 -maltivec -mabi=altivec")
-set(CMAKE_C_FLAGS_RELEASE "-Ofast -DNDEBUG")
+set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS "-noixemul -mcpu=G4 -maltivec -mabi=altivec")
-set(CMAKE_CXX_FLAGS_RELEASE "-Ofast -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 
 add_compile_definitions(__MORPHOS__)
 
@@ -98,3 +98,5 @@ set(CMAKE_STATIC_LINKER_FLAGS "")
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
 link_directories(${MOS_SDK_ROOT}/ppc-morphos/lib)
+
+set(CMAKE_EXECUTABLE_SUFFIX "mos_ppc_fpu_gcc")
