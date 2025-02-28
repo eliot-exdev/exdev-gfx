@@ -99,4 +99,4 @@ set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
 link_directories(${MOS_SDK_ROOT}/ppc-morphos/lib)
 
-set(CMAKE_EXECUTABLE_SUFFIX "mos_ppc_fpu_gcc")
+set(CMAKE_EXECUTABLE_SUFFIX_C ".mos-ppc-fpu-gcc")
