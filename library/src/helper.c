@@ -8,7 +8,13 @@
 #include <string.h>
 
 #ifndef EXDEV_FP_MATH
+
 #include <math.h>
+
+#endif
+
+#ifndef M_PI
+# define M_PI 3.14159265358979323846
 #endif
 
 //#define HALF_PI_ 1.570796f
