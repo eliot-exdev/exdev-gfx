@@ -184,8 +184,8 @@ int main(int argc, char **argv) {
     // work loop
     Event_t event;
     char close_event = 0;
-    TIMESTAMP before = 0;
-    TIMESTAMP after = 0;
+    exdev_timestamp_t before = 0;
+    exdev_timestamp_t after = 0;
     char fps_text[128];
     int show_fps = 1;
     while (!close_event) {

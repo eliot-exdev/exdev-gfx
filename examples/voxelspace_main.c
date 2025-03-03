@@ -284,7 +284,7 @@ int main(int argc, char **argv) {
     int rotation = 0;
     int show_fps = 1;
     int skip_x = 0;
-    TIMESTAMP before = 0, after = 0;
+    exdev_timestamp_t before = 0, after = 0;
 #ifdef LOW_RESOLUTION
     int dz = 5;
 #else

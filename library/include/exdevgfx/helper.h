@@ -11,7 +11,8 @@
 extern "C" {
 #endif
 
-#define TIMESTAMP long
+#define EXDEV_TIMESTAMP long
+typedef EXDEV_TIMESTAMP exdev_timestamp_t;
 
 float deg_to_rad(float deg);
 
@@ -33,7 +34,7 @@ int read_line(FILE *fp, char *line, size_t size);
 
 void swap_bytes_int(int *i);
 
-TIMESTAMP now();
+exdev_timestamp_t now();
 
 static inline int normalize_int(int i, const int s) {
     i = i % s;

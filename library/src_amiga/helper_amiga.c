@@ -9,7 +9,7 @@
 
 static struct timeval a;
 
-TIMESTAMP now(){
+exdev_timestamp_t now(){
   GetSysTime(&a);
   return a.tv_secs*1000 + a.tv_micro/1000;
 }

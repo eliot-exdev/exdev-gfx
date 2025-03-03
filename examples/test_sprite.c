@@ -84,8 +84,8 @@ int main() {
     }
     window_update_palette(window, &palette);
 
-    TIMESTAMP start = now();
-    TIMESTAMP t = 0;
+    exdev_timestamp_t start = now();
+    exdev_timestamp_t t = 0;
     int in = 1;
     while (!close_event) {
         // render
