@@ -32,9 +32,9 @@ unsigned char versiontag[] = "\0$VER: " VERSION;
 #define HEIGHT 240
 
 #ifdef EXDEV_FP_MATH
-#define DEFAULT_DISTANCE exdev_int_to_fp(200)
-#define SCALE_HEIGHT exdev_int_to_fp(80)
-#define HORIZON exdev_int_to_fp(60)
+static EXDEV_FLOAT DEFAULT_DISTANCE = 0;
+static EXDEV_FLOAT SCALE_HEIGHT = 0;
+static EXDEV_FLOAT HORIZON = 0;
 #else
 #define DEFAULT_DISTANCE 200.0f
 #define SCALE_HEIGHT 80.0f
@@ -45,9 +45,9 @@ unsigned char versiontag[] = "\0$VER: " VERSION;
 #define HEIGHT 480
 
 #ifdef EXDEV_FP_MATH
-#define DEFAULT_DISTANCE exdev_int_to_fp(320)
-#define SCALE_HEIGHT exdev_int_to_fp(160)
-#define HORIZON exdev_int_to_fp(120)
+static EXDEV_FLOAT DEFAULT_DISTANCE = 0;
+static EXDEV_FLOAT SCALE_HEIGHT = 0;
+static EXDEV_FLOAT HORIZON = 0;
 #else
 #define DEFAULT_DISTANCE 320.f
 #define SCALE_HEIGHT 160.f
@@ -100,7 +100,7 @@ static const char *colormap_path = COLORMAP_ONE;
 static const char *palette_path = PALETTE_ONE;
 static const char *sky_path = SKY_TEXTURE_ONE;
 
-static EXDEV_FLOAT distance = DEFAULT_DISTANCE;
+static EXDEV_FLOAT distance = 0;
 static char demo_mode = 0;
 
 static void print_help() {
@@ -237,6 +237,18 @@ int main(int argc, char **argv) {
     parse_args(argc, argv);
 
     log_info("--> init all ...");
+#ifdef EXDEV_FP_MATH
+#ifdef LOW_RESOLUTION
+    DEFAULT_DISTANCE = exdev_int_to_fp(200);
+    SCALE_HEIGHT = exdev_int_to_fp(80);
+    HORIZON = exdev_int_to_fp(60);
+#else
+    DEFAULT_DISTANCE = exdev_int_to_fp(320);
+    SCALE_HEIGHT = exdev_int_to_fp(160);
+    HORIZON = exdev_int_to_fp(120);
+#endif
+#endif
+    distance = DEFAULT_DISTANCE;
 
     int res = exdev_base_init();
     if (res) {

@@ -10,42 +10,38 @@
 extern "C" {
 #endif
 
-#ifdef EXDEV_FP_MATH
+#define FIXMATH_NO_ROUNDING
+#include <fpmath/fix16.h>
 
-#define FPT_WBITS 17
-
-#include <fpmath/fptc.h>
-
-typedef fpt exdev_fp_t;
-
-// constants
-#define EXDEV_FP_ZERO FPT_ZERO
-#define EXDEV_FP_ONE FPT_ONE
-#define EXDEV_FP_ONE_HALF FPT_ONE_HALF
-#define EXDEV_FP_MINUS_ONE (-EXDEV_FP_ONE)
-
-#define EXDEV_FP_PI FPT_PI
-#define EXDEV_FP_HALF_PI FPT_HALF_PI
-#define EXDEV_FP_TWO_PI FPT_TWO_PI
+typedef int32_t exdev_fp_t;
 
 // conversions
-#define exdev_float_to_fp(R) fl2fpt(R)
-#define exdev_int_to_fp(I) i2fpt(I)
-#define exdev_fp_to_int(F) fpt2i(F)
-#define exdev_fp_to_float(F) fpt2fl(F)
+#define exdev_float_to_fp(F) fix16_from_float(F)
+#define exdev_int_to_fp(I) fix16_from_int(I)
+#define exdev_fp_to_int(F) fix16_to_int(F)
+#define exdev_fp_to_float(F) fix16_to_float(F)
 
 // simple math
-#define exdev_fp_add(A, B) fpt_add(A,B)
-#define exdev_fp_sub(A, B) fpt_sub(A,B)
-#define exdev_fp_mul(A, B) fpt_mul(A,B)
-#define exdev_fp_div(A, B) fpt_div(A,B)
+#define exdev_fp_add(A, B) fix16_add(A, B)
+#define exdev_fp_sub(A, B) fix16_sub(A, B)
+#define exdev_fp_mul(A, B) fix16_mul(A, B)
+#define exdev_fp_div(A, B) fix16_div(A,B)
 
 // math
-#define exdev_fp_sin(F) fpt_sin(F)
-#define exdev_fp_cos(F) fpt_cos(F)
-#define exdev_fp_sqrt(A) fpt_sqrt(A)
-#define exdev_fp_abs(A) fpt_abs(A)
-#endif //EXDEV_FP_MATH
+#define exdev_fp_sin(F) fix16_sin(F)
+#define exdev_fp_cos(F) fix16_cos(F)
+#define exdev_fp_sqrt(F) fix16_sqrt(F)
+#define exdev_fp_abs(F) fix16_abs(F)
+
+// constants
+#define EXDEV_FP_ZERO 0
+#define EXDEV_FP_ONE fix16_one
+#define EXDEV_FP_ONE_HALF exdev_fp_div(EXDEV_FP_ONE, exdev_int_to_fp(2))
+#define EXDEV_FP_MINUS_ONE (-EXDEV_FP_ONE)
+
+#define EXDEV_FP_PI fix16_pi
+#define EXDEV_FP_HALF_PI exdev_fp_div(EXDEV_FP_PI, exdev_int_to_fp(2))
+#define EXDEV_FP_TWO_PI exdev_fp_mul(EXDEV_FP_PI, exdev_int_to_fp(2))
 
 #ifdef __cplusplus
 }

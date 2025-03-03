@@ -699,8 +699,8 @@ void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb,
 #ifdef EXDEV_FP_MATH
     const int max_length_center_x = exdev_fp_to_int(exdev_fp_mul(exdev_int_to_fp(max_length_x), EXDEV_FP_ONE_HALF));
     const int max_length_center_y = exdev_fp_to_int(exdev_fp_mul(exdev_int_to_fp(max_length_y), EXDEV_FP_ONE_HALF));
-    const int x_offset = exdev_fp_to_int(exdev_fp_mul(exdev_int_to_fp(max_length_x - src->width), FPT_ONE_HALF));
-    const int y_offset = exdev_fp_to_int(exdev_fp_mul(exdev_int_to_fp(max_length_y - src->height), FPT_ONE_HALF));
+    const int x_offset = exdev_fp_to_int(exdev_fp_mul(exdev_int_to_fp(max_length_x - src->width), EXDEV_FP_ONE_HALF));
+    const int y_offset = exdev_fp_to_int(exdev_fp_mul(exdev_int_to_fp(max_length_y - src->height), EXDEV_FP_ONE_HALF));
 #else
     const int max_length_center_x = (int) ((EXDEV_FLOAT) max_length_x * 0.5f);
     const int max_length_center_y = (int) ((EXDEV_FLOAT) max_length_y * 0.5f);
