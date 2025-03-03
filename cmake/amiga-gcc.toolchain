@@ -85,9 +85,9 @@ set(CMAKE_CXX_COMPILER_RANLIB ${AMIGA_RANLIB})
 # set compile flags
 set(CMAKE_C_FLAGS "-m68060 -mtune=68060 -Wa,-march=68060,-mcpu=68060")
 #set(CMAKE_C_FLAGS "-m68881 -mtune=68030 -Wa,-march=68030")
-set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG")
+set(CMAKE_C_FLAGS_RELEASE "-Ofast -DNDEBUG")
 set(CMAKE_CXX_FLAGS "-m68060 -mtune=68060 -Wa,-march=68060,-mcpu=68060")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "-Ofast -DNDEBUG")
 
 add_compile_definitions(__AMIGAOS__)
 
