@@ -84,6 +84,16 @@ static const char *sky_path = SKY_TEXTURE_ONE;
 static float distance = DEFAULT_DISTANCE;
 static char demo_mode = 0;
 
+static exdev_timestamp_t tp;
+
+#ifdef PROFILE_APPLICATION
+#define begin_profile() tp = now();
+#define update_profile(M)  {const exdev_timestamp_t tp_tmp = now(); log_info_fmt("time for %s: %d ms", M, tp_tmp-tp); tp = tp_tmp;}
+#else
+#define begin_profile()
+#define update_profile(M)
+#endif
+
 static void print_help() {
     printf("voxelspace [ARGUMENTS]...\n"
            "arguments:\n"
@@ -311,6 +321,7 @@ int main(int argc, char **argv) {
     Event_t event;
     // game loop
     while (!close_event) {
+        begin_profile();
         // read inputs
         window_poll_events(window, &close_event, &event, 1);
         // keyboard events
@@ -418,6 +429,7 @@ int main(int argc, char **argv) {
         log_debug("--> render");
         position[0] = normalize_float(position[0], (float) v.heightmap.height);
         position[1] = normalize_float(position[1], (float) v.heightmap.width);
+        update_profile("update world");
         voxelspace_render(position, rotation, HORIZON, distance, (float) dz, skip_x, &v);
 
         // draw text
@@ -431,7 +443,9 @@ int main(int argc, char **argv) {
             framebuffer_8bit_draw_text(&fb, &mia1, fps_text, strlen(fps_text), font_color, 20, HEIGHT - 20);
         }
         before = now();
+        update_profile("render world");
         window_fill_8bit(window, &fb);
+        update_profile("blit image");
         log_debug("<-- render");
     }
 
