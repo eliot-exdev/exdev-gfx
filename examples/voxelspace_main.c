@@ -84,11 +84,10 @@ static const char *sky_path = SKY_TEXTURE_ONE;
 static float distance = DEFAULT_DISTANCE;
 static char demo_mode = 0;
 
-static exdev_timestamp_t tp;
-
 #ifdef PROFILE_APPLICATION
+static exdev_timestamp_t tp;
 #define begin_profile() tp = now();
-#define update_profile(M)  {const exdev_timestamp_t tp_tmp = now(); log_info_fmt("time for %s: %d ms", M, tp_tmp-tp); tp = tp_tmp;}
+#define update_profile(M) {const exdev_timestamp_t tp_tmp = now(); log_info_fmt("time for %s: %d ms", M, tp_tmp-tp); tp = tp_tmp;}
 #else
 #define begin_profile()
 #define update_profile(M)
@@ -430,6 +429,7 @@ int main(int argc, char **argv) {
         position[0] = normalize_float(position[0], (float) v.heightmap.height);
         position[1] = normalize_float(position[1], (float) v.heightmap.width);
         update_profile("update world");
+
         voxelspace_render(position, rotation, HORIZON, distance, (float) dz, skip_x, &v);
 
         // draw text
@@ -444,6 +444,7 @@ int main(int argc, char **argv) {
         }
         before = now();
         update_profile("render world");
+
         window_fill_8bit(window, &fb);
         update_profile("blit image");
         log_debug("<-- render");
