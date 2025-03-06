@@ -62,8 +62,13 @@ void voxelspace_deinit(Voxelspace_t *v) {
     v->sky_texture = NULL;
 }
 
-void
-voxelspace_render(const Vertex3d_t p, const float rot, const float horizon, const float distance, const float dz, const int skip_x, const Voxelspace_t *v) {
+void voxelspace_render(const Vertex3d_t p,
+                       const float rot,
+                       const float horizon,
+                       const float distance,
+                       const float dz,
+                       const int skip_x,
+                       const Voxelspace_t *v) {
     // precalculate viewing angle parameters
     const float phi = deg_to_rad(rot);
     const float sinphi = sin(phi);
@@ -81,7 +86,7 @@ voxelspace_render(const Vertex3d_t p, const float rot, const float horizon, cons
 #ifdef __VBCC__
     for (i = 0; i < v->fb->width; ++i) { v->ybuffer[i] = v->fb->height; }
 #else
-    wmemset((wchar_t*)v->ybuffer, v->fb->height, v->fb->width);
+    wmemset((wchar_t *) v->ybuffer, v->fb->height, v->fb->width);
 #endif
     // render sky
     if (!v->sky_texture) {
