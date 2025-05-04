@@ -4,7 +4,7 @@ This is a little technical demo of a voxelspace renderer written in C99.
 It was created for testing purposes and private research only.  
 Currently I cannot say how it will develop in the future.
 
-This demo provides 5 different worlds taken from the game Comanche developed by Novalogic.
+This demo provides five different worlds taken from the game Comanche developed by Novalogic.
 
 - World 1: pyramid
 - World 2: desert
@@ -24,10 +24,10 @@ Email: eliot@exdev.de
 # Requirements
 
 * MorphOs: any MorphOs system should work.  
-  I tested it on a Mac Mini G4 Silent Upgrade with MorphOs 3.14.  
-  You will need a 640x80x8 screen mode.
-* Amiga Os: tested on Amiga 4000T, 060, Cybervision 64/3D, Aos 3.1.4 and 
-                      Amiga 1200, 060, AGA, Aos 3.2.3.  
+  Tested it on a Mac Mini G4 Silent Upgrade with MorphOs 3.14.  
+  You will need a 640x480x8 screen mode.
+* AmigaOs: Tested on a Amiga 4000T, 060, Cybervision 64/3D, Aos 3.1.4 and 
+                         Amiga 1200, 060, AGA, Aos 3.2.3.  
   It requires a stack size of 16384 or greater and a 320x240x8 screen mode.
 * Linux: tested on Ubuntu 20.10 (amd64)
   It requires X11 server.
@@ -35,7 +35,7 @@ Email: eliot@exdev.de
 # Usage
 
 Please start the binary (voxelspace_mos, voxelspace_060) from your shell.  
-To get a complete arguments list of the program please start it with '-h'.  
+To get a complete arguments list of the program, please start it with '-h'.  
 You can quit the program by hitting ESC.  
 Stack size of 16384 ius required
 
