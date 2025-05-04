@@ -1,7 +1,7 @@
-C_FLAGS_MOS=-O3 -speed -final -DNDEBUG -D__MORPHOS__
+C_FLAGS_MOS=-O4 -speed -final -DNDEBUG -D__MORPHOS__
 C_FLAGS_MOS_GCC=-Ofast -noixemul -mcpu=G4 -maltivec -mabi=altivec -DNDEBUG -D__MORPHOS__
 
-C_FLAGS_060=+aos68k -fpu=68060 -cpu=68060 -O3 -speed -final -DNDEBUG -D__AMIGA__
+C_FLAGS_060=+aos68k -fpu=68060 -cpu=68060 -O4 -speed -final -DNDEBUG -D__AMIGA__
 C_FLAGS_030_FPU=+aos68k -fpu=68881 -cpu=68030 -O3 -speed -final -DNDEBUG -D__AMIGA__
 
 LD_FLAGS_MOS=-lm
@@ -120,7 +120,7 @@ dist_voxelspace: voxelspace
 	mkdir ram:voxelspace
 	mkdir ram:voxelspace/assets
 	cp -av examples/README_VOXELSPACE.md ram:voxelspace
-	cp -av assets/*palette.dat assets/*height_map.dat assets/*color_map_8bit.dat ram:voxelspace/assets
+	cp -av assets/*palette.dat assets/*height_map.dat assets/*color_map_8bit.dat assets/*sky.dat assets/*sky_lowres.dat ram:voxelspace/assets
 	cp -av voxelspace_mos voxelspace_mos_gcc voxelspace_060 ram:voxelspace
 	lha a -r ram:voxelspace.lha ram:voxelspace
 
