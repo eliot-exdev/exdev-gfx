@@ -25,9 +25,10 @@ Email: eliot@exdev.de
 
 * MorphOs: any MorphOs system should work.  
   I tested it on a Mac Mini G4 Silent Upgrade with MorphOs 3.14.  
-  You will need a 640x80x8 screen for fullscreen mode.
-* Amiga Os: tested on Amiga 4000T, 060, Cybervision 64/3D, Aos 3.1.4.  
-  It requires a stack size of 16384 or greater and a 632x240x8 screen mode.
+  You will need a 640x80x8 screen mode.
+* Amiga Os: tested on Amiga 4000T, 060, Cybervision 64/3D, Aos 3.1.4 and 
+                      Amiga 1200, 060, AGA, Aos 3.2.3.  
+  It requires a stack size of 16384 or greater and a 320x240x8 screen mode.
 * Linux: tested on Ubuntu 20.10 (amd64)
   It requires X11 server.
 
