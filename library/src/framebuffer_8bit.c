@@ -20,7 +20,7 @@ void framebuffer_8bit_init(Framebuffer8Bit_t *fb, const int width, const int hei
 
     fb->width = width;
     fb->height = height;
-    fb->buffer = (Color8Bit_t *) malloc(width * height);
+    fb->buffer = (Color8Bit_t *) ALLOC_FAST_MEM(width * height);
 }
 
 int framebuffer_8bit_init_from_framebuffer(Framebuffer8Bit_t *f, Palette8Bit_t *p, const Framebuffer_t *fb, const int init_palette) {
@@ -56,7 +56,7 @@ int framebuffer_8bit_init_from_framebuffer(Framebuffer8Bit_t *f, Palette8Bit_t *
 void framebuffer_8bit_deinit(Framebuffer8Bit_t *fb) {
     assert(fb);
 
-    free(fb->buffer);
+    FREE_MEM(fb->buffer, fb->width*fb->height);
     fb->buffer = NULL;
 }
 

@@ -7,10 +7,17 @@
 
 #include <stdio.h>
 
+#ifdef __AMIGAOS__
+#include <proto/exec.h>
+#include <exec/exec.h>
+#include <clib/exec_protos.h>
+#else
+#include <stdlib.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 #define EXDEV_TIMESTAMP long
 typedef EXDEV_TIMESTAMP exdev_timestamp_t;
 
@@ -23,6 +30,15 @@ float rad_to_deg(float rad);
 #define max(a, b) (a > b ? a : b)
 
 int read_line(FILE *fp, char *line, size_t size);
+
+#ifdef __AMIGAOS__
+#define ALLOC_FAST_MEM(s) AllocMem(s, MEMF_FAST)
+#define ALLOC_FAST_MEM_AND_CLEAR(s) AllocMem(s, MEMF_FAST| MEMF_CLEAR)
+#define FREE_MEM(p, s) FreeMem(p, s)
+#else
+#define ALLOC_FAST_MEM(s) malloc(s)
+#define FREE_MEM(p, s) free(p)
+#endif
 
 //float fast_sin(float f);
 //
