@@ -28,10 +28,13 @@
 #include <assert.h>
 
 struct NativeWindow {
-    struct Window *window;
     struct Screen *screen;
+    struct Window *window;
 };
 typedef struct NativeWindow NativeWindow_t;
+
+#define NATIVE_WINDOW_CAST(w) ((NativeWindow_t *)w)
+#define NATIVE_WINDOW_CAST_CONST(w) ((const  NativeWindow_t *)w)
 
 Window_t *window_create(const int width, const int height, const char *title, const enum FULLSCREEN fs) {
     NativeWindow_t *w = (NativeWindow_t *) malloc(sizeof(NativeWindow_t));
@@ -127,60 +130,50 @@ Window_t *window_create(const int width, const int height, const char *title, co
 }
 
 void window_destroy(Window_t *win) {
-    NativeWindow_t *w = (NativeWindow_t *) win;
-    if (w->window) {
-        CloseWindow(w->window);
+    if (NATIVE_WINDOW_CAST(win)->window) {
+        CloseWindow(NATIVE_WINDOW_CAST(win)->window);
     }
-    if (w->screen) {
-        CloseScreen(w->screen);
+    if (NATIVE_WINDOW_CAST(win)->screen) {
+        CloseScreen(NATIVE_WINDOW_CAST(win)->screen);
     }
-    //CloseDevice((struct IORequest *) &ioreq);
-    w->window = NULL;
-    w->screen = NULL;
+    NATIVE_WINDOW_CAST(win)->window = NULL;
+    NATIVE_WINDOW_CAST(win)->screen = NULL;
 
-    free(w);
-    win = NULL;
+    free(NATIVE_WINDOW_CAST(win));
 }
 
 int window_get_width(const Window_t *win) {
-    const NativeWindow_t *w = (const NativeWindow_t *) win;
-    return w->window->Width;
+    return NATIVE_WINDOW_CAST_CONST(win)->window->Width;
 }
 
 int window_get_height(const Window_t *win) {
-    const NativeWindow_t *w = (const NativeWindow_t *) win;
-    return w->window->Height;
+    return NATIVE_WINDOW_CAST_CONST(win)->window->Height;
 }
 
 int window_get_inner_width(const Window_t *win) {
-    NativeWindow_t *w = (NativeWindow_t *) win;
-    return w->window->Width - w->window->BorderLeft - w->window->BorderRight;
+    return NATIVE_WINDOW_CAST_CONST(win)->window->Width - NATIVE_WINDOW_CAST_CONST(win)->window->BorderLeft - NATIVE_WINDOW_CAST_CONST(win)->window->BorderRight;
 }
 
 int window_get_inner_height(const Window_t *win) {
-    const NativeWindow_t *w = (const NativeWindow_t *) win;
-    return w->window->Height - w->window->BorderTop - w->window->BorderBottom;
+    return NATIVE_WINDOW_CAST_CONST(win)->window->Height - NATIVE_WINDOW_CAST_CONST(win)->window->BorderTop - NATIVE_WINDOW_CAST_CONST(win)->window->BorderBottom;
 }
 
 void window_fill(Window_t *win, const Framebuffer_t *gb) {
-    NativeWindow_t *w = (NativeWindow_t *) win;
     //    WritePixelArray(gb->buffer, 0, 0, gb->width * 3, w->window->RPort, 0, 0, gb->width, gb->height, RECTFMT_RGB);
-    WriteChunkyPixels(w->window->RPort, 0, 0, gb->width * 3, gb->height * 3, (unsigned char *) gb->buffer, gb->width);
+    WriteChunkyPixels(NATIVE_WINDOW_CAST(win)->window->RPort, 0, 0, gb->width * 3, gb->height * 3, (unsigned char *) gb->buffer, gb->width);
 }
 
 void window_fill_8bit(Window_t *win, const Framebuffer8Bit_t *gb) {
-    NativeWindow_t *w = (NativeWindow_t *) win;
     assert(w->screen);
     //    WritePixelArray(gb->buffer, 0, 0, gb->width, w->window->RPort, 0, 0, gb->width, gb->height, RECTFMT_LUT8);
-    WriteChunkyPixels(w->window->RPort, 0, 0, gb->width, gb->height, gb->buffer, gb->width);
+    WriteChunkyPixels(NATIVE_WINDOW_CAST(win)->window->RPort, 0, 0, gb->width, gb->height, gb->buffer, gb->width);
 }
 
 void window_update_palette(Window_t *win, const Palette8Bit_t *p) {
-    NativeWindow_t *w = (NativeWindow_t *) win;
     assert(w->screen);
     for (int i = 0; i < p->numPens; ++i) {
         const Pen_t *pen = palette_8bit_get_pen_const(p, i);
-        SetRGB32(&w->screen->ViewPort, i, pen->r, pen->g, pen->b);
+        SetRGB32(&NATIVE_WINDOW_CAST(win)->screen->ViewPort, i, pen->r, pen->g, pen->b);
     }
 }
 
@@ -198,7 +191,6 @@ static LONG deadKeyConvert(const struct IntuiMessage *msg, char *kbuffer, struct
 }
 
 int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const int maxEvents) {
-    NativeWindow_t *w = (NativeWindow_t *) win;
     struct IntuiMessage *msg = NULL;// since V39 it should be struct ExtIntuiMessage *
     struct InputEvent ievent;
     char buffer[KEY_BUFFER_SIZE];
@@ -210,7 +202,7 @@ int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const i
 
     //    Wait(1L << w->window->UserPort->mp_SigBit);
 
-    while (numEvents < maxEvents && (msg = GT_GetIMsg(w->window->UserPort))) {
+    while (numEvents < maxEvents && (msg = GT_GetIMsg(NATIVE_WINDOW_CAST(win)->window->UserPort))) {
         log_debug("--> got message");
         switch (msg->Class) {
             case IDCMP_CLOSEWINDOW:
