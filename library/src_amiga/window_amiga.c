@@ -106,11 +106,27 @@ Window_t *window_create(const int width, const int height, const char *title, co
             return NULL;
         }
 
-        w->screen = OpenScreenTags(NULL, SA_Left, 0, SA_Top, 0, SA_Width, screen_width, SA_Height, screen_height, SA_Depth, screen_depth,
-                                   SA_Type, CUSTOMSCREEN, SA_DisplayID, screen_id,
-                                   SA_Title, title, SA_Exclusive, TRUE, SA_SharePens, TRUE, SA_ShowTitle, FALSE, TAG_DONE);
+        w->screen = OpenScreenTags(NULL, 
+                                   SA_Left, 0, 
+                                   SA_Top, 0, 
+                                   SA_Width, screen_width, 
+                                   SA_Height, screen_height, 
+                                   SA_Depth, screen_depth,
+                                   SA_Type, CUSTOMSCREEN, 
+                                   SA_DisplayID, screen_id,
+                                   SA_Title, title, 
+                                   SA_Exclusive, TRUE, 
+                                   SA_SharePens, TRUE, 
+                                   SA_ShowTitle, FALSE, 
+                                   SA_AutoScroll, FALSE,
+                                   SA_Draggable, FALSE,
+                                   TAG_DONE);
 
-        w->window = OpenWindowTags(NULL, WA_Left, 0, WA_Top, 0, WA_Width, width, WA_Height, height,
+        w->window = OpenWindowTags(NULL, 
+                                   WA_Left, 0, 
+                                   WA_Top, 0, 
+                                   WA_Width, width, 
+                                   WA_Height, height,
                                    WA_CustomScreen, w->screen,
                                    WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
                                    WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_REPORTMOUSE | WFLG_RMBTRAP,
@@ -119,9 +135,14 @@ Window_t *window_create(const int width, const int height, const char *title, co
     } else {
         w->screen = NULL;
 
-        w->window = OpenWindowTags(NULL, WA_Left, 50, WA_Top, 50, WA_Width, width, WA_Height, height,
+        w->window = OpenWindowTags(NULL, 
+                                   WA_Left, 0, 
+                                   WA_Top, 0, 
+                                   WA_Width, width, 
+                                   WA_Height, height,
+                                   WA_CustomScreen, w->screen,
                                    WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
-                                   WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_DRAGBAR | WFLG_REPORTMOUSE | WFLG_RMBTRAP,
+                                   WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_REPORTMOUSE | WFLG_RMBTRAP,
                                    WA_Title, title,
                                    TAG_DONE);
     }
@@ -166,7 +187,7 @@ void window_fill(Window_t *win, const Framebuffer_t *gb) {
 void window_fill_8bit(Window_t *win, const Framebuffer8Bit_t *gb) {
     assert(w->screen);
     //    WritePixelArray(gb->buffer, 0, 0, gb->width, w->window->RPort, 0, 0, gb->width, gb->height, RECTFMT_LUT8);
-    WriteChunkyPixels(NATIVE_WINDOW_CAST(win)->window->RPort, 0, 0, gb->width, gb->height, gb->buffer, gb->width);
+    WriteChunkyPixels(&NATIVE_WINDOW_CAST(win)->screen->RastPort, 0, 0, gb->width, gb->height, gb->buffer, gb->width);
 }
 
 void window_update_palette(Window_t *win, const Palette8Bit_t *p) {
@@ -326,3 +347,4 @@ int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const i
     }
     return numEvents;
 }
+
