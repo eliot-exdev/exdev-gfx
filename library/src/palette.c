@@ -98,7 +98,7 @@ const Pen_t *palette_8bit_get_pen_const(const Palette8Bit_t *palette, const unsi
 int palette_8bit_find_pen(const Palette8Bit_t *palette, const Pen_t *pen) {
     assert(palette);
     assert(pen);
-    for (unsigned char i = 0; i < palette->numPens; ++i) {
+    for (int i = 0; i < palette->numPens; ++i) {
         if (pen_equals(&palette->pens[i], pen)) {
             return i;
         }
