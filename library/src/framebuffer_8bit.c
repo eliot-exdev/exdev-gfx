@@ -93,7 +93,7 @@ void framebuffer_8bit_draw_vertical_line(Framebuffer8Bit_t *fb, const int x, int
     assert(to_y <= fb->height);
 
     for (; y < to_y; ++y) {
-        fb->buffer[(y) *fb->width + x] = c;
+        fb->buffer[y * fb->width + x] = c;
     }
 }
 
