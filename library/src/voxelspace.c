@@ -76,8 +76,8 @@ void voxelspace_render(const Vertex3d_t p,
 
     float z = 1.0f;
     Vertex2d_t pleft;
-    int pleft_n[2];
     Vertex2d_t pright;
+    int pleft_n[2];
 
     float dx, dy;
     int i = 0, si = 0;
@@ -114,6 +114,8 @@ void voxelspace_render(const Vertex3d_t p,
     log_debug("--> starting render round");
     const HeightmapValue_t *value = NULL;
     int height_on_screen = 0;
+    int *ybuffer = v->ybuffer;
+    const Heightmap_t *heightmap = &v->heightmap;
 
     while (z < distance) {
         log_debug_fmt("z=%f", z);
@@ -138,22 +140,22 @@ void voxelspace_render(const Vertex3d_t p,
         while (i < v->fb->width) {
             // calc height on screen
             // log_info_fmt("%d %d", pleft_n[0], pleft_n[1]);
-            pleft_n[0] = normalize_int((int) pleft[0], v->heightmap.width);
-            pleft_n[1] = normalize_int((int) pleft[1], v->heightmap.height);
-            value = heightmap_value_at_const_inline((&v->heightmap), pleft_n[0], pleft_n[1]);
+            pleft_n[0] = normalize_int((int) pleft[0], heightmap->width);
+            pleft_n[1] = normalize_int((int) pleft[1], heightmap->height);
+            value = heightmap_value_at_const_inline(heightmap, pleft_n[0], pleft_n[1]);
             height_on_screen = (int) ((height - (float) value->height) / z * v->scale_height + horizon);
             if (height_on_screen < 0) {
                 height_on_screen = 0;
             }
 
             // render
-            if (height_on_screen < v->ybuffer[i]) {
+            if (height_on_screen < ybuffer[i]) {
                 framebuffer_8bit_draw_vertical_line_inline((v->fb),
-                                                    i,
-                                                    height_on_screen,
-                                                    v->ybuffer[i],
-                                                    value->color);
-                v->ybuffer[i] = height_on_screen;
+                                                           i,
+                                                           height_on_screen,
+                                                           ybuffer[i],
+                                                           value->color);
+                ybuffer[i] = height_on_screen;
             }
 
             // next step
