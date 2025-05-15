@@ -35,6 +35,7 @@ void heightmap_init_with_framebuffer(Heightmap_t *hm, const Framebuffer8Bit_t *h
 HeightmapValue_t *heightmap_value_at(Heightmap_t *hm, int x, int y);
 
 const HeightmapValue_t *heightmap_value_at_const(const Heightmap_t *hm, int x, int y);
+#define heightmap_value_at_const_inline(hm, x, y) (hm->values + ((y * hm->width) + x))
 
 #ifdef __cplusplus
 }

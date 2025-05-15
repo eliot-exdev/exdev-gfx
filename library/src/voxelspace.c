@@ -140,7 +140,7 @@ void voxelspace_render(const Vertex3d_t p,
             // log_info_fmt("%d %d", pleft_n[0], pleft_n[1]);
             pleft_n[0] = normalize_int((int) pleft[0], v->heightmap.width);
             pleft_n[1] = normalize_int((int) pleft[1], v->heightmap.height);
-            value = heightmap_value_at_const(&v->heightmap, pleft_n[0], pleft_n[1]);
+            value = heightmap_value_at_const_inline((&v->heightmap), pleft_n[0], pleft_n[1]);
             height_on_screen = (int) ((height - (float) value->height) / z * v->scale_height + horizon);
             if (height_on_screen < 0) {
                 height_on_screen = 0;
@@ -148,7 +148,7 @@ void voxelspace_render(const Vertex3d_t p,
 
             // render
             if (height_on_screen < v->ybuffer[i]) {
-                framebuffer_8bit_draw_vertical_line(v->fb,
+                framebuffer_8bit_draw_vertical_line_inline((v->fb),
                                                     i,
                                                     height_on_screen,
                                                     v->ybuffer[i],
