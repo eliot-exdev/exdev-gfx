@@ -32,13 +32,13 @@ unsigned char versiontag[] = "\0$VER: " VERSION;
 #define HEIGHT 240
 #define DEFAULT_DISTANCE 200.0f
 #define SCALE_HEIGHT 80.0f
-#define HORIZON 60.0f
+#define HORIZON 120.0f
 #else
 #define WIDTH 640
 #define HEIGHT 480
 #define DEFAULT_DISTANCE 320.0f
 #define SCALE_HEIGHT 160.0f
-#define HORIZON 120.0f
+#define HORIZON 240.0f
 #endif
 
 #define ROTATION_STEP_SIZE 4.0f

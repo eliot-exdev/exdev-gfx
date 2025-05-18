@@ -21,11 +21,11 @@
 // see: https://github.com/s-macke/VoxelSpace
 
 #ifdef LOW_RESOLUTION
-#define AUTO_HEIGHT_OVER_GROUND 5.f
-#define SKY_TEXTURE_HEIGHT 100
-#else
 #define AUTO_HEIGHT_OVER_GROUND 10.f
-#define SKY_TEXTURE_HEIGHT 200
+#define SKY_TEXTURE_HEIGHT 170
+#else
+#define AUTO_HEIGHT_OVER_GROUND 20.f
+#define SKY_TEXTURE_HEIGHT 280
 #endif
 
 void voxelspace_init(Voxelspace_t *v,
