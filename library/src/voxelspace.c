@@ -74,7 +74,7 @@ void voxelspace_render(const Vertex3d_t p,
     const float sinphi = sin(phi);
     const float cosphi = cos(phi);
 
-    float z = 1.0f;
+    float z = 4.0f;
     Vertex2d_t pleft;
     Vertex2d_t pright;
     int pleft_n[2];
