@@ -25,7 +25,7 @@
 #define SKY_TEXTURE_HEIGHT 170
 #else
 #define AUTO_HEIGHT_OVER_GROUND 20.f
-#define SKY_TEXTURE_HEIGHT 280
+#define SKY_TEXTURE_HEIGHT 300
 #endif
 
 void voxelspace_init(Voxelspace_t *v,
