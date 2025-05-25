@@ -192,11 +192,7 @@ void voxelspace_render(const Vertex3d_t p,
             pleft[1] += dy * (float) current_zone->x_step_size;
             i = i + current_zone->x_step_size;
         }
-#ifdef LOW_RESOLUTION
-        z += 3.0f;
-#else
-        z += 1.0f;
-#endif
-        }
+        z += current_zone->dz;
+    }
     log_debug("--> render round done!");
 }

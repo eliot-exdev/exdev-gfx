@@ -15,6 +15,7 @@ extern "C" {
 typedef struct {
     float max_distance;
     int x_step_size;
+    float dz;
 } zone_t;
 
 typedef struct {
