@@ -83,6 +83,7 @@ static const char *sky_path = SKY_TEXTURE_ONE;
 
 static float distance = DEFAULT_DISTANCE;
 static char demo_mode = 0;
+static char max_detail = 0;
 
 #ifdef PROFILE_APPLICATION
 static exdev_timestamp_t tp;
@@ -111,11 +112,9 @@ static void print_help() {
            "options:\n"
            "     ESC or q            quit\n"
            "     F1                  enable/disable show fps\n"
-           "     F2                  reduce rendering quality\n"
-           "     F3                  increase rendering quality\n"
+           "     F2                  enable/disable max detail\n"
            "     F4                  decrease distance\n"
-           "     F5                  increase distance\n"
-           "     F6                  enable/disable dither x\n");
+           "     F5                  increase distance\n");
 }
 
 static void print_version() {
@@ -177,6 +176,35 @@ static void parse_args(int argc, char **argv) {
 
 #define MAX_HEIGHT 120.0f
 #define MIN_HEIGHT 5.0f
+
+zones_t zones;
+
+static void set_zones() {
+    if (max_detail) {
+        zones.zones[0].max_distance = 1000.0f;
+        zones.zones[0].x_step_size = 1;
+        zones.zones[1].max_distance = 1000.0f;
+        zones.zones[1].x_step_size = 1;
+        zones.zones[2].max_distance = 1000.0f;
+        zones.zones[2].x_step_size = 1;
+    } else {
+#ifdef LOW_RESOLUTION
+        zones.zones[0].max_distance = 50.0f;
+        zones.zones[0].x_step_size = 16;
+        zones.zones[1].max_distance = 100.0f;
+        zones.zones[1].x_step_size = 8;
+        zones.zones[2].max_distance = 1000.0f;
+        zones.zones[2].x_step_size = 4;
+#else
+        zones.zones[0].max_distance = 80.0f;
+        zones.zones[0].x_step_size = 8;
+        zones.zones[1].max_distance = 160.0f;
+        zones.zones[1].x_step_size = 4;
+        zones.zones[2].max_distance = 1000.0f;
+        zones.zones[2].x_step_size = 2;
+#endif
+    }
+}
 
 static void move(Vertex3d_t p, const char move_flag, const char strafe_flag, const char up_down_flag, const int rot) {
     if (move_flag == 0 && strafe_flag == 0 && up_down_flag == 0) {
@@ -280,9 +308,13 @@ int main(int argc, char **argv) {
     char fps_text[10];
     memset(fps_text, 0, 10);
 
+    // init zones
+    zones_init(&zones, 3);
+    set_zones();
+
     // create voxelspace
     Voxelspace_t v;
-    voxelspace_init(&v, &height_map, &color_map, &fb, SCALE_HEIGHT, palette.numPens - 2, &sky_texture);
+    voxelspace_init(&v, &height_map, &color_map, &fb, SCALE_HEIGHT, palette.numPens - 2, &sky_texture, &zones);
 
     // cleanup
     framebuffer_8bit_deinit(&height_map);
@@ -291,14 +323,8 @@ int main(int argc, char **argv) {
 
     // local variables
     int rotation = 0;
-    int show_fps = 1;
-    int skip_x = 0;
+    char show_fps = 1;
     exdev_timestamp_t before = 0, after = 0;
-#ifdef LOW_RESOLUTION
-    int dz = 5;
-#else
-    int dz = 1;
-#endif
     Vertex3d_t position;
     vertex3d_set(position, 512, 512, 80);
 
@@ -345,11 +371,9 @@ int main(int argc, char **argv) {
                     show_fps = !show_fps;
                     break;
                 case KEY_TYPE_F2:
-                    ++dz;
-                    break;
-                case KEY_TYPE_F3:
-                    if (dz > 1)
-                        --dz;
+                    max_detail = !max_detail;
+                    set_zones();
+                    log_info_fmt("max_detail: %d", (int) max_detail);
                     break;
                 case KEY_TYPE_F4:
                     if (distance >= 30.0f) {
@@ -360,9 +384,6 @@ int main(int argc, char **argv) {
                     if (distance <= 600.0f) {
                         distance += 10.f;
                     }
-                    break;
-                case KEY_TYPE_F6:
-                    skip_x = !skip_x;
                     break;
                 case KEY_TYPE_CODE:
                     if (event.key_event.code == 'w') {
@@ -430,7 +451,7 @@ int main(int argc, char **argv) {
         position[1] = normalize_float(position[1], (float) v.heightmap.width);
         update_profile("update world");
 
-        voxelspace_render(position, rotation, HORIZON, distance, (float) dz, skip_x, &v);
+        voxelspace_render(position, rotation, HORIZON, distance, &v);
 
         // draw text
         if (show_fps) {
@@ -454,6 +475,7 @@ int main(int argc, char **argv) {
     log_info("--> cleanup ...");
     window_destroy(window);
     voxelspace_deinit(&v);
+    zones_deinit(&zones);
     font_deinit(&mia1);
     framebuffer_8bit_deinit(&sky_texture);
     framebuffer_8bit_deinit(&fb);

@@ -28,17 +28,35 @@
 #define SKY_TEXTURE_HEIGHT 300
 #endif
 
+void zones_init(zones_t *zones, const int size) {
+    assert(zones);
+    assert(size > 0);
+
+    zones->zones = malloc(sizeof(zone_t) * size);
+    zones->size = size;
+}
+
+void zones_deinit(zones_t *zones) {
+    assert(zones);
+
+    free(zones->zones);
+    zones->zones = NULL;
+    zones->size = 0;
+}
+
 void voxelspace_init(Voxelspace_t *v,
                      Framebuffer8Bit_t *height_map,
                      Framebuffer8Bit_t *color_map,
                      Framebuffer8Bit_t *fb,
                      float scale_height,
                      Color8Bit_t sky_color,
-                     Framebuffer8Bit_t *sky_texture) {
+                     Framebuffer8Bit_t *sky_texture,
+                     zones_t *zones) {
     assert(v);
     assert(height_map);
     assert(color_map);
     assert(fb);
+    assert(zones);
     assert(scale_height > 0);
 
     assert(height_map->height == color_map->height);
@@ -50,6 +68,7 @@ void voxelspace_init(Voxelspace_t *v,
     v->sky_color = sky_color;
     v->ybuffer = malloc(sizeof(int) * fb->width);
     v->sky_texture = sky_texture;
+    v->zones = zones;
 }
 
 void voxelspace_deinit(Voxelspace_t *v) {
@@ -60,14 +79,13 @@ void voxelspace_deinit(Voxelspace_t *v) {
     free(v->ybuffer);
     v->ybuffer = NULL;
     v->sky_texture = NULL;
+    v->zones = NULL;
 }
 
 void voxelspace_render(const Vertex3d_t p,
                        const float rot,
                        const float horizon,
                        const float distance,
-                       const float dz,
-                       const int skip_x,
                        const Voxelspace_t *v) {
     // precalculate viewing angle parameters
     const float phi = deg_to_rad(rot);
@@ -117,6 +135,8 @@ void voxelspace_render(const Vertex3d_t p,
     int *ybuffer = v->ybuffer;
     const Heightmap_t *heightmap = &v->heightmap;
 
+    zone_t *current_zone = v->zones->zones;
+
     while (z < distance) {
         log_debug_fmt("z=%f", z);
         // Find line on map. This calculation corresponds to a field of view of 90°
@@ -131,12 +151,18 @@ void voxelspace_render(const Vertex3d_t p,
         dy = (pright[1] - pleft[1]) / (float) v->fb->width;
 
         // Raster line and draw a vertical line for each segment
-        if (skip_x) {
-            si = !si;
-            i = si;
-        } else {
-            i = 0;
+        i = 1;
+
+        // find current zone
+        while (i < v->zones->size) {
+            if (distance < v->zones->zones[i].max_distance) {
+                current_zone = v->zones->zones + i;
+                break;
+            }
+            ++i;
         }
+
+        i = 0;
         while (i < v->fb->width) {
             // calc height on screen
             // log_info_fmt("%d %d", pleft_n[0], pleft_n[1]);
@@ -155,22 +181,19 @@ void voxelspace_render(const Vertex3d_t p,
                                                            height_on_screen,
                                                            ybuffer[i],
                                                            value->color);
-                ybuffer[i] = height_on_screen;
+                framebuffer_8bit_fill_rect(v->fb, i, height_on_screen, current_zone->x_step_size, ybuffer[i] - height_on_screen, value->color);
+                for (si = 0; si < current_zone->x_step_size; ++si) {
+                    ybuffer[i + si] = height_on_screen;
+                }
             }
 
             // next step
-            if (skip_x) {
-                pleft[0] += dx * 2.0f;
-                pleft[1] += dy * 2.0f;
-                i += 2;
-            } else {
-                pleft[0] += dx;
-                pleft[1] += dy;
-                ++i;
-            }
+            pleft[0] += dx * (float) current_zone->x_step_size;
+            pleft[1] += dy * (float) current_zone->x_step_size;
+            i = i + current_zone->x_step_size;
         }
 
-        z += dz;
+        z += 1.0f;
     }
     log_debug("--> render round done!");
 }

@@ -97,35 +97,14 @@ void framebuffer_8bit_draw_vertical_line(Framebuffer8Bit_t *fb, const int x, int
     }
 }
 
-void framebuffer_8bit_draw_horizontal_line(Framebuffer8Bit_t *fb, int x, const int y, int to_x, const Color8Bit_t c) {
+void framebuffer_8bit_draw_horizontal_line(Framebuffer8Bit_t *fb, const int x, const int y, const int to_x, const Color8Bit_t c) {
     assert(fb);
-
-    // check x
-    if (x >= fb->width) {
-        return;
-    }
-    if (x < 0) {
-        x = 0;
-    }
-
-    //check y
-    if (y < 0) {
-        return;
-    }
-    if (y >= fb->height) {
-        return;
-    }
-
-    // check to_x
-    if (to_x <= 0) {
-        return;
-    }
-    if (to_x < x) {
-        return;
-    }
-    if (to_x > fb->width) {
-        to_x = fb->width;
-    }
+    assert(x<fb->width);
+    assert(x>=0);
+    assert(y>=0);
+    assert(y<=fb->height);
+    assert(to_x<=fb->width);
+    assert(to_x>=0);
 
     memset(framebuffer_8bit_pixel_at(fb, x, y), c, to_x - x);
 }
