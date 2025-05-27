@@ -132,5 +132,5 @@ dist_voxelspace: voxelspace
 #--- clean ---#
 .PHONY: clean
 clean: 
-	delete julia#? voxelspace#? test_sprite#? #?.o
+	delete julia#? voxelspace_#? test_sprite#? #?.o
 
