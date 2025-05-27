@@ -24,7 +24,7 @@
 #ifdef __VBCC__
 __entry
 #endif
-unsigned char versiontag[] = "\0$VER: " VERSION;
+        unsigned char versiontag[] = "\0$VER: " VERSION;
 #endif
 
 #ifdef LOW_RESOLUTION
@@ -44,36 +44,36 @@ unsigned char versiontag[] = "\0$VER: " VERSION;
 #define ROTATION_STEP_SIZE 4.0f
 #define MOVEMENT_STEP_SIZE 3.0f
 
-static const char COLORMAP_ONE[] = ASSETS_PREFIX"assets/first_color_map_8bit.dat";
-static const char COLORMAP_TWO[] = ASSETS_PREFIX"assets/second_color_map_8bit.dat";
-static const char COLORMAP_THREE[] = ASSETS_PREFIX"assets/third_color_map_8bit.dat";
-static const char COLORMAP_FOUR[] = ASSETS_PREFIX"assets/fourth_color_map_8bit.dat";
-static const char COLORMAP_FIVE[] = ASSETS_PREFIX"assets/fifth_color_map_8bit.dat";
+static const char COLORMAP_ONE[] = ASSETS_PREFIX "assets/first_color_map_8bit.dat";
+static const char COLORMAP_TWO[] = ASSETS_PREFIX "assets/second_color_map_8bit.dat";
+static const char COLORMAP_THREE[] = ASSETS_PREFIX "assets/third_color_map_8bit.dat";
+static const char COLORMAP_FOUR[] = ASSETS_PREFIX "assets/fourth_color_map_8bit.dat";
+static const char COLORMAP_FIVE[] = ASSETS_PREFIX "assets/fifth_color_map_8bit.dat";
 
-static const char HEIGHTMAP_ONE[] = ASSETS_PREFIX"assets/first_height_map.dat";
-static const char HEIGHTMAP_TWO[] = ASSETS_PREFIX"assets/second_height_map.dat";
-static const char HEIGHTMAP_THREE[] = ASSETS_PREFIX"assets/third_height_map.dat";
-static const char HEIGHTMAP_FOUR[] = ASSETS_PREFIX"assets/fourth_height_map.dat";
-static const char HEIGHTMAP_FIVE[] = ASSETS_PREFIX"assets/fifth_height_map.dat";
+static const char HEIGHTMAP_ONE[] = ASSETS_PREFIX "assets/first_height_map.dat";
+static const char HEIGHTMAP_TWO[] = ASSETS_PREFIX "assets/second_height_map.dat";
+static const char HEIGHTMAP_THREE[] = ASSETS_PREFIX "assets/third_height_map.dat";
+static const char HEIGHTMAP_FOUR[] = ASSETS_PREFIX "assets/fourth_height_map.dat";
+static const char HEIGHTMAP_FIVE[] = ASSETS_PREFIX "assets/fifth_height_map.dat";
 
-static const char PALETTE_ONE[] = ASSETS_PREFIX"assets/first_color_map_palette.dat";
-static const char PALETTE_TWO[] = ASSETS_PREFIX"assets/second_color_map_palette.dat";
-static const char PALETTE_THREE[] = ASSETS_PREFIX"assets/third_color_map_palette.dat";
-static const char PALETTE_FOUR[] = ASSETS_PREFIX"assets/fourth_color_map_palette.dat";
-static const char PALETTE_FIVE[] = ASSETS_PREFIX"assets/fifth_color_map_palette.dat";
+static const char PALETTE_ONE[] = ASSETS_PREFIX "assets/first_color_map_palette.dat";
+static const char PALETTE_TWO[] = ASSETS_PREFIX "assets/second_color_map_palette.dat";
+static const char PALETTE_THREE[] = ASSETS_PREFIX "assets/third_color_map_palette.dat";
+static const char PALETTE_FOUR[] = ASSETS_PREFIX "assets/fourth_color_map_palette.dat";
+static const char PALETTE_FIVE[] = ASSETS_PREFIX "assets/fifth_color_map_palette.dat";
 
 #ifdef LOW_RESOLUTION
-static const char SKY_TEXTURE_ONE[] = ASSETS_PREFIX"assets/first_sky_lowres.dat";
-static const char SKY_TEXTURE_TWO[] = ASSETS_PREFIX"assets/second_sky_lowres.dat";
-static const char SKY_TEXTURE_THREE[] = ASSETS_PREFIX"assets/third_sky_lowres.dat";
-static const char SKY_TEXTURE_FOUR[] = ASSETS_PREFIX"assets/fourth_sky_lowres.dat";
-static const char SKY_TEXTURE_FIVE[] = ASSETS_PREFIX"assets/fifth_sky_lowres.dat";
+static const char SKY_TEXTURE_ONE[] = ASSETS_PREFIX "assets/first_sky_lowres.dat";
+static const char SKY_TEXTURE_TWO[] = ASSETS_PREFIX "assets/second_sky_lowres.dat";
+static const char SKY_TEXTURE_THREE[] = ASSETS_PREFIX "assets/third_sky_lowres.dat";
+static const char SKY_TEXTURE_FOUR[] = ASSETS_PREFIX "assets/fourth_sky_lowres.dat";
+static const char SKY_TEXTURE_FIVE[] = ASSETS_PREFIX "assets/fifth_sky_lowres.dat";
 #else
-static const char SKY_TEXTURE_ONE[] = ASSETS_PREFIX"assets/first_sky.dat";
-static const char SKY_TEXTURE_TWO[] = ASSETS_PREFIX"assets/second_sky.dat";
-static const char SKY_TEXTURE_THREE[] = ASSETS_PREFIX"assets/third_sky.dat";
-static const char SKY_TEXTURE_FOUR[] = ASSETS_PREFIX"assets/fourth_sky.dat";
-static const char SKY_TEXTURE_FIVE[] = ASSETS_PREFIX"assets/fifth_sky.dat";
+static const char SKY_TEXTURE_ONE[] = ASSETS_PREFIX "assets/first_sky.dat";
+static const char SKY_TEXTURE_TWO[] = ASSETS_PREFIX "assets/second_sky.dat";
+static const char SKY_TEXTURE_THREE[] = ASSETS_PREFIX "assets/third_sky.dat";
+static const char SKY_TEXTURE_FOUR[] = ASSETS_PREFIX "assets/fourth_sky.dat";
+static const char SKY_TEXTURE_FIVE[] = ASSETS_PREFIX "assets/fifth_sky.dat";
 #endif
 
 static const char *heightmap_path = HEIGHTMAP_ONE;
@@ -88,7 +88,12 @@ static char max_detail = 0;
 #ifdef PROFILE_APPLICATION
 static exdev_timestamp_t tp;
 #define begin_profile() tp = now();
-#define update_profile(M) {const exdev_timestamp_t tp_tmp = now(); log_info_fmt("time for %s: %d ms", M, tp_tmp-tp); tp = tp_tmp;}
+#define update_profile(M)                                   \
+    {                                                       \
+        const exdev_timestamp_t tp_tmp = now();             \
+        log_info_fmt("time for %s: %d ms", M, tp_tmp - tp); \
+        tp = tp_tmp;                                        \
+    }
 #else
 #define begin_profile()
 #define update_profile(M)
@@ -337,9 +342,9 @@ int main(int argc, char **argv) {
     Vertex3d_t position;
     vertex3d_set(position, 512, 512, 80);
 
-    char ctrl_move = 0; // 0=no, 1=forward, 2=backward
+    char ctrl_move = 0;   // 0=no, 1=forward, 2=backward
     char ctrl_rotate = 0; // 0=no, 1=right, 2=left
-    char ctrl_up_down = 0; // 0=no, 1=up, 2=down
+    char ctrl_up_down = 0;// 0=no, 1=up, 2=down
     char ctrl_strafe = 0; // 0=no, 1=left, 2=right
 
     // show window
@@ -437,7 +442,7 @@ int main(int argc, char **argv) {
             ctrl_rotate = 0;
             ctrl_up_down = 0;
             ctrl_strafe = 0;
-            position[2] = -1.0f; // use auto height
+            position[2] = -1.0f;// use auto height
         }
 
         switch (ctrl_rotate) {
@@ -465,14 +470,13 @@ int main(int argc, char **argv) {
         // draw text
         if (show_fps) {
             after = now();
-            long time_elapsed = after - before;
-            if (time_elapsed == 0) {
-                time_elapsed = 1;
+            before = after - before;
+            if (before == 0) {
+                ++before;
             }
-            sprintf(fps_text, "%li", 1000 / time_elapsed);
-            framebuffer_8bit_draw_text(&fb, &mia1, fps_text, strlen(fps_text), font_color, 20, HEIGHT - 20);
+            framebuffer_8bit_draw_text(&fb, &mia1, fps_text, sprintf(fps_text, "%li", 1000 / before), font_color, 20, HEIGHT - 20);
+            before = after;
         }
-        before = now();
         update_profile("render world");
 
         window_fill_8bit(window, &fb);
