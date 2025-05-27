@@ -155,13 +155,15 @@ void voxelspace_render(const Vertex3d_t p,
 
         // find current zone
         while (i < v->zones->size) {
-            if (distance < v->zones->zones[i].max_distance) {
+            if (z < v->zones->zones[i].max_distance) {
                 current_zone = v->zones->zones + i;
+                //                log_info_fmt("%d %f", i, z);
                 break;
             }
             ++i;
         }
 
+        //        log_info_fmt("using zone: %f %d, %f", current_zone->dz, current_zone->x_step_size, current_zone->max_distance);
         i = 0;
         while (i < v->fb->width) {
             // calc height on screen
@@ -176,11 +178,6 @@ void voxelspace_render(const Vertex3d_t p,
 
             // render
             if (height_on_screen < ybuffer[i]) {
-                framebuffer_8bit_draw_vertical_line_inline((v->fb),
-                                                           i,
-                                                           height_on_screen,
-                                                           ybuffer[i],
-                                                           value->color);
                 framebuffer_8bit_fill_rect(v->fb, i, height_on_screen, current_zone->x_step_size, ybuffer[i] - height_on_screen, value->color);
                 for (si = 0; si < current_zone->x_step_size; ++si) {
                     ybuffer[i + si] = height_on_screen;
