@@ -30,7 +30,7 @@ __entry
 #ifdef LOW_RESOLUTION
 #define WIDTH 320
 #define HEIGHT 240
-#define DEFAULT_DISTANCE 200.0f
+#define DEFAULT_DISTANCE 120.0f
 #define SCALE_HEIGHT 80.0f
 #define HORIZON 120.0f
 #else
@@ -197,14 +197,14 @@ static void set_zones() {
         zones.zones[2].dz = 1.0f;
     } else {
 #ifdef LOW_RESOLUTION
-        zones.zones[0].max_distance = 50.0f;
-        zones.zones[0].x_step_size = 16;
+        zones.zones[0].max_distance = 40.0f;
+        zones.zones[0].x_step_size = 8;
         zones.zones[0].dz = 2.0f;
-        zones.zones[1].max_distance = 100.0f;
-        zones.zones[1].x_step_size = 8;
+        zones.zones[1].max_distance = 80.0f;
+        zones.zones[1].x_step_size = 4;
         zones.zones[1].dz = 3.0f;
         zones.zones[2].max_distance = 1000.0f;
-        zones.zones[2].x_step_size = 4;
+        zones.zones[2].x_step_size = 2;
         zones.zones[2].dz = 4.0f;
 #else
         zones.zones[0].max_distance = 80.0f;
