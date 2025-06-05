@@ -20,6 +20,7 @@ Have fun!
 
 Author: André Geisler  
 Email: eliot@exdev.de
+Sources: https://github.com/eliot-exdev/exdev-gfx.git
 
 # Requirements
 
@@ -28,7 +29,7 @@ Email: eliot@exdev.de
   You will need a 640x480x8 screen mode.
 * AmigaOs: Tested on a Amiga 4000T, 060, Cybervision 64/3D, Aos 3.1.4 and  
                        Amiga 1200, 060, AGA, Aos 3.2.3.  
-  It requires a stack size of 16384 or greater and a 320x240x8 screen mode.
+  Requires c2p.library from aminet (https://aminet.net/dev/misc/c2plib.lha).
 * Linux: tested on Ubuntu 20.10 (amd64)
   It requires X11 server.
 
