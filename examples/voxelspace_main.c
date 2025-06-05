@@ -188,13 +188,13 @@ static void set_zones() {
     if (max_detail) {
         zones.zones[0].max_distance = 1000.0f;
         zones.zones[0].x_step_size = 1;
-        zones.zones[0].dz = 1.0f;
+        zones.zones[0].dz = 2.0f;
         zones.zones[1].max_distance = 1000.0f;
         zones.zones[1].x_step_size = 1;
-        zones.zones[1].dz = 1.0f;
+        zones.zones[1].dz = 2.0f;
         zones.zones[2].max_distance = 1000.0f;
+        zones.zones[2].dz = 2.0f;
         zones.zones[2].x_step_size = 1;
-        zones.zones[2].dz = 1.0f;
     } else {
 #ifdef LOW_RESOLUTION
         zones.zones[0].max_distance = 40.0f;
@@ -344,8 +344,9 @@ int main(int argc, char **argv) {
     window_update_palette(window, &palette);
 
     // create voxelspace
+    Framebuffer8Bit_t *fb = window_get_chunky_buffer(window);
     Voxelspace_t v;
-    voxelspace_init(&v, &height_map, &color_map, window_get_chunky_buffer(window), SCALE_HEIGHT, palette.numPens - 2, &sky_texture, &zones);
+    voxelspace_init(&v, &height_map, &color_map, fb, SCALE_HEIGHT, palette.numPens - 2, &sky_texture, &zones);
 
     // cleanup
     framebuffer_8bit_deinit(&height_map);
@@ -471,7 +472,7 @@ int main(int argc, char **argv) {
             if (before == 0) {
                 ++before;
             }
-            framebuffer_8bit_draw_text(window_get_chunky_buffer(window), &mia1, fps_text, sprintf(fps_text, "%li", 1000 / before), font_color, 20, HEIGHT - 20);
+            framebuffer_8bit_draw_text(fb, &mia1, fps_text, sprintf(fps_text, "%li", 1000 / before), font_color, 20, HEIGHT - 20);
             before = after;
         }
         update_profile("render world");

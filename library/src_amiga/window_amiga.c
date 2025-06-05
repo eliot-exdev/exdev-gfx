@@ -116,8 +116,6 @@ Window_t *window_create(const int width, const int height, const char *title, co
             return NULL;
         }
 
-        w->chunky_buffer.width = width;
-        w->chunky_buffer.height = height;
 #ifdef USE_C2P
         w->C2P_context = C2P_CreateContext();
         C2P_SetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_TYPE, C2P_CONTEXT_TYPE_BITMAP);
@@ -125,25 +123,19 @@ Window_t *window_create(const int width, const int height, const char *title, co
         C2P_SetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_HEIGHT, height);
         C2P_SetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_PLANAR_FORMAT, C2P_CONTEXT_PLANAR_FORMAT_8_BIT);
         C2P_InitializeContext(w->C2P_context);
-        w->chunky_buffer.buffer = C2P_GetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_CHUNKY);
+        w->chunky_buffer.buffer = (Color8Bit_t *)C2P_GetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_CHUNKY);
+                w->chunky_buffer.width = width;
+        w->chunky_buffer.height = height;
         APTR bmp = (APTR) C2P_GetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_BITMAP);
-        struct BitMap *b = (struct BitMap *) bmp;
-#else
-        framebuffer_8bit_init(&w->chunky_buffer, width, height);
-#endif
-
-        w->screen = OpenScreenTags(NULL,
+        
+                w->screen = OpenScreenTags(NULL, 
                                    SA_Left, 0,
                                    SA_Top, 0,
                                    SA_Width, screen_width,
                                    SA_Height, screen_height,
                                    SA_Depth, screen_depth,
-                                   #ifdef USE_C2P
                                    SA_Type, CUSTOMSCREEN | CUSTOMBITMAP,
                                    SA_BitMap, bmp,
-                                   #else
-                                   SA_Type, CUSTOMSCREEN,
-                                   #endif
                                    SA_DisplayID, screen_id,
                                    SA_Title, title,
                                    SA_Exclusive, TRUE,
@@ -152,8 +144,26 @@ Window_t *window_create(const int width, const int height, const char *title, co
                                    SA_AutoScroll, FALSE,
                                    SA_Draggable, FALSE,
                                    TAG_DONE);
+#else
+        framebuffer_8bit_init(&w->chunky_buffer, width, height);
+                w->screen = OpenScreenTags(NULL, 
+                                   SA_Left, 0,
+                                   SA_Top, 0,
+                                   SA_Width, screen_width,
+                                   SA_Height, screen_height,
+                                   SA_Depth, screen_depth,
+                                   SA_Type, CUSTOMSCREEN,
+                                   SA_DisplayID, screen_id,
+                                   SA_Title, title,
+                                   SA_Exclusive, TRUE,
+                                   SA_SharePens, TRUE,
+                                   SA_ShowTitle, FALSE,
+                                   SA_AutoScroll, FALSE,
+                                   SA_Draggable, FALSE,
+                                   TAG_DONE);
+#endif
 
-        w->window = OpenWindowTags(NULL,
+        w->window = OpenWindowTags(NULL, 
                                    WA_Left, 0,
                                    WA_Top, 0,
                                    WA_Width, width,
@@ -166,7 +176,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
     } else {
         w->screen = NULL;
 
-        w->window = OpenWindowTags(NULL,
+        w->window = OpenWindowTags(NULL, 
                                    WA_Left, 0,
                                    WA_Top, 0,
                                    WA_Width, width,

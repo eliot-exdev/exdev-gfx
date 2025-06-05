@@ -21,7 +21,7 @@ INCLUDES_AOS=-Ilibrary/include -Ilibrary/easing/include
 all: voxelspace julia test_sprite other
 
 #--- voxelspace ---#
-voxelspace: voxelspace_mos voxelspace_mos_gcc voxelspace_060 voxelspace_060_profile voxelspace_030_fpu
+voxelspace: voxelspace_mos voxelspace_mos_gcc voxelspace_060 voxelspace_060_c2p 
 
 voxelspace_mos: library/src/vertex3d.c library/src/events.c library/src/vertex2d.c library/src/matrix.c library/src/palette.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c library/src/heightmap.c\
                 library/src/voxelspace.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/voxelspace_main.c
@@ -35,13 +35,13 @@ voxelspace_060: library/src/vertex3d.c library/src/events.c library/src/vertex2d
                 library/src/voxelspace.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/voxelspace_main.c
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060} -DLOW_RESOLUTION
 
-voxelspace_060_profile: library/src/vertex3d.c library/src/events.c library/src/vertex2d.c library/src/matrix.c library/src/palette.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c library/src/heightmap.c\
+voxelspace_060_c2p: library/src/vertex3d.c library/src/events.c library/src/vertex2d.c library/src/matrix.c library/src/palette.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c library/src/heightmap.c\
                 library/src/voxelspace.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/voxelspace_main.c
-	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060} -DLOW_RESOLUTION -DPROFILE_APPLICATION
+	$(CC) -o ${@} ${INCLUDES_AOS} -IWork:workspace/c2plib/sdk/C $(^) ${C_FLAGS_060} ${LD_FLAGS_060} -LWork:workspace/c2plib/sdk -lc2p -DLOW_RESOLUTION -DUSE_C2P
 
-voxelspace_030_fpu: library/src/vertex3d.c library/src/events.c library/src/vertex2d.c library/src/matrix.c library/src/palette.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c library/src/heightmap.c\
-                library/src/voxelspace.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/voxelspace_main.c
-	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_030_FPU} ${LD_FLAGS_030_FPU} -DLOW_RESOLUTION
+#voxelspace_030_fpu: library/src/vertex3d.c library/src/events.c library/src/vertex2d.c library/src/matrix.c library/src/palette.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c library/src/heightmap.c\
+#                library/src/voxelspace.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/voxelspace_main.c
+#	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_030_FPU} ${LD_FLAGS_030_FPU} -DLOW_RESOLUTION
 
 #--- test sprite ---#
 test_sprite: test_sprite_mos test_sprite_mos_gcc
@@ -125,7 +125,7 @@ dist_voxelspace: voxelspace
 	mkdir ram:voxelspace/assets
 	cp -av examples/README_VOXELSPACE.md ram:voxelspace
 	cp -av assets/*palette.dat assets/*height_map.dat assets/*color_map_8bit.dat assets/*sky.dat assets/*sky_lowres.dat ram:voxelspace/assets
-	cp -av voxelspace_mos voxelspace_060 voxelspace_060_profile voxelspace_030_fpu ram:voxelspace
+	cp -av voxelspace_mos voxelspace_060 voxelspace_060_c2p ram:voxelspace
 	cp voxelspace.info ram:voxelspace.info
 	lha a -r ram:voxelspace.lha ram:voxelspace ram:voxelspace.info
 
