@@ -18,7 +18,7 @@
 #define ASSETS_PREFIX ""
 #endif
 
-#define VERSION "voxelspace 0.7 (26.12.2020)"
+#define VERSION "voxelspace 0.8 (05.06.2025)"
 
 #ifndef __linux__
 #ifdef __VBCC__
