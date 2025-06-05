@@ -237,7 +237,9 @@ Framebuffer8Bit_t *window_get_chunky_buffer(Window_t *win) {
 }
 
 void window_blit_chunky_buffer(Window_t *win) {
+#ifdef LOW_RESOLUTION
     WaitTOF();
+#endif
 
 #ifdef USE_C2P
     C2P_Chunky2Planar(NATIVE_WINDOW_CAST(win)->C2P_context);
