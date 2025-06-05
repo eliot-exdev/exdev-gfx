@@ -12,7 +12,7 @@ A simple mandelbrot renderer:
 
 ## voxelspace
 A simple voxelspace renderer (do you remember [Comanche](https://en.wikipedia.org/wiki/Comanche_(video_game_series))?):  
-![voxelspace](screenshots/voxelspace.png)
+![voxelspace](screenshots/voxelspace_world_5.png)
 
 ## sprite
 A simple sprite renderer with alpha, scaling and rotation:
