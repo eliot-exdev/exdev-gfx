@@ -256,6 +256,10 @@ static void move(Vertex3d_t p, const char move_flag, const char strafe_flag, con
     }
 }
 
+#if defined(__MORPHOS__) || defined(__AMIGAOS__)
+unsigned long __stack = (16 * 1024 * 1024);
+#endif
+
 int main(int argc, char **argv) {
     parse_args(argc, argv);
 
