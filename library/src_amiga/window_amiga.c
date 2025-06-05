@@ -23,6 +23,12 @@
 #include <utility/tagitem.h>
 #include <proto/asl.h>
 
+#ifdef USE_C2P
+
+#include <c2p.h>
+
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -30,6 +36,10 @@
 struct NativeWindow {
     struct Screen *screen;
     struct Window *window;
+    Framebuffer8Bit_t chunky_buffer;
+#ifdef USE_C2P
+    APTR C2P_context;
+#endif
 };
 typedef struct NativeWindow NativeWindow_t;
 
@@ -106,39 +116,60 @@ Window_t *window_create(const int width, const int height, const char *title, co
             return NULL;
         }
 
-        w->screen = OpenScreenTags(NULL, 
-                                   SA_Left, 0, 
-                                   SA_Top, 0, 
-                                   SA_Width, screen_width, 
-                                   SA_Height, screen_height, 
+        w->chunky_buffer.width = width;
+        w->chunky_buffer.height = height;
+#ifdef USE_C2P
+        w->C2P_context = C2P_CreateContext();
+        C2P_SetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_TYPE, C2P_CONTEXT_TYPE_BITMAP);
+        C2P_SetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_WIDTH, width);
+        C2P_SetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_HEIGHT, height);
+        C2P_SetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_PLANAR_FORMAT, C2P_CONTEXT_PLANAR_FORMAT_8_BIT);
+        C2P_InitializeContext(w->C2P_context);
+        w->chunky_buffer.buffer = C2P_GetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_CHUNKY);
+        APTR bmp = (APTR) C2P_GetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_BITMAP);
+        struct BitMap *b = (struct BitMap *) bmp;
+#else
+        framebuffer_8bit_init(&w->chunky_buffer, width, height);
+#endif
+
+        w->screen = OpenScreenTags(NULL,
+                                   SA_Left, 0,
+                                   SA_Top, 0,
+                                   SA_Width, screen_width,
+                                   SA_Height, screen_height,
                                    SA_Depth, screen_depth,
-                                   SA_Type, CUSTOMSCREEN, 
+                                   #ifdef USE_C2P
+                                   SA_Type, CUSTOMSCREEN | CUSTOMBITMAP,
+                                   SA_BitMap, bmp,
+                                   #else
+                                   SA_Type, CUSTOMSCREEN,
+                                   #endif
                                    SA_DisplayID, screen_id,
-                                   SA_Title, title, 
-                                   SA_Exclusive, TRUE, 
-                                   SA_SharePens, TRUE, 
-                                   SA_ShowTitle, FALSE, 
+                                   SA_Title, title,
+                                   SA_Exclusive, TRUE,
+                                   SA_SharePens, TRUE,
+                                   SA_ShowTitle, FALSE,
                                    SA_AutoScroll, FALSE,
                                    SA_Draggable, FALSE,
                                    TAG_DONE);
 
-        w->window = OpenWindowTags(NULL, 
-                                   WA_Left, 0, 
-                                   WA_Top, 0, 
-                                   WA_Width, width, 
+        w->window = OpenWindowTags(NULL,
+                                   WA_Left, 0,
+                                   WA_Top, 0,
+                                   WA_Width, width,
                                    WA_Height, height,
                                    WA_CustomScreen, w->screen,
                                    WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
-                                   WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_REPORTMOUSE | WFLG_RMBTRAP,
+                                   WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_REPORTMOUSE | WFLG_RMBTRAP | WFLG_BACKDROP,
                                    WA_Title, title,
                                    TAG_DONE);
     } else {
         w->screen = NULL;
 
-        w->window = OpenWindowTags(NULL, 
-                                   WA_Left, 0, 
-                                   WA_Top, 0, 
-                                   WA_Width, width, 
+        w->window = OpenWindowTags(NULL,
+                                   WA_Left, 0,
+                                   WA_Top, 0,
+                                   WA_Width, width,
                                    WA_Height, height,
                                    WA_CustomScreen, w->screen,
                                    WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
@@ -159,6 +190,13 @@ void window_destroy(Window_t *win) {
     }
     NATIVE_WINDOW_CAST(win)->window = NULL;
     NATIVE_WINDOW_CAST(win)->screen = NULL;
+
+#ifdef USE_C2P
+    C2P_DestroyContext(NATIVE_WINDOW_CAST(win)->C2P_context);
+    NATIVE_WINDOW_CAST(win)->chunky_buffer.buffer = NULL;
+#else
+    framebuffer_8bit_deinit(&NATIVE_WINDOW_CAST(win)->chunky_buffer);
+#endif
 
     free(NATIVE_WINDOW_CAST(win));
 }
@@ -184,10 +222,28 @@ void window_fill(Window_t *win, const Framebuffer_t *gb) {
     WriteChunkyPixels(NATIVE_WINDOW_CAST(win)->window->RPort, 0, 0, gb->width * 3, gb->height * 3, (unsigned char *) gb->buffer, gb->width);
 }
 
+Framebuffer8Bit_t *window_get_chunky_buffer(Window_t *win) {
+    return &NATIVE_WINDOW_CAST(win)->chunky_buffer;
+}
+
+void window_blit_chunky_buffer(Window_t *win) {
+    WaitTOF();
+
+#ifdef USE_C2P
+    C2P_Chunky2Planar(NATIVE_WINDOW_CAST(win)->C2P_context);
+#else
+    WriteChunkyPixels(&NATIVE_WINDOW_CAST(win)->screen->RastPort, 0, 0,
+                      NATIVE_WINDOW_CAST(win)->chunky_buffer.width,
+                      NATIVE_WINDOW_CAST(win)->chunky_buffer.height,
+                      NATIVE_WINDOW_CAST(win)->chunky_buffer.buffer,
+                      NATIVE_WINDOW_CAST(win)->chunky_buffer.width);
+#endif
+}
+
 void window_fill_8bit(Window_t *win, const Framebuffer8Bit_t *gb) {
-    assert(w->screen);
     //    WritePixelArray(gb->buffer, 0, 0, gb->width, w->window->RPort, 0, 0, gb->width, gb->height, RECTFMT_LUT8);
     WriteChunkyPixels(&NATIVE_WINDOW_CAST(win)->screen->RastPort, 0, 0, gb->width, gb->height, gb->buffer, gb->width);
+//    C2P_Chunky2Planar()
 }
 
 void window_update_palette(Window_t *win, const Palette8Bit_t *p) {

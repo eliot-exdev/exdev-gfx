@@ -34,6 +34,10 @@ int window_get_inner_width(const Window_t *w);
 
 int window_get_inner_height(const Window_t *w);
 
+void window_blit_chunky_buffer(Window_t *win);
+
+Framebuffer8Bit_t *window_get_chunky_buffer(Window_t *win);
+
 void window_fill(Window_t *w, const Framebuffer_t *gb);
 
 void window_fill_8bit(Window_t *w, const Framebuffer8Bit_t *gb);

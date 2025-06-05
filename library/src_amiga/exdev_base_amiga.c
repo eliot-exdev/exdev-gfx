@@ -40,6 +40,10 @@ struct Library *TimerBase = 0;
 struct Device *TimerBase = 0;
 #endif
 
+#ifdef USE_C2P
+struct Library *C2PBase;
+#endif
+
 int exdev_base_init() {
     if (exdev_base_initiated) {
         return 0;
@@ -84,6 +88,14 @@ int exdev_base_init() {
     TimerBase = (struct Device *) timer_ioreq.io_Device;
 #endif
 
+#ifdef USE_C2P
+    C2PBase = OpenLibrary("c2p.library", 0);
+    if (C2PBase == NULL) {
+        log_warning("could not open c2p.library");
+        return 1;
+    }
+#endif
+
     exdev_base_initiated = 1;
     log_info("<-- exdev_base_init()");
     return 0;
@@ -94,6 +106,13 @@ int exdev_base_deinit() {
         return 0;
     }
     log_info("--> exdev_base_deinit()");
+
+#ifdef USE_C2P
+    if (C2PBase) {
+        CloseLibrary(C2PBase);
+        C2PBase = NULL;
+    }
+#endif
 
     CloseDevice(&timer_ioreq);
 
@@ -106,22 +125,22 @@ int exdev_base_deinit() {
 
     if (AslBase) {
         CloseLibrary((struct Library *) AslBase);
-        AslBase = 0;
+        AslBase = NULL;
     }
 
     if (GadToolsBase) {
         CloseLibrary((struct Library *) GadToolsBase);
-        GadToolsBase = 0;
+        GadToolsBase = NULL;
     }
 
     if (GfxBase) {
         CloseLibrary((struct Library *) GfxBase);
-        GfxBase = 0;
+        GfxBase = NULL;
     }
 
     if (IntuitionBase) {
         CloseLibrary((struct Library *) IntuitionBase);
-        IntuitionBase = 0;
+        IntuitionBase = NULL;
     }
 
     exdev_base_initiated = 0;

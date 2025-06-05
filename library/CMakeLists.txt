@@ -27,18 +27,23 @@ if (MORPHOS OR AMIGAOS)
             src_amiga/exdev_base_amiga.c
             src_amiga/helper_amiga.c
             src_amiga/window_amiga.c
-            )
+    )
     target_include_directories(${PROJECT_NAME}
             PUBLIC include
-            )
+    )
     target_link_libraries(${PROJECT_NAME}
             PUBLIC m
-            )
+    )
     target_compile_options(${PROJECT_NAME}
             PUBLIC -Wno-format -Wno-int-conversion
-            )
-    if(AMIGAOS)
+    )
+    if (AMIGAOS)
         target_compile_definitions(${PROJECT_NAME} PRIVATE LOW_RESOLUTION)
+        if (USE_AMIGA_C2P)
+            target_include_directories(${PROJECT_NAME} PRIVATE ${AMIGA_C2P_INCLUDE_DIR})
+            target_compile_definitions(${PROJECT_NAME} PRIVATE USE_C2P)
+            target_link_libraries(${PROJECT_NAME} PRIVATE ${AMIGA_C2P_LIBRARY})
+        endif ()
     endif ()
 else ()
     add_library(${PROJECT_NAME} STATIC
@@ -62,27 +67,25 @@ else ()
             src_linux/exdev_base_linux.c
             src_linux/helper_linux.c
             src_linux/window_linux_x11.c
-            )
+    )
     target_include_directories(${PROJECT_NAME}
             PUBLIC include
             PUBLIC ${X11_INCLUDE_DIR}
-            )
+    )
     target_link_libraries(${PROJECT_NAME}
             PUBLIC ${X11_LIBRARIES}
             PUBLIC m
-            )
+    )
     target_compile_options(${PROJECT_NAME}
             PUBLIC -Wno-c2x-extensions -Wno-unused-variable -fPIC -Wno-format
-            )
+    )
 endif ()
-
-
 
 install(TARGETS ${PROJECT_NAME}
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
-        )
+)
 
 install(DIRECTORY include
         DESTINATION include
-        )
+)

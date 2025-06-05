@@ -267,7 +267,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    log_info_fmt("resolution=%d:%d", WIDTH, HEIGHT);
+    log_info_fmt("resolution=%dx%d", WIDTH, HEIGHT);
     log_info_fmt("heightmap path=%s", heightmap_path);
     log_info_fmt("colormap path=%s", colormap_path);
     log_info_fmt("palette path=%s", palette_path);
@@ -284,7 +284,7 @@ int main(int argc, char **argv) {
         exit(0);
     }
 
-    // read color map
+    // read colormap
     log_info("--> reading color map ...");
     Framebuffer8Bit_t color_map;
     res = framebuffer_8bit_read_from_dat(&color_map, colormap_path);
@@ -311,10 +311,6 @@ int main(int argc, char **argv) {
         exit(0);
     }
 
-    // setup framebuffer to render
-    struct Framebuffer8Bit fb;
-    framebuffer_8bit_init(&fb, WIDTH, HEIGHT);
-
     // create font
     Font_t mia1;
     font_init_mia_1(&mia1);
@@ -326,14 +322,6 @@ int main(int argc, char **argv) {
     zones_init(&zones, 3);
     set_zones();
 
-    // create voxelspace
-    Voxelspace_t v;
-    voxelspace_init(&v, &height_map, &color_map, &fb, SCALE_HEIGHT, palette.numPens - 2, &sky_texture, &zones);
-
-    // cleanup
-    framebuffer_8bit_deinit(&height_map);
-    framebuffer_8bit_deinit(&color_map);
-    log_info("<-- init all done");
 
     // local variables
     int rotation = 0;
@@ -354,6 +342,15 @@ int main(int argc, char **argv) {
         exit(0);
     }
     window_update_palette(window, &palette);
+
+    // create voxelspace
+    Voxelspace_t v;
+    voxelspace_init(&v, &height_map, &color_map, window_get_chunky_buffer(window), SCALE_HEIGHT, palette.numPens - 2, &sky_texture, &zones);
+
+    // cleanup
+    framebuffer_8bit_deinit(&height_map);
+    framebuffer_8bit_deinit(&color_map);
+    log_info("<-- init all done");
 
     //events
     char close_event = 0;
@@ -474,12 +471,12 @@ int main(int argc, char **argv) {
             if (before == 0) {
                 ++before;
             }
-            framebuffer_8bit_draw_text(&fb, &mia1, fps_text, sprintf(fps_text, "%li", 1000 / before), font_color, 20, HEIGHT - 20);
+            framebuffer_8bit_draw_text(window_get_chunky_buffer(window), &mia1, fps_text, sprintf(fps_text, "%li", 1000 / before), font_color, 20, HEIGHT - 20);
             before = after;
         }
         update_profile("render world");
 
-        window_fill_8bit(window, &fb);
+        window_blit_chunky_buffer(window);
         update_profile("blit image");
         log_debug("<-- render");
     }
@@ -491,7 +488,6 @@ int main(int argc, char **argv) {
     zones_deinit(&zones);
     font_deinit(&mia1);
     framebuffer_8bit_deinit(&sky_texture);
-    framebuffer_8bit_deinit(&fb);
     log_info("<-- cleanup done");
 
     return exdev_base_deinit();

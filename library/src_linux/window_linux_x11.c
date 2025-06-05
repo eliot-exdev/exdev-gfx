@@ -27,6 +27,7 @@ struct X11Window {
     XImage *img;
     FramebufferRGBA_t fb;
     const Palette8Bit_t *palette;
+    Framebuffer8Bit_t chunky_buffer;
 };
 
 typedef struct X11Window X11Window_t;
@@ -102,6 +103,9 @@ Window_t *window_create(const int width, const int height, const char *title, co
     }
 
     XSync(x11_w->display, 0);
+
+    framebuffer_8bit_init(&x11_w->chunky_buffer, width, height);
+
     return (void *) x11_w;
 }
 
@@ -113,6 +117,7 @@ void window_destroy(Window_t *w) {
     XDestroyWindow(x11_w->display, x11_w->window);
     XCloseDisplay(x11_w->display);
     //    framebuffer_rgba_deinit(&x11_w->fb); // is not needed, because XDestroyImage clears the buffer
+    framebuffer_8bit_deinit(&x11_w->chunky_buffer);
     free(x11_w);
 }
 
@@ -178,6 +183,15 @@ void window_update_palette(Window_t *w, const Palette8Bit_t *p) {
     assert(p);
     X11Window_t *x11_w = (X11Window_t *) w;
     x11_w->palette = p;
+}
+
+void window_blit_chunky_buffer(Window_t *win) {
+    window_fill_8bit(win, window_get_chunky_buffer(win));
+}
+
+Framebuffer8Bit_t *window_get_chunky_buffer(Window_t *win) {
+    X11Window_t *x11_w = (X11Window_t *) win;
+    return &x11_w->chunky_buffer;
 }
 
 void window_fill_8bit(Window_t *w, const Framebuffer8Bit_t *gb) {
