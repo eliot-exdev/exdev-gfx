@@ -123,12 +123,12 @@ Window_t *window_create(const int width, const int height, const char *title, co
         C2P_SetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_HEIGHT, height);
         C2P_SetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_PLANAR_FORMAT, C2P_CONTEXT_PLANAR_FORMAT_8_BIT);
         C2P_InitializeContext(w->C2P_context);
-        w->chunky_buffer.buffer = (Color8Bit_t *)C2P_GetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_CHUNKY);
-                w->chunky_buffer.width = width;
+        w->chunky_buffer.buffer = (Color8Bit_t *) C2P_GetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_CHUNKY);
+        w->chunky_buffer.width = width;
         w->chunky_buffer.height = height;
         APTR bmp = (APTR) C2P_GetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_BITMAP);
-        
-                w->screen = OpenScreenTags(NULL, 
+
+        w->screen = OpenScreenTags(NULL,
                                    SA_Left, 0,
                                    SA_Top, 0,
                                    SA_Width, screen_width,
@@ -163,7 +163,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
                                    TAG_DONE);
 #endif
 
-        w->window = OpenWindowTags(NULL, 
+        w->window = OpenWindowTags(NULL,
                                    WA_Left, 0,
                                    WA_Top, 0,
                                    WA_Width, width,
@@ -176,7 +176,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
     } else {
         w->screen = NULL;
 
-        w->window = OpenWindowTags(NULL, 
+        w->window = OpenWindowTags(NULL,
                                    WA_Left, 0,
                                    WA_Top, 0,
                                    WA_Width, width,
