@@ -32,22 +32,22 @@ static penner_functions_t functions[NUM_FUNCTIONS];
 
 static int functions_index = 0;
 
-static void paint(Window_t *window, Framebuffer8Bit_t *offscreen, Framebuffer8Bit_t *sprite, const float scale,
-                  const float rotate) {
+static void paint(Window_t *window, Framebuffer8Bit_t *sprite, const float scale, const float rotate) {
+    Framebuffer8Bit_t *offscreen = window_get_chunky_buffer(window);
+
     // clear buffer + draw
     framebuffer_8bit_fill(offscreen, 31);
     // render scale
     framebuffer_8bit_draw_framebuffer_scaled(offscreen, posSprite1[0], posSprite1[1], sprite, scale, 0);
     // render rotate
     framebuffer_8bit_draw_framebuffer_rotated(offscreen, posSprite2[0], posSprite2[1], sprite, rotate, 0);
-    window_fill_8bit(window, offscreen);
+    window_blit_chunky_buffer(window);
 }
 
 int main() {
     // variables
     float scale = 1.0f;
     float rotate = 0.0f;
-    Framebuffer8Bit_t offscreen;
     Framebuffer8Bit_t sprite;
     Palette8Bit_t palette;
     Window_t *window = NULL;
@@ -69,7 +69,6 @@ int main() {
 
     // init
     exdev_base_init();
-    framebuffer_8bit_init(&offscreen, WIDTH, HEIGHT);
     if (framebuffer_8bit_read_from_dat(&sprite, "assets/guybrush_8bit.dat")) {
         log_warning("could not read sprite");
         return 1;
@@ -89,7 +88,7 @@ int main() {
     int in = 1;
     while (!close_event) {
         // render
-        paint(window, &offscreen, &sprite, scale, rotate);
+        paint(window, &sprite, scale, rotate);
 
         // handle events
         window_poll_events(window, &close_event, &event, 1);
@@ -139,7 +138,6 @@ int main() {
     }
 
     // deinit
-    framebuffer_8bit_deinit(&offscreen);
     framebuffer_8bit_deinit(&sprite);
     window_destroy(window);
     exdev_base_deinit();

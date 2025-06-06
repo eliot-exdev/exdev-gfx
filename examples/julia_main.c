@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
     julia.max_it = max_it;
     julia_paint(&julia, &fb);
 
-    window = window_create(width, height, "Julia", FS_NO);
+    window = window_create(width, height, "Julia", FS_24_BIT);
     window_fill(window, &fb);
 
     while (!close_event) {

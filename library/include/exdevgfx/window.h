@@ -17,9 +17,8 @@ extern "C" {
 typedef void *Window_t;
 
 enum FULLSCREEN {
-    FS_NO,
-    FS_8_BIT,
-    FS_24_BIT
+    FS_8_BIT = 8,
+    FS_24_BIT = 24
 };
 
 Window_t *window_create(int width, int height, const char *title, enum FULLSCREEN fs);

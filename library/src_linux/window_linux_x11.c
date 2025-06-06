@@ -63,7 +63,7 @@ typedef struct hints {
 } hints_t;
 
 
-Window_t *window_create(const int width, const int height, const char *title, const enum FULLSCREEN fs) {
+Window_t *window_create(const int width, const int height, const char *title, const enum FULLSCREEN) {
     X11Window_t *x11_w = (X11Window_t *) malloc(sizeof(X11Window_t));
     x11_w->display = XOpenDisplay(NULL);
     if (x11_w->display == NULL) {
@@ -96,11 +96,6 @@ Window_t *window_create(const int width, const int height, const char *title, co
     XChangeProperty(x11_w->display, x11_w->window, property, property, 32, PropModeReplace, (unsigned char *) &hints,
                     5);
 #endif
-
-    if (fs != FS_NO) {
-        log_warning("full screen is currently not supported on linux");
-        //        setFullscreen(x11_w->display,x11_w->window);
-    }
 
     XSync(x11_w->display, 0);
 

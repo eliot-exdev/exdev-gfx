@@ -8,6 +8,7 @@
 
 #include "exdevgfx/logger.h"
 #include "exdevgfx/exdev_base.h"
+#include "exdevgfx/helper.h"
 
 #include <intuition/intuition.h>
 #include <proto/intuition.h>
@@ -24,9 +25,7 @@
 #include <proto/asl.h>
 
 #ifdef USE_C2P
-
 #include <c2p.h>
-
 #endif
 
 #include <stdlib.h>
@@ -47,151 +46,138 @@ typedef struct NativeWindow NativeWindow_t;
 #define NATIVE_WINDOW_CAST_CONST(w) ((const  NativeWindow_t *)w)
 
 Window_t *window_create(const int width, const int height, const char *title, const enum FULLSCREEN fs) {
-    NativeWindow_t *w = (NativeWindow_t *) malloc(sizeof(NativeWindow_t));
+    NativeWindow_t *w = ALLOC_FAST_MEM(sizeof(NativeWindow_t));
 
-    if (fs == FS_8_BIT || fs == FS_24_BIT) {
-        int depth = 24;
-        if (fs == FS_8_BIT) {
-            depth = 8;
-        }
+    const int depth = (int) fs;
 
-        char TITLE_TEXT[256];
-        sprintf(TITLE_TEXT, "Select screen mode (%dx%dx%d)", width, height, depth);
+    char TITLE_TEXT[256];
+    sprintf(TITLE_TEXT, "Select screen mode (%dx%dx%d)", width, height, depth);
 
-        struct TagItem smrtags[5];
-        smrtags[0].ti_Tag = ASLSM_TitleText;
-        smrtags[0].ti_Data = (ULONG) TITLE_TEXT;
-        smrtags[1].ti_Tag = ASLSM_MinWidth;
-        smrtags[1].ti_Data = width;
-        smrtags[2].ti_Tag = ASLSM_MinHeight;
-        smrtags[2].ti_Data = height;
-        smrtags[3].ti_Tag = ASLSM_MinDepth;
-        smrtags[3].ti_Data = depth;
-        smrtags[4].ti_Tag = TAG_END;
+    struct TagItem smrtags[5];
+    smrtags[0].ti_Tag = ASLSM_TitleText;
+    smrtags[0].ti_Data = (ULONG) TITLE_TEXT;
+    smrtags[1].ti_Tag = ASLSM_MinWidth;
+    smrtags[1].ti_Data = width;
+    smrtags[2].ti_Tag = ASLSM_MinHeight;
+    smrtags[2].ti_Data = height;
+    smrtags[3].ti_Tag = ASLSM_MinDepth;
+    smrtags[3].ti_Data = depth;
+    smrtags[4].ti_Tag = TAG_END;
 
-        struct ScreenModeRequester *smr = 0;
-        unsigned long screen_id = (unsigned long) INVALID_ID;
-        int screen_width = 0;
-        int screen_height = 0;
-        int screen_depth = 0;
-        smr = (struct ScreenModeRequester *) AllocAslRequest(ASL_ScreenModeRequest, smrtags);
-        if (AslRequest(smr, 0L)) {
-            screen_id = smr->sm_DisplayID;
-            screen_width = smr->sm_DisplayWidth;
-            screen_height = smr->sm_DisplayHeight;
-            screen_depth = smr->sm_DisplayDepth;
-        } else {
-            log_warning("no screen mode selected by user");
-            FreeAslRequest(smr);
-            free(w);
-            return NULL;
-        }
-
+    struct ScreenModeRequester *smr = 0;
+    unsigned long screen_id = (unsigned long) INVALID_ID;
+    int screen_width = 0;
+    int screen_height = 0;
+    int screen_depth = 0;
+    smr = (struct ScreenModeRequester *) AllocAslRequest(ASL_ScreenModeRequest, smrtags);
+    if (AslRequest(smr, 0L)) {
+        screen_id = smr->sm_DisplayID;
+        screen_width = smr->sm_DisplayWidth;
+        screen_height = smr->sm_DisplayHeight;
+        screen_depth = smr->sm_DisplayDepth;
+    } else {
+        log_warning("no screen mode selected by user");
         FreeAslRequest(smr);
+        free(w);
+        return NULL;
+    }
 
-//        const unsigned long id = BestModeID(BIDTAG_Depth, depth, BIDTAG_DesiredWidth, width, BIDTAG_DesiredHeight, height, TAG_DONE);
-        if (screen_id == (unsigned long) INVALID_ID) {
-            free(w);
-            log_warning("invalid screen id");
-            return NULL;
-        }
-        log_info_fmt("screen_id=0x%08lx", screen_id);
-        log_info_fmt("screen_width=%d", screen_width);
-        log_info_fmt("screen_height=%d", screen_height);
-        log_info_fmt("screen_depth=%d", screen_depth);
+    FreeAslRequest(smr);
 
-        if (screen_width < width) {
-            free(w);
-            log_warning("screen width is to small");
-            return NULL;
-        }
-        if (screen_height < height) {
-            free(w);
-            log_warning("screen height is to small");
-            return NULL;
-        }
-        if (screen_depth < depth) {
-            free(w);
-            log_warning("screen depth is to small");
-            return NULL;
-        }
+    if (screen_id == (unsigned long) INVALID_ID) {
+        free(w);
+        log_warning("invalid screen id");
+        return NULL;
+    }
+    log_info_fmt("screen_id=0x%08lx", screen_id);
+    log_info_fmt("screen_width=%d", screen_width);
+    log_info_fmt("screen_height=%d", screen_height);
+    log_info_fmt("screen_depth=%d", screen_depth);
+
+    if (screen_width < width) {
+        free(w);
+        log_warning("screen width is to small");
+        return NULL;
+    }
+    if (screen_height < height) {
+        free(w);
+        log_warning("screen height is to small");
+        return NULL;
+    }
+    if (screen_depth < depth) {
+        free(w);
+        log_warning("screen depth is to small");
+        return NULL;
+    }
 
 #ifdef USE_C2P
-        w->C2P_context = C2P_CreateContext();
-        C2P_SetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_TYPE, C2P_CONTEXT_TYPE_BITMAP);
-        C2P_SetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_WIDTH, width);
-        C2P_SetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_HEIGHT, height);
-        C2P_SetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_PLANAR_FORMAT, C2P_CONTEXT_PLANAR_FORMAT_8_BIT);
-        C2P_InitializeContext(w->C2P_context);
-        w->chunky_buffer.buffer = (Color8Bit_t *) C2P_GetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_CHUNKY);
-        w->chunky_buffer.width = width;
-        w->chunky_buffer.height = height;
-        APTR bmp = (APTR) C2P_GetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_BITMAP);
+    w->C2P_context = C2P_CreateContext();
+    C2P_SetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_TYPE, C2P_CONTEXT_TYPE_BITMAP);
+    C2P_SetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_WIDTH, width);
+    C2P_SetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_HEIGHT, height);
+    C2P_SetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_PLANAR_FORMAT, C2P_CONTEXT_PLANAR_FORMAT_8_BIT);
+    C2P_InitializeContext(w->C2P_context);
+    w->chunky_buffer.buffer = (Color8Bit_t *) C2P_GetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_CHUNKY);
+    w->chunky_buffer.width = width;
+    w->chunky_buffer.height = height;
+    APTR bmp = (APTR) C2P_GetContextParameter(w->C2P_context, C2P_CONTEXT_PARAMETER_BITMAP);
 
-        w->screen = OpenScreenTags(NULL,
-                                   SA_Left, 0,
-                                   SA_Top, 0,
-                                   SA_Width, screen_width,
-                                   SA_Height, screen_height,
-                                   SA_Depth, screen_depth,
-                                   SA_Type, CUSTOMSCREEN | CUSTOMBITMAP,
-                                   SA_BitMap, bmp,
-                                   SA_DisplayID, screen_id,
-                                   SA_Title, title,
-                                   SA_Exclusive, TRUE,
-                                   SA_SharePens, TRUE,
-                                   SA_ShowTitle, FALSE,
-                                   SA_AutoScroll, FALSE,
-                                   SA_Draggable, FALSE,
-                                   TAG_DONE);
+    w->screen = OpenScreenTags(NULL,
+                               SA_Left, 0,
+                               SA_Top, 0,
+                               SA_Width, screen_width,
+                               SA_Height, screen_height,
+                               SA_Depth, screen_depth,
+                               SA_Type, CUSTOMSCREEN | CUSTOMBITMAP,
+                               SA_BitMap, bmp,
+                               SA_DisplayID, screen_id,
+                               SA_Title, title,
+                               SA_Exclusive, TRUE,
+                               SA_SharePens, TRUE,
+                               SA_ShowTitle, FALSE,
+                               SA_AutoScroll, FALSE,
+                               SA_Draggable, FALSE,
+                               TAG_DONE);
 #else
-        framebuffer_8bit_init(&w->chunky_buffer, width, height);
-                w->screen = OpenScreenTags(NULL, 
-                                   SA_Left, 0,
-                                   SA_Top, 0,
-                                   SA_Width, screen_width,
-                                   SA_Height, screen_height,
-                                   SA_Depth, screen_depth,
-                                   SA_Type, CUSTOMSCREEN,
-                                   SA_DisplayID, screen_id,
-                                   SA_Title, title,
-                                   SA_Exclusive, TRUE,
-                                   SA_SharePens, TRUE,
-                                   SA_ShowTitle, FALSE,
-                                   SA_AutoScroll, FALSE,
-                                   SA_Draggable, FALSE,
-                                   TAG_DONE);
+    framebuffer_8bit_init(&w->chunky_buffer, width, height);
+    w->screen = OpenScreenTags(NULL,
+                               SA_Left, 0,
+                               SA_Top, 0,
+                               SA_Width, screen_width,
+                               SA_Height, screen_height,
+                               SA_Depth, screen_depth,
+                               SA_Type, CUSTOMSCREEN,
+                               SA_DisplayID, screen_id,
+                               SA_Title, title,
+                               SA_Exclusive, TRUE,
+                               SA_SharePens, TRUE,
+                               SA_ShowTitle, FALSE,
+                               SA_AutoScroll, FALSE,
+                               SA_Draggable, FALSE,
+                               TAG_DONE);
 #endif
-
-        w->window = OpenWindowTags(NULL,
-                                   WA_Left, 0,
-                                   WA_Top, 0,
-                                   WA_Width, width,
-                                   WA_Height, height,
-                                   WA_CustomScreen, w->screen,
-                                   WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
-                                   WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_REPORTMOUSE | WFLG_RMBTRAP | WFLG_BACKDROP,
-                                   WA_Title, title,
-                                   TAG_DONE);
-    } else {
-        w->screen = NULL;
-
-        w->window = OpenWindowTags(NULL,
-                                   WA_Left, 0,
-                                   WA_Top, 0,
-                                   WA_Width, width,
-                                   WA_Height, height,
-                                   WA_CustomScreen, w->screen,
-                                   WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
-                                   WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_REPORTMOUSE | WFLG_RMBTRAP,
-                                   WA_Title, title,
-                                   TAG_DONE);
-    }
+    w->window = OpenWindowTags(NULL,
+                               WA_Left, 0,
+                               WA_Top, 0,
+                               WA_Width, width,
+                               WA_Height, height,
+                               WA_CustomScreen, w->screen,
+                               WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
+                               WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_REPORTMOUSE | WFLG_RMBTRAP | WFLG_BACKDROP,
+                               WA_Title, title,
+                               TAG_DONE);
 
     return (Window_t *) w;
 }
 
 void window_destroy(Window_t *win) {
+#ifdef USE_C2P
+    C2P_DestroyContext(NATIVE_WINDOW_CAST(win)->C2P_context);
+    NATIVE_WINDOW_CAST(win)->chunky_buffer.buffer = NULL;
+#else
+    framebuffer_8bit_deinit(&NATIVE_WINDOW_CAST(win)->chunky_buffer);
+#endif
+
     if (NATIVE_WINDOW_CAST(win)->window) {
         CloseWindow(NATIVE_WINDOW_CAST(win)->window);
     }
@@ -201,14 +187,7 @@ void window_destroy(Window_t *win) {
     NATIVE_WINDOW_CAST(win)->window = NULL;
     NATIVE_WINDOW_CAST(win)->screen = NULL;
 
-#ifdef USE_C2P
-    C2P_DestroyContext(NATIVE_WINDOW_CAST(win)->C2P_context);
-    NATIVE_WINDOW_CAST(win)->chunky_buffer.buffer = NULL;
-#else
-    framebuffer_8bit_deinit(&NATIVE_WINDOW_CAST(win)->chunky_buffer);
-#endif
-
-    free(NATIVE_WINDOW_CAST(win));
+    FREE_MEM(NATIVE_WINDOW_CAST(win), sizeof(NativeWindow_t));
 }
 
 int window_get_width(const Window_t *win) {
@@ -229,7 +208,11 @@ int window_get_inner_height(const Window_t *win) {
 
 void window_fill(Window_t *win, const Framebuffer_t *gb) {
     //    WritePixelArray(gb->buffer, 0, 0, gb->width * 3, w->window->RPort, 0, 0, gb->width, gb->height, RECTFMT_RGB);
-    WriteChunkyPixels(NATIVE_WINDOW_CAST(win)->window->RPort, 0, 0, gb->width * 3, gb->height * 3, (unsigned char *) gb->buffer, gb->width);
+    WriteChunkyPixels(&NATIVE_WINDOW_CAST(win)->screen->RastPort, 0, 0,
+                      gb->width,
+                      gb->height,
+                      (unsigned char *) gb->buffer,
+                      gb->width * 3);
 }
 
 Framebuffer8Bit_t *window_get_chunky_buffer(Window_t *win) {
@@ -253,9 +236,11 @@ void window_blit_chunky_buffer(Window_t *win) {
 }
 
 void window_fill_8bit(Window_t *win, const Framebuffer8Bit_t *gb) {
-    //    WritePixelArray(gb->buffer, 0, 0, gb->width, w->window->RPort, 0, 0, gb->width, gb->height, RECTFMT_LUT8);
-    WriteChunkyPixels(&NATIVE_WINDOW_CAST(win)->screen->RastPort, 0, 0, gb->width, gb->height, gb->buffer, gb->width);
-//    C2P_Chunky2Planar()
+    WriteChunkyPixels(&NATIVE_WINDOW_CAST(win)->screen->RastPort, 0, 0,
+                      gb->width,
+                      gb->height,
+                      gb->buffer,
+                      gb->width);
 }
 
 void window_update_palette(Window_t *win, const Palette8Bit_t *p) {
@@ -280,7 +265,7 @@ static LONG deadKeyConvert(const struct IntuiMessage *msg, char *kbuffer, struct
 }
 
 int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const int maxEvents) {
-    struct IntuiMessage *msg = NULL;// since V39 it should be struct ExtIntuiMessage *
+    struct IntuiMessage *msg = NULL; // since V39 it should be struct ExtIntuiMessage *
     struct InputEvent ievent;
     char buffer[KEY_BUFFER_SIZE];
 
