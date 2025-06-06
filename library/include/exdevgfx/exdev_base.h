@@ -18,8 +18,10 @@ extern int exdev_base_initiated;
 #include <proto/intuition.h>
 #include <proto/graphics.h>
 #include <proto/gadtools.h>
+#ifdef __MORPHOS__
 //#include <proto/cybergraphics.h>
-#include <proto/dos.h>
+#endif
+    #include <proto/dos.h>
 
 //extern struct IOStdReq ioreq;
 //extern struct IORequest timer_ioreq;

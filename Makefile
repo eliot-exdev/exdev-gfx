@@ -69,23 +69,20 @@ test_sprite_mos: library/src/palette.c library/src/events.c library/src/color.c 
 	$(CC) -o ${@} ${INCLUDES_MOS} $(^) $(EASING_OBJECTS) ${C_FLAGS_MOS} ${LD_FLAGS_MOS}
 
 #--- julia ---#
-julia: julia_mos julia_mos_gcc julia_060
+julia: julia_mos julia_mos_gcc
 
-julia_mos: library/src/vertex2d.c library/src/events.c library/src/framebuffer.c library/src/color.c library/src_amiga/window_amiga.c library/src/julia.c library/src/args.c library/src/palette.c\
-           library/src_amiga/exdev_base_amiga.c library/src/helper.c examples/julia_main.c
+julia_mos: library/src/vertex2d.c library/src/events.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src/color.c library/src_amiga/window_amiga.c library/src/julia.c library/src/args.c library/src/palette.c\
+           library/src_amiga/exdev_base_amiga.c library/src/helper.c library/src/font.c examples/julia_main.c
 	$(CC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS} ${LD_FLAGS_MOS}
 
-julia_mos_gcc: library/src/vertex2d.c library/src/events.c library/src/framebuffer.c library/src/color.c library/src/framebuffer_8bit.c library/src/framebuffer_rgba.c library/src/color.c library/src/font.c library/src_amiga/window_amiga.c library/src/julia.c library/src/args.c library/src/palette.c\
-           library/src_amiga/exdev_base_amiga.c library/src/helper.c examples/julia_main.c
+julia_mos_gcc: library/src/vertex2d.c library/src/events.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src/color.c library/src_amiga/window_amiga.c library/src/julia.c library/src/args.c library/src/palette.c\
+           library/src_amiga/exdev_base_amiga.c library/src/helper.c library/src/font.c examples/julia_main.c
 	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
 
-julia_060: library/src/vertex2d.c library/src/events.c library/src/framebuffer.c library/src/color.c library/src_amiga/window_amiga.c library/src/julia.c library/src/args.c library/src/palette.c\
-           library/src_amiga/exdev_base_amiga.c library/src/helper.c examples/julia_main.c
-	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060}
+#julia_060: library/src/vertex2d.c library/src/events.c library/src/framebuffer.c library/src/color.c library/src_amiga/window_amiga.c library/src/julia.c library/src/args.c library/src/palette.c\
+#           library/src_amiga/exdev_base_amiga.c library/src/helper.c examples/julia_main.c
+#	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060}
 
-julia_nofpu: library/src/vertex2d.c library/src/events.c library/src/framebuffer.c library/src_amiga/window_amiga.c library/src/julia.c library/src/args.c library/src/palette.c\
-           library/src_amiga/exdev_base_amiga.c library/src/helper.c examples/julia_main.c
-	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_NO_FPU} ${LD_FLAGS_NO_FPU}
 
 #--- other ---#
 other: render_palette_mos render_palette_060

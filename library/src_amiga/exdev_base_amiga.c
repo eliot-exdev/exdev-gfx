@@ -22,7 +22,9 @@ int exdev_base_initiated = 0;
 struct IntuitionBase *IntuitionBase = 0;
 struct GfxBase *GfxBase = 0;
 struct Library *GadToolsBase = 0;
-//struct Library *CyberGfxBase = 0;
+#ifdef __MORPHOS__
+struct Library *CyberGfxBase = 0;
+#endif
 struct Library *AslBase = 0;
 //#define DEVICE_TYPE Library
 
@@ -69,10 +71,12 @@ int exdev_base_init() {
         return 4;
     }
 
-    //    CyberGfxBase = (struct Library *) OpenLibrary("cybergraphics.library", 41L);
-    //    if (!CyberGfxBase) {
-    //        return 4;
-    //    }
+#ifdef __MORPHOS__
+    CyberGfxBase = (struct Library *) OpenLibrary("cybergraphics.library", 41L);
+    if (!CyberGfxBase) {
+        return 5;
+    }
+#endif
 
     OpenDevice("console.device", -1, (struct IORequest *) &console_ioreq, 0);
 #ifdef __MORPHOS__
@@ -119,11 +123,13 @@ int exdev_base_deinit() {
 
     CloseDevice((struct IORequest *) &console_ioreq);
 
-    //    if (CyberGfxBase) {
-    //        CloseLibrary((struct Library *) CyberGfxBase);
-    //        CyberGfxBase = 0;
-    //    }
-
+#ifdef __MORPHOS__
+    if (CyberGfxBase) {
+        CloseLibrary((struct Library *) CyberGfxBase);
+        CyberGfxBase = NULL;
+    }
+#endif
+    
     if (AslBase) {
         CloseLibrary((struct Library *) AslBase);
         AslBase = NULL;

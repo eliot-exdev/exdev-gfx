@@ -13,8 +13,10 @@
 #include <intuition/intuition.h>
 #include <proto/intuition.h>
 #include <intuition/screens.h>
-//#include <cybergraphx/cybergraphics.h>
-//#include <proto/cybergraphics.h>
+#ifdef __MORPHOS__
+#include <cybergraphx/cybergraphics.h>
+#include <proto/cybergraphics.h>
+#endif
 #include <proto/graphics.h>
 #include <devices/inputevent.h>
 #include <devices/keymap.h>
@@ -206,14 +208,16 @@ int window_get_inner_height(const Window_t *win) {
     return NATIVE_WINDOW_CAST_CONST(win)->window->Height - NATIVE_WINDOW_CAST_CONST(win)->window->BorderTop - NATIVE_WINDOW_CAST_CONST(win)->window->BorderBottom;
 }
 
+#ifdef __MORPHOS__
 void window_fill(Window_t *win, const Framebuffer_t *gb) {
-    //    WritePixelArray(gb->buffer, 0, 0, gb->width * 3, w->window->RPort, 0, 0, gb->width, gb->height, RECTFMT_RGB);
-    WriteChunkyPixels(&NATIVE_WINDOW_CAST(win)->screen->RastPort, 0, 0,
+   WritePixelArray(gb->buffer, 0, 0, gb->width * 3, &NATIVE_WINDOW_CAST(win)->screen->RastPort, 0, 0, gb->width, gb->height, RECTFMT_RGB);
+   /*WriteChunkyPixels(&NATIVE_WINDOW_CAST(win)->screen->RastPort, 0, 0,
                       gb->width,
                       gb->height,
                       (unsigned char *) gb->buffer,
-                      gb->width * 3);
+                      gb->width);*/
 }
+#endif
 
 Framebuffer8Bit_t *window_get_chunky_buffer(Window_t *win) {
     return &NATIVE_WINDOW_CAST(win)->chunky_buffer;
