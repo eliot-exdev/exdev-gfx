@@ -66,7 +66,7 @@ void voxelspace_init(Voxelspace_t *v,
     v->fb = fb;
     v->scale_height = scale_height;
     v->sky_color = sky_color;
-    v->ybuffer = malloc(sizeof(int) * fb->width);
+    v->ybuffer = ALLOC_FAST_MEM(sizeof(int) * fb->width);
     v->sky_texture = sky_texture;
     v->zones = zones;
 }
@@ -75,9 +75,9 @@ void voxelspace_deinit(Voxelspace_t *v) {
     assert(v);
 
     heightmap_deinit(&v->heightmap);
-    v->fb = NULL;
-    free(v->ybuffer);
+    FREE_MEM(v->ybuffer, sizeof(sizeof(int) * v->fb->width));
     v->ybuffer = NULL;
+    v->fb = NULL;
     v->sky_texture = NULL;
     v->zones = NULL;
 }
@@ -102,25 +102,19 @@ void voxelspace_render(const Vertex3d_t p,
 
     // init ybuffer
 #ifdef __VBCC__
-    for (i = 0; i < v->fb->width; ++i) { v->ybuffer[i] = v->fb->height; }
+    for (; i < v->fb->width; ++i) { v->ybuffer[i] = v->fb->height; }
 #else
     wmemset((wchar_t *) v->ybuffer, v->fb->height, v->fb->width);
 #endif
     // render sky
-    if (!v->sky_texture) {
-        framebuffer_8bit_fill(v->fb, v->sky_color);
+    int x_shifted = 0;
+    if (rot < 0) {
+        x_shifted = (int) ((float) -rot / 360.0f * (float) v->sky_texture->width);
     } else {
-        int x_shifted = 0;
-        if (rot < 0) {
-            x_shifted = (int) ((float) -rot / 360.0f * (float) v->sky_texture->width);
-        } else {
-            x_shifted = (int) ((float) rot / 360.0f * (float) v->sky_texture->width);
-        }
-        if (rot > 0) {
-            x_shifted = v->sky_texture->width - x_shifted;
-        }
-        framebuffer_8bit_draw_framebuffer_shifted(v->fb, x_shifted, SKY_TEXTURE_HEIGHT, v->sky_texture);
+        x_shifted = v->sky_texture->width - (int) ((float) rot / 360.0f * (float) v->sky_texture->width);
     }
+
+    framebuffer_8bit_draw_framebuffer_shifted(v->fb, x_shifted, SKY_TEXTURE_HEIGHT, v->sky_texture);
 
     // auto height
     float height = p[2];
@@ -150,14 +144,11 @@ void voxelspace_render(const Vertex3d_t p,
         dx = (pright[0] - pleft[0]) / (float) v->fb->width;
         dy = (pright[1] - pleft[1]) / (float) v->fb->width;
 
-        // Raster line and draw a vertical line for each segment
-        i = 1;
-
         // find current zone
+        i = 1;
         while (i < v->zones->size) {
             if (z < v->zones->zones[i].max_distance) {
                 current_zone = v->zones->zones + i;
-                //                log_info_fmt("%d %f", i, z);
                 break;
             }
             ++i;
