@@ -30,19 +30,18 @@ Sources: https://github.com/eliot-exdev/exdev-gfx.git
 * AmigaOs: Tested on a Amiga 4000T, 060, Cybervision 64/3D, Aos 3.1.4 and  
                        Amiga 1200, 060, AGA, Aos 3.2.3.  
   Requires c2p.library from aminet (https://aminet.net/dev/misc/c2plib.lha).
-* Linux: tested on Ubuntu 20.10 (amd64)
+* Linux: tested on Ubuntu 20.10 (amd64)  
   It requires X11 server.
 
 # Usage
 
-Please start the binary (voxelspace_mos, voxelspace_060, voxelspace_060_c2p) from your shell.  
+Please start the binary (voxelspace_mos_gcc, voxelspace_060, voxelspace_060_c2p) from your shell.  
 To get a complete arguments list of the program, please start it with '-h'.  
 You can quit the program by hitting ESC.  
-Stack size of 16384 ius required
 
 On Amiga with gfx card, you should use voxelspace_060.  
-On Amiga with aga only, you shpuld use voxelspace_060_c2p.  
-This requires c2p.library from aminet (https://aminet.net/dev/misc/c2plib.lha).
+On Amiga with aga only, you should use voxelspace_060_c2p.  
+This requires c2p.library (>=1.7) from aminet (https://aminet.net/dev/misc/c2plib.lha).
 
 ## Program arguments
 
@@ -72,6 +71,10 @@ F5                  increase distance
 ## ToDo
 
 # History
+- 0.9 2025-06-05
+  - optimized sky rendering
+  - replaced voxelspace_mos with voxelspace_mos_gcc (this is the faster binary)
+
 - 0.8 2025-06-05
   - add aga support
   - optimizations

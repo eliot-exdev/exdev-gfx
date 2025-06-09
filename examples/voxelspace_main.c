@@ -18,7 +18,7 @@
 #define ASSETS_PREFIX ""
 #endif
 
-#define VERSION "voxelspace 0.8 (05.06.2025)"
+#define VERSION "voxelspace 0.9 (09.06.2025)"
 
 #ifndef __linux__
 #ifdef __VBCC__
@@ -307,8 +307,8 @@ int main(int argc, char **argv) {
     }
 
     // read sky texture
-    Framebuffer8Bit_t sky_texture;
     log_info("--> reading sky texture ...");
+    Framebuffer8Bit_t sky_texture;
     res = framebuffer_8bit_read_from_dat(&sky_texture, sky_path);
     log_info_fmt("<--- result reading sky texture=%d", res);
     if (res) {
