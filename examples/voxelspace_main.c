@@ -24,7 +24,7 @@
 #ifdef __VBCC__
 __entry
 #endif
-        unsigned char versiontag[] = "\0$VER: " VERSION;
+unsigned char versiontag[] = "\0$VER: " VERSION;
 #endif
 
 #ifdef LOW_RESOLUTION
@@ -466,7 +466,9 @@ int main(int argc, char **argv) {
         position[0] = normalize_float(position[0], (float) v.heightmap.height);
         position[1] = normalize_float(position[1], (float) v.heightmap.width);
         update_profile("update world");
-
+#if defined(__AMIGA__) || defined(__MORPHOS__)
+        Forbid();
+#endif
         voxelspace_render(position, rotation, HORIZON, distance, &v);
 
         // draw text
@@ -482,6 +484,9 @@ int main(int argc, char **argv) {
         update_profile("render world");
 
         window_blit_chunky_buffer(window);
+#if defined(__AMIGA__) || defined(__MORPHOS__)
+        Permit();
+#endif
         update_profile("blit image");
         log_debug("<-- render");
     }
