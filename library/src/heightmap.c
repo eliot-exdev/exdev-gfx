@@ -49,6 +49,7 @@ HeightmapValue_t *heightmap_value_at(Heightmap_t *hm, const int x, const int y) 
     assert(y < hm->height);
     assert(x >= 0);
     assert(y >= 0);
+    assert(hm->values);
 
     return hm->values + ((y * hm->width) + x);
 }

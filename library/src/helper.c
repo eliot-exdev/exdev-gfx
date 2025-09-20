@@ -21,7 +21,7 @@
 
 int read_line(FILE *fp, char *line, const size_t size) {
     size_t res = 0;
-    size_t read_bytes = 0;
+    int read_bytes = 0;
     memset(line, 0, size);
     do {
         res = fread(line + read_bytes, 1, 1, fp);

@@ -8,7 +8,7 @@
 #define EXDEVGFX2_LOG_LEVEL 1
 
 #include "exdevgfx/logger.h"
-#include "exdevgfx/logger.h"
+//#include "exdevgfx/logger.h"
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
