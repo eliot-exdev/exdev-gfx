@@ -75,7 +75,7 @@ void voxelspace_deinit(Voxelspace_t *v) {
     assert(v);
 
     heightmap_deinit(&v->heightmap);
-    FREE_MEM(v->ybuffer, sizeof(sizeof(int) * v->fb->width));
+    FREE_MEM(v->ybuffer, sizeof(int) * v->fb->width);
     v->ybuffer = NULL;
     v->fb = NULL;
     v->sky_texture = NULL;
