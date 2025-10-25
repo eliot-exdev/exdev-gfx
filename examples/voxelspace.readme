@@ -1,3 +1,12 @@
+Short:        Technical demo of a voxelspace render...
+Uploader:     Andre Geisler
+Author:       Andre Geisler
+Type:         misc/misc
+Requires:     c2plib
+Version:      0.9
+Architecture: m68k-amigaos >= 3.1.4; ppc-morphos
+URL:          https://github.com/eliot-exdev/exdev-gfx.git
+
 # About
 
 This is a little technical demo of a voxelspace renderer written in C99.  
@@ -15,12 +24,6 @@ This demo provides five different worlds taken from the game Comanche developed 
 You can select them by passing program arguments.
 
 Have fun!
-
-# Contact
-
-Author: André Geisler  
-Email: eliot@exdev.de
-Sources: https://github.com/eliot-exdev/exdev-gfx.git
 
 # Requirements
 
@@ -63,12 +66,13 @@ cursors         navigate forward/backward and turn left/right
 ## Options
 
 ESC                quit  
-F1                  enable/disable show fps  
-F2                  max detail  
-F4                  decrease render distance  
-F5                  increase render distance  
+F1                 enable/disable show fps
+F2                 max detail
+F4                 decrease render distance
+F5                 increase render distance
 
 # History
+
 - 0.9 2025-06-05
   - optimized sky rendering
   - replaced voxelspace_mos with voxelspace_mos_gcc (this is the faster binary)
