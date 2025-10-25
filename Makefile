@@ -125,7 +125,7 @@ dist_voxelspace: voxelspace
 	cp -av examples/README_VOXELSPACE.md ram:voxelspace
 	cp -av assets/*palette.dat assets/*height_map.dat assets/*color_map_8bit.dat assets/*sky.dat assets/*sky_lowres.dat ram:voxelspace/assets
 	cp -av voxelspace_mos_gcc voxelspace_060 voxelspace_060_c2p ram:voxelspace
-	cp voxelspace.info ram:voxelspace.info
+	cp examples/voxelspace.info ram:voxelspace.info
 	lha a -r ram:voxelspace.lha ram:voxelspace ram:voxelspace.info
 
 #--- clean ---#
