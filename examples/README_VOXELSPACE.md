@@ -27,11 +27,11 @@ Sources: https://github.com/eliot-exdev/exdev-gfx.git
 * MorphOs: any MorphOs system should work.  
   Tested it on a Mac Mini G4 Silent Upgrade with MorphOs 3.14.  
   You will need a 640x480x8 screen mode.
-* AmigaOs: Tested on a Amiga 4000T, 060, Cybervision 64/3D, Aos 3.1.4 and  
-                       Amiga 1200, 060, AGA, Aos 3.2.3.  
+* AmigaOs: Tested on a Amiga 4000T, 060, Cybervision 64/3D, Aos 3.2.3 and  
+                                    Amiga 1200, 060, AGA, Aos 3.2.3.  
   Requires c2p.library from aminet (https://aminet.net/dev/misc/c2plib.lha).
 * Linux: tested on Ubuntu 20.10 (amd64)  
-  It requires X11 server.
+   It requires X11 server.
 
 # Usage
 
@@ -47,28 +47,26 @@ This requires c2p.library (>=1.7) from aminet (https://aminet.net/dev/misc/c2pli
 
 voxelspace [ARGUMENTS]...  
 arguments:  
--h, --help              print help message and exit  
+-h, --help                        print help message and exit  
 -w, --world <number>    select world 1, 2, 3, 4 or 5 (default 1)  
--d, --demo              enable demo mode  
--v, --version           print version  
+-d, --demo                     enable demo mode  
+-v, --version                   print version  
 
 ## Controls
 
-w                   move up  
+w                  move up  
 s                   move down  
 a                   strafe left  
 d                   strafe right  
-cursors             navigate forward/backward and turn left/right  
+cursors         navigate forward/backward and turn left/right  
 
 ## Options
 
-ESC                 quit  
+ESC                quit  
 F1                  enable/disable show fps  
 F2                  max detail  
-F4                  decrease distance  
-F5                  increase distance  
-
-## ToDo
+F4                  decrease render distance  
+F5                  increase render distance  
 
 # History
 - 0.9 2025-06-05
