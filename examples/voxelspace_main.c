@@ -29,10 +29,15 @@ unsigned char versiontag[] = "\0$VER: " VERSION;
 
 #ifdef LOW_RESOLUTION
 #define WIDTH 320
+#ifdef USE_C2P
+#define HEIGHT 256
+#define HORIZON 128.0f
+#else
 #define HEIGHT 240
+#define HORIZON 120.0f
+#endif
 #define DEFAULT_DISTANCE 120.0f
 #define SCALE_HEIGHT 80.0f
-#define HORIZON 120.0f
 #else
 #define WIDTH 640
 #define HEIGHT 480
