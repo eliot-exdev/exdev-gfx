@@ -3,7 +3,7 @@
 int main() {
     Application_t app;
     application_init(&app, "test", 640, 480);
-    application_run(&app);
+    application_run(&app, 40);
     application_destroy(&app);
 
     return 0;

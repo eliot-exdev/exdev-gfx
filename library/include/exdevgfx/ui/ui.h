@@ -8,6 +8,8 @@ extern "C" {
 #include <exdevgfx/framebuffer_8bit.h>
 #include <exdevgfx/events.h>
 #include <exdevgfx/window.h>
+#include <exdevgfx/helper.h>
+
 
 enum ui_component_type {
     UI_COMPONENT_CONTAINER,
@@ -84,7 +86,7 @@ void application_init(Application_t *self, const char* name, int width, int heig
 
 void application_destroy(Application_t *self);
 
-int application_run(Application_t *self);
+int application_run(Application_t *self, exdev_timestamp_t wait_ms);
 
 #ifdef __cplusplus
 }

@@ -59,6 +59,8 @@ static inline int normalize_int(int i, const int s) {
 
 float normalize_float(float f, float d);
 
+void sleep_for_ms(exdev_timestamp_t ms);
+
 #ifdef __cplusplus
 }
 #endif
