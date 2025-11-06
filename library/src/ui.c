@@ -19,10 +19,11 @@ void ui_component_list_destroy(UIComponentList_t *self) {
     assert(self);
 
     for (int i = 0; i < self->size; ++i) {
-        ui_component_destroy(self->components[i]);
+        self->components[i]->functions.destroy_func(self->components[i]);
         free(self->components[i]);
         self->components[i] = NULL;
     }
+    free(self->components);
 }
 
 void ui_component_list_add(UIComponentList_t *self, UIComponent_t *component) {
@@ -30,10 +31,10 @@ void ui_component_list_add(UIComponentList_t *self, UIComponent_t *component) {
     assert(component);
 
     if (self->size > 0) {
-        self->components = realloc(self->components, sizeof(self->components) * (self->size + 1));
+        self->components = realloc(self->components, sizeof(UIComponent_t *) * (self->size + 1));
         self->size += 1;
     } else {
-        self->components = malloc(sizeof(self->components));
+        self->components = malloc(sizeof(UIComponent_t *));
         self->size = 1;
     }
     self->components[self->size - 1] = component;
