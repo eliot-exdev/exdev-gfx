@@ -21,6 +21,7 @@ void ui_component_list_destroy(UIComponentList_t *self) {
     for (int i = 0; i < self->size; ++i) {
         ui_component_destroy(self->components[i]);
         free(self->components[i]);
+        self->components[i] = NULL;
     }
 }
 
@@ -63,11 +64,7 @@ void ui_component_init(UIComponent_t *self, const int x, const int y, const int 
 }
 
 void ui_component_destroy(UIComponent_t *self) {
-    for (int i = 0; i < self->childs.size; ++i) {
-        ui_component_destroy(self->childs.components[i]);
-        free(self->childs.components[i]);
-        self->childs.components[i] = NULL;
-    }
+    ui_component_list_destroy(&self->childs);
 }
 
 void ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, const int x, const int y) {
