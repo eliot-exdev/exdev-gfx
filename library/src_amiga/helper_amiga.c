@@ -3,7 +3,6 @@
  */
 
 #include "exdevgfx/helper.h"
-#include "exdevgfx/exdev_base.h"
 
 #include <proto/timer.h>
 
