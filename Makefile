@@ -20,6 +20,11 @@ INCLUDES_AOS=-Ilibrary/include -Ilibrary/easing/include
 
 all: voxelspace julia test_sprite other
 
+#--- application ---#
+application_mos_gcc: library/src/events.c library/src/palette.c library/src/color.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c\
+                     library/src/ui.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/test_application.c
+	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
+
 #--- voxelspace ---#
 voxelspace: voxelspace_mos voxelspace_mos_gcc voxelspace_060 voxelspace_060_c2p 
 
