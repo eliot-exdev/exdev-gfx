@@ -12,7 +12,7 @@ extern "C" {
 
 extern int exdev_base_initiated;
 
-#if defined(__amigaos4__) || defined(__MORPHOS__) || defined(__AROS__)
+#if defined(__AMIGA__) || defined(__MORPHOS__) || defined(__AROS__)
 
 #include <proto/exec.h>
 #include <proto/intuition.h>
