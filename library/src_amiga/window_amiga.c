@@ -214,15 +214,15 @@ int window_get_inner_height(const Window_t *win) {
 
 
 void window_fill(Window_t *win, const Framebuffer_t *gb) {
-#ifdef __MORPHOS__
-    WritePixelArray(gb->buffer, 0, 0, gb->width * 3, &NATIVE_WINDOW_CAST(win)->screen->RastPort, 0, 0, gb->width, gb->height, RECTFMT_RGB);
-#else
+//#ifdef __MORPHOS__
+//    WritePixelArray(gb->buffer, 0, 0, gb->width * 3, &NATIVE_WINDOW_CAST(win)->screen->RastPort, 0, 0, gb->width, gb->height, RECTFMT_RGB);
+//#else
     WriteChunkyPixels(&NATIVE_WINDOW_CAST(win)->screen->RastPort, 0, 0,
                       gb->width,
                       gb->height,
                       (unsigned char *) gb->buffer,
                       gb->width * 3);
-#endif
+//#endif
 }
 
 Framebuffer8Bit_t *window_get_chunky_buffer(Window_t *win) {
