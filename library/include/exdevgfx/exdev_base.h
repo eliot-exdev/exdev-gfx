@@ -19,6 +19,7 @@ extern int exdev_base_initiated;
 #include <proto/graphics.h>
 #include <proto/gadtools.h>
 #include <proto/dos.h>
+#include <proto/timer.h>
 
 //extern struct IOStdReq ioreq;
 //extern struct IORequest timer_ioreq;
