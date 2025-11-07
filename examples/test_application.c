@@ -7,9 +7,9 @@
 
 static int i = 0;
 
-void my_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, const int x, const int y) {
-    ui_component_paint(self, fb, x, y); // call paint of base class
-    framebuffer_8bit_fill_rect(fb, x + 2, y + i, self->properties.width - 3, 10, 2);
+void my_paint(UIComponent_t *self, Framebuffer8Bit_t *fb) {
+    ui_component_paint(self, fb); // call paint of base class
+    framebuffer_8bit_fill_rect(fb, self->properties.x + 2, self->properties.y + i, self->properties.width - 3, 10, 2);
     self->flags.dirty_flag = 1; // always paint again
 }
 
@@ -35,7 +35,7 @@ int main() {
 
     UIComponent_t *right = malloc(sizeof(UIComponent_t));
     ui_component_init(right, 542, 2, 96, 476, app.root);
-    right->functions.paint_func = (void (*)(void *, Framebuffer8Bit_t *, int, int)) &my_paint;
+    right->functions.paint_func = (void (*)(void *, Framebuffer8Bit_t *)) &my_paint;
     right->functions.update_func = (void (*)(void *, exdev_timestamp_t)) &my_update;
     ui_component_list_add(&app.root->childs, right);
 
