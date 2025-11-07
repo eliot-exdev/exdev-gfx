@@ -58,7 +58,7 @@ void ui_component_init(UIComponent_t *self, const int x, const int y, const int 
 
     self->functions.destroy_func = (void (*)(void *)) &ui_component_destroy;
     self->functions.paint_func = (void (*)(void *, Framebuffer8Bit_t *)) &ui_component_paint;
-    self->functions.update_func = (void (*)(void *, exdev_timestamp_t)) &ui_component_update;
+    self->functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &ui_component_update;
 
     self->parent = parent;
     ui_component_list_init(&self->childs);
@@ -89,12 +89,19 @@ void ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb) {
     }
 }
 
-void ui_component_update(UIComponent_t *self, const exdev_timestamp_t time_elapsed) {
+void ui_component_update(UIComponent_t *self, const exdev_timestamp_t time_elapsed, const Event_t *events, const int num_events) {
     assert(self);
 
     for (int i = 0; i < self->childs.size; ++i) {
-        self->childs.components[i]->functions.update_func(self->childs.components[i], time_elapsed);
+        self->childs.components[i]->functions.update_func(self->childs.components[i], time_elapsed, events, num_events);
     }
+}
+
+int ui_component_is_inside(const UIComponent_t *self, const int x, const int y) {
+    assert(self);
+
+    return x >= self->properties.x && x < self->properties.x + self->properties.width &&
+           y >= self->properties.y && y < self->properties.y + self->properties.height;
 }
 
 void application_init(Application_t *self, const int width, const int height) {
@@ -131,7 +138,8 @@ int application_run(Application_t *self, exdev_timestamp_t wait_ms) {
     assert(self);
 
     char close_event = 0;
-    Event_t event;
+    Event_t events[2];
+    int num_events = 0;
 
     exdev_timestamp_t begin_ms = 0;
     exdev_timestamp_t loop_time_ms = 0;
@@ -146,19 +154,21 @@ int application_run(Application_t *self, exdev_timestamp_t wait_ms) {
     while (self->resume) {
         begin_ms = now();
         // ui events
-        window_poll_events(self->window, &close_event, &event, 1);
-        if (event.type == EVENT_KEY && event.key_event.event == KEY_EVENT_PRESSED) {
-            switch (event.key_event.key) {
-                case KEY_TYPE_ESC:
-                    self->resume = 0;
-                    break;
-                default:
-                    break;
+        num_events = window_poll_events(self->window, &close_event, events, 2);
+        for (int it_events = 0; it_events < num_events; ++it_events) {
+            if (events[it_events].type == EVENT_KEY && events[it_events].key_event.event == KEY_EVENT_PRESSED) {
+                switch (events[it_events].key_event.key) {
+                    case KEY_TYPE_ESC:
+                        self->resume = 0;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
         // update ui
-        self->root->functions.update_func(self->root, end_ms - begin_ms);
+        self->root->functions.update_func(self->root, end_ms - begin_ms, events, num_events);
 
         // paint ui
         self->root->functions.paint_func(self->root, window_get_chunky_buffer(self->window));
