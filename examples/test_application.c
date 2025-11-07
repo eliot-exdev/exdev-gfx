@@ -39,7 +39,7 @@ void left_update(UIComponent_t *self, const exdev_timestamp_t ms, const Event_t 
 
 void right_paint(UIComponent_t *self, Framebuffer8Bit_t *fb) {
     ui_component_paint(self, fb); // call paint of base class
-    framebuffer_8bit_fill_rect(fb, self->properties.x + 2, self->properties.y + i, self->properties.width - 3, 10, 2);
+    framebuffer_8bit_fill_rect(fb, self->properties.x + 2, self->properties.y + i, self->properties.width - 3, 10, 38);
     self->flags.dirty_flag = 1; // always paint again
 }
 

@@ -14,6 +14,7 @@ extern "C" {
 
 #define PEN_MAX 0xffffffff
 #define PEN_HALF 0x7FFFFFFF
+#define PEN_QUARTER 0x0FFFFFFF
 #define PEN_MIN 0x00000000
 
 struct Pen {
@@ -26,11 +27,22 @@ typedef struct Pen Pen_t;
 
 extern const Pen_t PEN_BLACK;
 extern const Pen_t PEN_WHITE;
+
 extern const Pen_t PEN_GRAY;
+extern const Pen_t PEN_DARK_GRAY;
+
 extern const Pen_t PEN_RED;
+extern const Pen_t PEN_DARK_RED;
+
 extern const Pen_t PEN_GREEN;
+extern const Pen_t PEN_DARK_GREEN;
+
 extern const Pen_t PEN_BLUE;
+extern const Pen_t PEN_DARK_BLUE;
+
 extern const Pen_t PEN_YELLOW;
+extern const Pen_t PEN_DARK_YELLOW;
+
 extern const Pen_t PEN_CYAN;
 
 void pen_init(Pen_t *p, unsigned int r, unsigned int g, unsigned int b);
