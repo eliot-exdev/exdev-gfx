@@ -1,7 +1,7 @@
 #include "exdevgfx/ui/ui.h"
 #include "exdevgfx/helper.h"
 
-#define EXDEVGFX2_LOG_LEVEL 2
+#define EXDEVGFX2_LOG_LEVEL 1
 
 #include "exdevgfx/logger.h"
 
@@ -42,6 +42,7 @@ void ui_component_list_add(UIComponentList_t *self, UIComponent_t *component) {
 
 static Color8Bit_t BACKGROUND_COLOR = 0;
 static Color8Bit_t BORDER_COLOR = 0;
+
 void ui_component_init(UIComponent_t *self, const int x, const int y, const int width, const int height, UIComponent_t *parent) {
     assert(self);
     self->type = UI_COMPONENT_BASE;
@@ -57,7 +58,7 @@ void ui_component_init(UIComponent_t *self, const int x, const int y, const int 
     self->flags.draw_border = 1;
 
     self->functions.destroy_func = (void (*)(void *)) &ui_component_destroy;
-    self->functions.paint_func = (void (*)(void *, Framebuffer8Bit_t *)) &ui_component_paint;
+    self->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *)) &ui_component_paint;
     self->functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &ui_component_update;
 
     self->parent = parent;
@@ -68,10 +69,11 @@ void ui_component_destroy(UIComponent_t *self) {
     ui_component_list_destroy(&self->childs);
 }
 
-void ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb) {
+int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb) {
     assert(self);
     assert(fb);
 
+    int res = 0;
     if (self->flags.dirty_flag) {
         if (self->flags.fill_background) {
             framebuffer_8bit_fill_rect(fb, self->properties.x, self->properties.y, self->properties.width, self->properties.height, BACKGROUND_COLOR);
@@ -82,11 +84,13 @@ void ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb) {
         }
 
         self->flags.dirty_flag = 0;
+        res = 1;
     }
 
     for (int i = 0; i < self->childs.size; ++i) {
-        self->childs.components[i]->functions.paint_func(self->childs.components[i], fb);
+        res = res | self->childs.components[i]->functions.paint_func(self->childs.components[i], fb);
     }
+    return res;
 }
 
 void ui_component_update(UIComponent_t *self, const exdev_timestamp_t time_elapsed, const Event_t *events, const int num_events) {
@@ -111,7 +115,7 @@ void ui_icon_init(UIIcon_t *self, int x, int y, Framebuffer8Bit_t *fb, UICompone
     ui_component_init(&self->base, x, y, fb->width + 2, fb->height + 2, parent);
     self->base.type = UI_COMPONENT_ICON;
     self->base.functions.destroy_func = (void (*)(void *)) &ui_icon_destroy;
-    self->base.functions.paint_func = (void (*)(void *, Framebuffer8Bit_t *)) &ui_icon_paint;
+    self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *)) &ui_icon_paint;
     self->base.functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &ui_icon_update;
 
     self->icon = fb;
@@ -126,16 +130,18 @@ void ui_icon_destroy(UIIcon_t *self) {
     self->icon = NULL;
 }
 
-void ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb) {
+int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb) {
     assert(self);
     assert(fb);
 
     const int tmp = self->base.flags.dirty_flag;
-    ui_component_paint(&self->base, fb);
+    int res = ui_component_paint(&self->base, fb);
 
     if (tmp) {
         framebuffer_8bit_draw_framebuffer(fb, self->base.properties.x + 1, self->base.properties.y + 1, self->icon);
+        res = 1;
     }
+    return res;
 }
 
 void ui_icon_update(UIIcon_t *self, const exdev_timestamp_t time_elapsed, const Event_t *events, const int num_events) {
@@ -162,8 +168,7 @@ void application_destroy(Application_t *self) {
     self->resume = 0;
 }
 
-#define MAX_EVENTS 64
-
+#define MAX_EVENTS 16
 int application_run(Application_t *self, exdev_timestamp_t wait_ms) {
     assert(self);
 
@@ -214,10 +219,12 @@ int application_run(Application_t *self, exdev_timestamp_t wait_ms) {
         self->root.functions.update_func(&self->root, end_ms - begin_ms, events, num_events);
 
         // paint ui
-        self->root.functions.paint_func(&self->root, window_get_chunky_buffer(self->window));
+        if (self->root.functions.paint_func(&self->root, window_get_chunky_buffer(self->window))) {
+            // blit ui to screen
+            log_debug("blit to screen required");
+            window_blit_chunky_buffer(self->window);
+        }
 
-        // blit ui to screen
-        window_blit_chunky_buffer(self->window);
 
         // wait some time
         loop_time_ms = now() - begin_ms;
@@ -227,7 +234,6 @@ int application_run(Application_t *self, exdev_timestamp_t wait_ms) {
                 log_warning("running out of time - will sleep anyway");
                 sleep_ms = 10;
             }
-            log_debug_fmt("sleep for: %dms", sleep_ms);
             sleep_for_ms(sleep_ms);
         }
         end_ms = now();
