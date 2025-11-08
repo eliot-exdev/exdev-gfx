@@ -39,7 +39,7 @@ int right_paint(UIComponent_t *self, Framebuffer8Bit_t *fb) {
     const int tmp = self->flags.dirty_flag;
     int res = ui_component_paint(self, fb);
     if (tmp) {
-        framebuffer_8bit_fill_rect(fb, self->properties.x + 2, self->properties.y, self->properties.width - 3, 10, 38);
+        framebuffer_8bit_fill_rect(fb, self->properties.x + 2, self->properties.y, self->properties.width - 3, 10, PEN_INDEX_BLUE);
         self->flags.dirty_flag = 0;
         res = 1;
     }

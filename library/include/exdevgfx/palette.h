@@ -14,7 +14,7 @@ extern "C" {
 
 #define PEN_MAX 0xffffffff
 #define PEN_HALF 0x7FFFFFFF
-#define PEN_QUARTER 0x0FFFFFFF
+#define PEN_QUARTER 0x3FFFFFFF
 #define PEN_MIN 0x00000000
 
 struct Pen {
