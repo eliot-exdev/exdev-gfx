@@ -65,6 +65,8 @@ struct UIComponent {
         int y;
         int width;
         int height;
+        Color8Bit_t background_color;
+        Color8Bit_t border_color;
     } properties;
     struct {
         int dirty_flag;
@@ -101,6 +103,7 @@ struct UIIcon {
     Framebuffer8Bit_t *icon;
     struct {
         int clickable;
+        int has_focus;
     } flags;
 };
 
