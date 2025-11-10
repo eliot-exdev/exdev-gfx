@@ -7,7 +7,7 @@
 
 #define WIDTH 640
 #define HEIGHT 480
-#define UPDATE_INTERVAL 40 // 25 times a second
+#define UPDATE_INTERVAL 50 // ms
 
 void left_update(UIComponent_t *self, const exdev_timestamp_t ms, const Event_t *events, const int num_events) {
     ui_component_update(self, ms, events, num_events); // call update of base class
