@@ -95,6 +95,10 @@ int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb) {
 void ui_component_update(UIComponent_t *self, const exdev_timestamp_t time_elapsed, const Event_t *events, const int num_events) {
     assert(self);
 
+    if (!self->flags.enabled_flag) {
+        return;
+    }
+
     for (int i = 0; i < self->childs.size; ++i) {
         self->childs.components[i]->functions.update_func(self->childs.components[i], time_elapsed, events, num_events);
     }
@@ -147,7 +151,15 @@ int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb) {
 void ui_icon_update(UIIcon_t *self, const exdev_timestamp_t time_elapsed, const Event_t *events, const int num_events) {
     assert(self);
 
+    if (!self->base.flags.enabled_flag) {
+        return;
+    }
+
     ui_component_update(&self->base, time_elapsed, events, num_events);
+
+    if (!self->flags.clickable) {
+        return;
+    }
 
     for (int i = 0; i < num_events; ++i) {
         if (events[i].type == EVENT_MOUSE && events[i].mouse_event.event == MOUSE_EVENT_MOVED) {
@@ -186,7 +198,7 @@ void application_destroy(Application_t *self) {
     self->resume = 0;
 }
 
-#define MAX_EVENTS 16
+#define MAX_EVENTS 32
 
 int application_run(Application_t *self, exdev_timestamp_t wait_ms) {
     assert(self);
