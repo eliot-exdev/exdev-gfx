@@ -89,6 +89,8 @@ typedef struct UIComponent UIComponent_t;
 
 void ui_component_init(UIComponent_t *self, int x, int y, int width, int height);
 
+UIComponent_t *ui_component_create(int x, int y, int width, int height);
+
 void ui_component_destroy(UIComponent_t *self);
 
 int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb);
@@ -112,6 +114,10 @@ struct UIIcon {
 typedef struct UIIcon UIIcon_t;
 
 void ui_icon_init(UIIcon_t *self, int x, int y, Framebuffer8Bit_t *fb);
+
+UIIcon_t *ui_icon_create(int x, int y, Framebuffer8Bit_t *fb);
+
+UIIcon_t *ui_icon_create_with_path(int x, int y, const char *path);
 
 void ui_icon_destroy(UIIcon_t *self);
 

@@ -40,6 +40,13 @@ void ui_component_list_add(UIComponentList_t *self, UIComponent_t *component) {
     self->components[self->size - 1] = component;
 }
 
+UIComponent_t *ui_component_create(const int x, const int y, const int width, const int height) {
+    UIComponent_t *self = malloc(sizeof(UIComponent_t));
+    ui_component_init(self, x, y, width, height);
+
+    return self;
+}
+
 void ui_component_init(UIComponent_t *self, const int x, const int y, const int width, const int height) {
     assert(self);
     self->type = UI_COMPONENT_BASE;
@@ -115,13 +122,29 @@ void ui_component_connect(void *parent_, void *child_) {
     assert(parent_);
     assert(child_);
 
-    UIComponent_t *parent =parent_;
+    UIComponent_t *parent = parent_;
     UIComponent_t *child = child_;
 
     ui_component_list_add(&parent->childs, child);
-    child->parent=parent;
+    child->parent = parent;
 }
 
+UIIcon_t *ui_icon_create(const int x, const int y, Framebuffer8Bit_t *fb) {
+    assert(fb);
+
+    UIIcon_t *self = malloc(sizeof(UIIcon_t));
+    ui_icon_init(self, x, y, fb);
+
+    return self;
+}
+
+UIIcon_t *ui_icon_create_with_path(const int x, const int y, const char *path) {
+    assert(path);
+
+    Framebuffer8Bit_t *icon_fb = malloc(sizeof(Framebuffer8Bit_t));
+    framebuffer_8bit_read_from_dat(icon_fb, path);
+    return ui_icon_create(x, y, icon_fb);
+}
 
 void ui_icon_init(UIIcon_t *self, const int x, const int y, Framebuffer8Bit_t *fb) {
     assert(self);
@@ -198,7 +221,6 @@ void application_init(Application_t *self, const int width, const int height) {
     ui_component_init(&self->root, 0, 0, width, height);
     palette_8bit_init(&self->palette, 0);
     self->resume = 1;
-
 }
 
 void application_destroy(Application_t *self) {
@@ -237,8 +259,8 @@ int application_run(Application_t *self, exdev_timestamp_t wait_ms) {
     palette_8bit_set_pen(&self->palette, &PEN_DARK_GREEN, 4);
     palette_8bit_set_pen(&self->palette, &PEN_GREEN, 5);
 
-    palette_8bit_set_pen(&self->palette, &PEN_DARK_BLUE, 6); // background
-    palette_8bit_set_pen(&self->palette, &PEN_BLUE, 7); // border
+    palette_8bit_set_pen(&self->palette, &PEN_DARK_BLUE, 6);// background
+    palette_8bit_set_pen(&self->palette, &PEN_BLUE, 7);     // border
 
     palette_8bit_set_pen(&self->palette, &PEN_DARK_YELLOW, 8);
     palette_8bit_set_pen(&self->palette, &PEN_YELLOW, 9);
