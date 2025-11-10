@@ -87,7 +87,7 @@ struct UIComponent {
 
 typedef struct UIComponent UIComponent_t;
 
-void ui_component_init(UIComponent_t *self, int x, int y, int width, int height, UIComponent_t *parent);
+void ui_component_init(UIComponent_t *self, int x, int y, int width, int height);
 
 void ui_component_destroy(UIComponent_t *self);
 
@@ -96,6 +96,8 @@ int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb);
 void ui_component_update(UIComponent_t *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
 
 int ui_component_is_inside(const UIComponent_t *self, int x, int y);
+
+void ui_component_connect(void *parent, void *child);
 
 //--- UIIcon ---//
 struct UIIcon {
@@ -109,7 +111,7 @@ struct UIIcon {
 
 typedef struct UIIcon UIIcon_t;
 
-void ui_icon_init(UIIcon_t *self, int x, int y, Framebuffer8Bit_t *fb, UIComponent_t *parent);
+void ui_icon_init(UIIcon_t *self, int x, int y, Framebuffer8Bit_t *fb);
 
 void ui_icon_destroy(UIIcon_t *self);
 

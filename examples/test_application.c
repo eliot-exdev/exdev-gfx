@@ -79,22 +79,22 @@ int main() {
     application_init(&app, WIDTH, HEIGHT);
 
     UIComponent_t *left = malloc(sizeof(UIComponent_t));
-    ui_component_init(left, 2, 2, 538, 476, &app.root);
+    ui_component_init(left, 2, 2, 538, 476);
     left->functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &left_update;
-    ui_component_list_add(&app.root.childs, left);
+    ui_component_connect(&app.root, left);
 
     Framebuffer8Bit_t *icon_fb = malloc(sizeof(Framebuffer8Bit_t));
     framebuffer_8bit_read_from_dat(icon_fb, "assets/amiga_logo_8bit.dat");
     palette_8bit_read_from_dat(&app.palette, "assets/amiga_logo_8bit.pal");
     UIIcon_t *icon = malloc(sizeof(UIIcon_t));
-    ui_icon_init(icon, 4, 4, icon_fb, &app.root);
-    ui_component_list_add(&left->childs, (UIComponent_t *) icon);
+    ui_icon_init(icon, 4, 4, icon_fb);
+    ui_component_connect(left, icon);
 
     UIComponent_t *right = malloc(sizeof(UIComponent_t));
-    ui_component_init(right, 542, 2, 96, 476, &app.root);
+    ui_component_init(right, 542, 2, 96, 476);
     right->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *)) &right_paint;
     right->functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &right_update;
-    ui_component_list_add(&app.root.childs, right);
+    ui_component_connect(&app.root, right);
 
     application_run(&app, UPDATE_INTERVAL);
     application_destroy(&app);
