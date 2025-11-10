@@ -37,6 +37,8 @@ enum ui_component_type {
     UI_COMPONENT_CUSTOM
 };
 
+typedef enum ui_component_type UIComponentType_t;
+
 struct UIComponent;
 
 struct UIComponentList {
@@ -58,7 +60,7 @@ typedef int (*paint_function)(void *self, Framebuffer8Bit_t *fb);
 typedef void (*update_function)(void *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
 
 struct UIComponent {
-    enum ui_component_type type;
+    UIComponentType_t type;
     int subtype;
     struct {
         int x;
@@ -101,14 +103,24 @@ int ui_component_is_inside(const UIComponent_t *self, int x, int y);
 
 void ui_component_connect(void *parent, void *child);
 
-//--- UIIcon ---//
+struct UIIcon;
+
+typedef void (*on_focus_function)(struct UIIcon *self);
+typedef void (*on_clicked_function)(struct UIIcon *self);
+
 struct UIIcon {
     UIComponent_t base;
     Framebuffer8Bit_t *icon;
     struct {
         int clickable;
-        int has_focus;
+        int focus;
+        int clicked;
     } flags;
+
+    struct {
+        on_focus_function on_focus;
+        on_clicked_function on_clicked;
+    } functions;
 };
 
 typedef struct UIIcon UIIcon_t;

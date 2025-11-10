@@ -158,7 +158,10 @@ void ui_icon_init(UIIcon_t *self, const int x, const int y, Framebuffer8Bit_t *f
 
     self->icon = fb;
     self->flags.clickable = 1;
-    self->flags.has_focus = 0;
+    self->flags.focus = 0;
+
+    self->functions.on_clicked = NULL;
+    self->functions.on_focus = NULL;
 }
 
 void ui_icon_destroy(UIIcon_t *self) {
@@ -199,16 +202,41 @@ void ui_icon_update(UIIcon_t *self, const exdev_timestamp_t time_elapsed, const 
     for (int i = 0; i < num_events; ++i) {
         if (events[i].type == EVENT_MOUSE && events[i].mouse_event.event == MOUSE_EVENT_MOVED) {
             if (ui_component_is_inside(&self->base, events[i].mouse_event.position_x, events[i].mouse_event.position_y)) {
-                if (!self->flags.has_focus) {
-                    self->flags.has_focus = 1;
+                if (!self->flags.focus) {
+                    self->flags.focus = 1;
                     self->base.properties.border_color = PEN_INDEX_DARK_YELLOW;
                     self->base.flags.dirty_flag = 1;
+                    if (self->functions.on_focus) {
+                        self->functions.on_focus(self);
+                    }
                 }
             } else {
-                if (self->flags.has_focus) {
-                    self->flags.has_focus = 0;
+                if (self->flags.focus) {
+                    self->flags.focus = 0;
                     self->base.properties.border_color = PEN_INDEX_BLUE;
                     self->base.flags.dirty_flag = 1;
+                    if (self->functions.on_focus) {
+                        self->functions.on_focus(self);
+                    }
+                }
+            }
+        } else if (events[i].type == EVENT_MOUSE && events[i].mouse_event.event == MOUSE_EVENT_BUTTON_PRESSED) {
+            if (ui_component_is_inside(&self->base, events[i].mouse_event.position_x, events[i].mouse_event.position_y)) {
+                self->flags.clicked = 1;
+                self->base.properties.border_color = PEN_INDEX_YELLOW;
+                self->base.flags.dirty_flag = 1;
+                if (self->functions.on_clicked) {
+
+                    self->functions.on_clicked(self);
+                }
+            }
+        } else if (events[i].type == EVENT_MOUSE && events[i].mouse_event.event == MOUSE_EVENT_BUTTON_RELEASED) {
+            if (ui_component_is_inside(&self->base, events[i].mouse_event.position_x, events[i].mouse_event.position_y)) {
+                self->flags.clicked = 0;
+                self->base.properties.border_color = PEN_INDEX_DARK_YELLOW;
+                self->base.flags.dirty_flag = 1;
+                if (self->functions.on_clicked) {
+                    self->functions.on_clicked(self);
                 }
             }
         }
