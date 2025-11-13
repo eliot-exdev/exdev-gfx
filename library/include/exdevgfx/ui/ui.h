@@ -55,7 +55,7 @@ void ui_component_list_add(UIComponentList_t *self, struct UIComponent *componen
 
 typedef void (*destroy_function)(void *self);
 
-typedef int (*paint_function)(void *self, Framebuffer8Bit_t *fb);
+typedef int (*paint_function)(void *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
 
 typedef void (*update_function)(void *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
 
@@ -63,8 +63,8 @@ struct UIComponent {
     UIComponentType_t type;
     int subtype;
     struct {
-        int x;
-        int y;
+        int x; // relative to parent
+        int y; // relative to parent
         int width;
         int height;
         Color8Bit_t background_color;
@@ -95,13 +95,15 @@ UIComponent_t *ui_component_create(int x, int y, int width, int height);
 
 void ui_component_destroy(UIComponent_t *self);
 
-int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb);
+int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
 
 void ui_component_update(UIComponent_t *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
 
 int ui_component_is_inside(const UIComponent_t *self, int x, int y);
 
 void ui_component_connect(void *parent, void *child);
+
+void ui_component_get_absolute_position(const UIComponent_t *self, int *x, int *y);
 
 struct UIIcon;
 
@@ -133,7 +135,7 @@ UIIcon_t *ui_icon_create_with_path(int x, int y, const char *path);
 
 void ui_icon_destroy(UIIcon_t *self);
 
-int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb);
+int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
 
 void ui_icon_update(UIIcon_t *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
 
