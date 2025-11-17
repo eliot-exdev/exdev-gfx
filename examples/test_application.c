@@ -80,7 +80,7 @@ static void icon_clicked(UIIcon_t *self) {
     log_info_fmt("icon clicked: %d", self->flags.clicked);
 }
 static void icon_focus(UIIcon_t *self) {
-    log_info_fmt("icon focus: %d", self->flags.focus);
+    log_info_fmt("icon focus: %d", self->flags.focused);
 }
 
 

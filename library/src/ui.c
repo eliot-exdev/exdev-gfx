@@ -178,8 +178,8 @@ void ui_icon_init(UIIcon_t *self, const int x, const int y, Framebuffer8Bit_t *f
     self->base.functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &ui_icon_update;
 
     self->icon = fb;
-    self->flags.clickable = 1;
-    self->flags.focus = 0;
+    self->properties.clickable = 1;
+    self->flags.focused = 0;
 
     self->functions.on_clicked = NULL;
     self->functions.on_focus = NULL;
@@ -218,15 +218,15 @@ void ui_icon_update(UIIcon_t *self, const exdev_timestamp_t time_elapsed, const 
 
     ui_component_update(&self->base, time_elapsed, events, num_events);
 
-    if (!self->flags.clickable) {
+    if (!self->properties.clickable) {
         return;
     }
 
     for (int i = 0; i < num_events; ++i) {
         if (events[i].type == EVENT_MOUSE && events[i].mouse_event.event == MOUSE_EVENT_MOVED) {
             if (ui_component_is_inside(&self->base, events[i].mouse_event.position_x, events[i].mouse_event.position_y)) {
-                if (!self->flags.focus) {
-                    self->flags.focus = 1;
+                if (!self->flags.focused) {
+                    self->flags.focused = 1;
                     self->base.properties.border_color = PEN_INDEX_DARK_YELLOW;
                     self->base.flags.dirty_flag = 1;
                     if (self->functions.on_focus) {
@@ -234,8 +234,8 @@ void ui_icon_update(UIIcon_t *self, const exdev_timestamp_t time_elapsed, const 
                     }
                 }
             } else {
-                if (self->flags.focus) {
-                    self->flags.focus = 0;
+                if (self->flags.focused) {
+                    self->flags.focused = 0;
                     self->base.properties.border_color = PEN_INDEX_BLUE;
                     self->base.flags.dirty_flag = 1;
                     if (self->functions.on_focus) {
@@ -249,7 +249,6 @@ void ui_icon_update(UIIcon_t *self, const exdev_timestamp_t time_elapsed, const 
                 self->base.properties.border_color = PEN_INDEX_YELLOW;
                 self->base.flags.dirty_flag = 1;
                 if (self->functions.on_clicked) {
-
                     self->functions.on_clicked(self);
                 }
             }

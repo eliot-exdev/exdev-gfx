@@ -117,7 +117,10 @@ struct UIIcon {
     Framebuffer8Bit_t *icon;
     struct {
         int clickable;
-        int focus;
+    } properties;
+
+    struct {
+        int focused;
         int clicked;
     } flags;
 
