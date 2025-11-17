@@ -15,8 +15,10 @@
 #include <intuition/screens.h>
 
 #ifdef __MORPHOS__
+
 #include <cybergraphx/cybergraphics.h>
 #include <proto/cybergraphics.h>
+
 #endif
 
 #include <proto/graphics.h>
@@ -168,7 +170,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
                                WA_Width, width,
                                WA_Height, height,
                                WA_CustomScreen, w->screen,
-                               WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
+                               WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS,
                                WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_REPORTMOUSE | WFLG_RMBTRAP | WFLG_BACKDROP,
                                WA_Title, title,
                                TAG_DONE);
@@ -397,17 +399,32 @@ int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const i
                               events[numEvents].mouse_event.position_y);
                 ++numEvents;
                 break;
-            case IDCMP_MOUSEMOVE:
-                events[numEvents].type = EVENT_MOUSE;
-                events[numEvents].mouse_event.event = MOUSE_EVENT_MOVED;
-                events[numEvents].mouse_event.button = MOUSE_BUTTON_NONE;
-                events[numEvents].mouse_event.position_x = msg->MouseX;
-                events[numEvents].mouse_event.position_y = msg->MouseY;
-                ++numEvents;
-                break;
+//            case IDCMP_MOUSEMOVE:
+//                events[numEvents].type = EVENT_MOUSE;
+//                events[numEvents].mouse_event.event = MOUSE_EVENT_MOVED;
+//                events[numEvents].mouse_event.button = MOUSE_BUTTON_NONE;
+//                events[numEvents].mouse_event.position_x = msg->MouseX;
+//                events[numEvents].mouse_event.position_y = msg->MouseY;
+//                ++numEvents;
+//                break;
         }
         GT_ReplyIMsg(msg);
     }
     return numEvents;
 }
 
+int window_get_mouse_position(Window_t *w, Event_t *event) {
+    assert(w);
+    assert(event);
+    const int x = NATIVE_WINDOW_CAST(w)->screen->MouseX;
+    const int y = NATIVE_WINDOW_CAST(w)->screen->MouseY;
+
+    if (NATIVE_WINDOW_CAST(w)->chunky_buffer.buffer && x >= 0 && y >= 0 && x <= NATIVE_WINDOW_CAST(w)->chunky_buffer.width && y <= NATIVE_WINDOW_CAST(w)->chunky_buffer.height) {
+        event->type = EVENT_MOUSE;
+        event->mouse_event.event = MOUSE_EVENT_MOVED;
+        event->mouse_event.position_x = x;
+        event->mouse_event.position_y = y;
+        return 1;
+    }
+    return 0;
+}

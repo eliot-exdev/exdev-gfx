@@ -45,6 +45,8 @@ void window_update_palette(Window_t *w, const Palette8Bit_t *p);
 
 int window_poll_events(Window_t *w, char *closeEvent, Event_t *events, int maxEvents);
 
+int window_get_mouse_position(Window_t *w, Event_t *event);
+
 #ifdef __cplusplus
 }
 #endif
