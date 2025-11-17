@@ -110,7 +110,7 @@ void framebuffer_8bit_draw_horizontal_line(Framebuffer8Bit_t *fb, const int x, c
     memset(framebuffer_8bit_pixel_at(fb, x, y), c, to_x - x);
 }
 
-void framebuffer_8bit_draw_pixel(Framebuffer8Bit_t *fb, int x, int y, Color8Bit_t c) {
+void framebuffer_8bit_draw_pixel(Framebuffer8Bit_t *fb, const int x, const int y, const Color8Bit_t c) {
     assert(fb);
 
     if (x >= fb->width || x < 0) {
@@ -464,10 +464,10 @@ void framebuffer_8bit_draw_framebuffer(Framebuffer8Bit_t *fb, const int x, const
     assert(fb);
     assert(src);
 
-    if (x > fb->width) {
+    if (x >= fb->width) {
         return;
     }
-    if (y > fb->height) {
+    if (y >= fb->height) {
         return;
     }
 
@@ -478,14 +478,45 @@ void framebuffer_8bit_draw_framebuffer(Framebuffer8Bit_t *fb, const int x, const
     }
 }
 
+void framebuffer_8bit_blit_8bit(Framebuffer8Bit_t *fb, const Framebuffer8Bit_t *src, int x, int y, int width, int height, int to_x, int to_y) {
+    assert(fb);
+    assert(src);
+
+    if (to_x >= fb->width) {
+        return;
+    }
+    if (to_y >= fb->height) {
+        return;
+    }
+    if (x >= src->width) {
+        return;
+    }
+    if (y >= src->height) {
+        return;
+    }
+
+    if (width + to_x >= fb->width) {
+        width = fb->width - to_x;
+    }
+    if (height + to_y >= fb->height) {
+        height = fb->height - to_y;
+    }
+
+    for (int j = 0; j < height; ++j) {
+        for (int i = 0; i < width; ++i) { // memcpy might be faster
+            *framebuffer_8bit_pixel_at(fb, i + to_x, j + to_y) = *framebuffer_8bit_pixel_at(src, j + x, j + y);
+        }
+    }
+}
+
 void framebuffer_8bit_draw_framebuffer_flip_vertical(Framebuffer8Bit_t *fb, int x, int y, const Framebuffer8Bit_t *src) {
     assert(fb);
     assert(src);
 
-    if (x > fb->width) {
+    if (x >= fb->width) {
         return;
     }
-    if (y > fb->height) {
+    if (y >= fb->height) {
         return;
     }
 

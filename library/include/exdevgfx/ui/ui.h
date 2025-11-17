@@ -110,7 +110,7 @@ void ui_component_get_absolute_position(const UIComponent_t *self, int *x, int *
 struct UIIcon;
 
 typedef void (*on_focus_function)(struct UIIcon *self);
-typedef void (*on_clicked_function)(struct UIIcon *self);
+typedef void (*on_click_function)(struct UIIcon *self);
 
 struct UIIcon {
     UIComponent_t base;
@@ -126,7 +126,7 @@ struct UIIcon {
 
     struct {
         on_focus_function on_focus;
-        on_clicked_function on_clicked;
+        on_click_function on_clicked;
     } functions;
 };
 
@@ -143,6 +143,26 @@ void ui_icon_destroy(UIIcon_t *self);
 int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
 
 void ui_icon_update(UIIcon_t *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
+
+//--- UIScroll ---//
+struct UIScroll {
+    UIComponent_t base;
+    struct {
+        int x_pos;
+        int y_pos;
+    } properties;
+    Framebuffer8Bit_t *fb;
+};
+
+typedef struct UIScroll UIScroll_t;
+
+void ui_scroll_init(UIScroll_t *self, int x, int y, int width, int height);
+
+void ui_scroll_destroy(UIScroll_t *self);
+
+int ui_scroll_paint(UIScroll_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
+
+void ui_scroll_update(UIScroll_t *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
 
 //--- UIApplication ---//
 struct UIApplication {
