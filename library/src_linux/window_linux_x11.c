@@ -359,6 +359,11 @@ int window_get_mouse_position(Window_t *w, Event_t *event) {
     assert(event);
 
     X11Window_t *x11_w = (X11Window_t *) w;
+
+    if (!x11_w->fb.buffer) {
+        return 0;
+    }
+
     Window root_window;
     Window child_window;
     int root_x = 0;
@@ -377,7 +382,7 @@ int window_get_mouse_position(Window_t *w, Event_t *event) {
                              &child_x,
                              &child_y,
                              &mask);
-    if (res && x11_w->fb.buffer && child_x >= 0 && child_y >= 0 && child_x <= x11_w->fb.width && child_y <= x11_w->fb.height) {
+    if (res && child_x >= 0 && child_y >= 0 && child_x <= x11_w->fb.width && child_y <= x11_w->fb.height) {
         event->type = EVENT_MOUSE;
         event->mouse_event.event = MOUSE_EVENT_MOVED;
         event->mouse_event.position_x = child_x;

@@ -416,10 +416,15 @@ int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const i
 int window_get_mouse_position(Window_t *w, Event_t *event) {
     assert(w);
     assert(event);
+
+    if (!NATIVE_WINDOW_CAST(w)->chunky_buffer.buffer) {
+        return 0;
+    }
+
     const int x = NATIVE_WINDOW_CAST(w)->screen->MouseX;
     const int y = NATIVE_WINDOW_CAST(w)->screen->MouseY;
 
-    if (NATIVE_WINDOW_CAST(w)->chunky_buffer.buffer && x >= 0 && y >= 0 && x <= NATIVE_WINDOW_CAST(w)->chunky_buffer.width && y <= NATIVE_WINDOW_CAST(w)->chunky_buffer.height) {
+    if (x >= 0 && y >= 0 && x <= NATIVE_WINDOW_CAST(w)->chunky_buffer.width && y <= NATIVE_WINDOW_CAST(w)->chunky_buffer.height) {
         event->type = EVENT_MOUSE;
         event->mouse_event.event = MOUSE_EVENT_MOVED;
         event->mouse_event.position_x = x;
