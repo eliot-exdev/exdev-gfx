@@ -34,6 +34,7 @@ extern "C" {
 enum ui_component_type {
     UI_COMPONENT_BASE,
     UI_COMPONENT_ICON,
+    UI_COMPONENT_SCROLL,
     UI_COMPONENT_CUSTOM
 };
 
@@ -63,8 +64,8 @@ struct UIComponent {
     UIComponentType_t type;
     int subtype;
     struct {
-        int x; // relative to parent
-        int y; // relative to parent
+        int x;// relative to parent
+        int y;// relative to parent
         int width;
         int height;
         Color8Bit_t background_color;
@@ -105,6 +106,7 @@ void ui_component_connect(void *parent, void *child);
 
 void ui_component_get_absolute_position(const UIComponent_t *self, int *x, int *y);
 
+//--- UIIcon ---//
 struct UIIcon;
 
 typedef void (*on_focus_function)(struct UIIcon *self);
@@ -139,21 +141,21 @@ int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_off
 
 void ui_icon_update(UIIcon_t *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
 
-//--- Application ---//
-struct Application {
+//--- UIApplication ---//
+struct UIApplication {
     Window_t *window;
     UIComponent_t root;
     Palette8Bit_t palette;
     int resume;
 };
 
-typedef struct Application Application_t;
+typedef struct UIApplication UIApplication_t;
 
-void application_init(Application_t *self, int width, int height);
+void application_init(UIApplication_t *self, int width, int height);
 
-void application_destroy(Application_t *self);
+void application_destroy(UIApplication_t *self);
 
-int application_run(Application_t *self, exdev_timestamp_t wait_ms);
+int application_run(UIApplication_t *self, exdev_timestamp_t wait_ms);
 
 #ifdef __cplusplus
 }
