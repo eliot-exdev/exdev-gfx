@@ -162,8 +162,8 @@ struct UIHorizontalScrollBar;
 struct UIScrollPane {
     UIComponent_t base;
     struct {
-        int x_pos;
-        int y_pos;
+        int x_offset;
+        int y_offset;
     } properties;
     struct {
         struct UIHorizontalScrollBar *h_bar;
@@ -184,7 +184,7 @@ int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, int x_offset, i
 void ui_scroll_update(UIScrollPane_t *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
 
 //--- UISrollBar ---//
-typedef void (*on_x_pos_function)(int x_pos);
+typedef void (*on_x_offset_function)(UIScrollPane_t *self, int x_offset);
 
 struct UIHorizontalScrollBar {
     UIComponent_t base;
@@ -195,7 +195,7 @@ struct UIHorizontalScrollBar {
     } properties;
 
     struct {
-        on_x_pos_function on_x_pos;
+        on_x_offset_function on_x_offset;
     } functions;
 };
 
