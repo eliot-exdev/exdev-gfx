@@ -24,11 +24,15 @@ all: voxelspace julia test_sprite other
 application: application_mos_gcc application_060
 
 application_mos_gcc: library/src/events.c library/src/palette.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c\
-                     library/src/ui.c library/src/vertex2d.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/test_application.c
+                     library/src/ui/ui_application.c library/src/ui/ui_component.c library/src/ui/ui_component_list.c library/src/ui/ui_horizontal_scroll_bar.c\
+                     library/src/ui/ui_icon.c library/src/ui/ui_scroll.c\
+                     library/src/vertex2d.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/test_application.c
 	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
 
 application_060: library/src/events.c library/src/palette.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c\
-                     library/src/ui.c library/src/vertex2d.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/test_application.c
+                 library/src/ui/ui_application.c library/src/ui/ui_component.c library/src/ui/ui_component_list.c library/src/ui/ui_horizontal_scroll_bar.c\
+                 library/src/ui/ui_icon.c library/src/ui/ui_scroll.c\
+                 library/src/vertex2d.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/test_application.c
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060}
 
 #--- voxelspace ---#
@@ -145,5 +149,5 @@ dist_voxelspace: voxelspace
 #--- clean ---#
 .PHONY: clean
 clean: 
-	$(RM) -f julia* voxelspace_* test_sprite_* *.o library/easing/src/*.o
+	$(RM) -f julia_* voxelspace_* application_* test_sprite_* *.o library/easing/src/*.o
 
