@@ -1,3 +1,7 @@
+/**
+* Copyright 2025 Andre Geisler (andre@exdev.de)
+ */
+
 #ifndef EXDEVGFX_BASE_UI_H
 #define EXDEVGFX_BASE_UI_H
 
