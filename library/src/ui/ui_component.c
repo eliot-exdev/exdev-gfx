@@ -36,11 +36,11 @@ void ui_component_init(UIComponent_t *self, const int x, const int y, const int 
     self->functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &ui_component_update;
 
     self->parent = NULL;
-    ui_component_list_init(&self->childs);
+    ui_component_list_init(&self->children);
 }
 
 void ui_component_destroy(UIComponent_t *self) {
-    ui_component_list_destroy(&self->childs);
+    ui_component_list_destroy(&self->children);
 }
 
 int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, int const x_offset, const int y_offset, const int, const int) {
@@ -63,8 +63,8 @@ int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, int const x_o
         self->flags.dirty_flag = 0;
     }
 
-    for (int i = 0; i < self->childs.size; ++i) {
-        if (self->childs.components[i]->functions.paint_func(self->childs.components[i], fb, x, y, self->properties.width, self->properties.height)) {
+    for (int i = 0; i < self->children.size; ++i) {
+        if (self->children.components[i]->functions.paint_func(self->children.components[i], fb, x, y, self->properties.width, self->properties.height)) {
             res = 1;
         }
     }
@@ -79,8 +79,8 @@ void ui_component_update(UIComponent_t *self, const exdev_timestamp_t time_elaps
         return;
     }
 
-    for (int i = 0; i < self->childs.size; ++i) {
-        self->childs.components[i]->functions.update_func(self->childs.components[i], time_elapsed, events, num_events);
+    for (int i = 0; i < self->children.size; ++i) {
+        self->children.components[i]->functions.update_func(self->children.components[i], time_elapsed, events, num_events);
     }
 }
 
@@ -115,6 +115,6 @@ void ui_component_connect(void *parent_, void *child_) {
     UIComponent_t *parent = parent_;
     UIComponent_t *child = child_;
 
-    ui_component_list_add(&parent->childs, child);
+    ui_component_list_add(&parent->children, child);
     child->parent = parent;
 }

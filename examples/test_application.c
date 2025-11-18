@@ -105,7 +105,7 @@ int main() {
     ui_component_connect(left, icon);
 
     // scroll component
-    UIScroll_t *scroll = ui_scroll_create(100, 100, 100, 100);
+    UIScrollPane_t *scroll = ui_scroll_create(100, 100, 100, 100);
     ui_component_connect(scroll, ui_icon_create_with_path(2, 2, "assets/amiga_logo_8bit.dat"));
     ui_component_connect(scroll, ui_icon_create_with_path(68, 68, "assets/amiga_logo_8bit.dat"));
     ui_component_connect(&app.root, scroll);

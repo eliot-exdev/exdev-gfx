@@ -76,6 +76,7 @@ else ()
             src/ui/ui_component.c
             src/ui/ui_icon.c
             src/ui/ui_scroll.c
+            src/ui/ui_horizontal_scroll_bar.c
             src/ui/ui_application.c
     )
     target_include_directories(${PROJECT_NAME}
