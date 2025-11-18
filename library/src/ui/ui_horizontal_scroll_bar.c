@@ -23,8 +23,8 @@ void ui_horizontal_scroll_bar_init(UIHorizontalScrollBar_t *self, const int x, c
     self->base.functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &ui_horizontal_scroll_bar_update;
 
     self->properties.x_pos = 0;
-    self->properties.x_width_total = 0;
-    self->properties.x_width_visible = 0;
+    self->properties.x_width_total = 1;
+    self->properties.x_width_visible = 1;
 
     self->functions.on_x_offset = NULL;
 }
