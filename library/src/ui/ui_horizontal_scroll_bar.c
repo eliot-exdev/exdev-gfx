@@ -12,28 +12,30 @@
 #include <assert.h>
 #include <stdlib.h>
 
-void ui_horizontal_scroll_bar_init(UIHorizontalScrollBar_t *self, const int x, const int y, const int width, const int height) {
+void ui_horizontal_scroll_bar_init(UIHorizontalScrollBar_t *self, UIScrollPane_t *parent, const int x, const int y, const int width, const int height, const int x_width_total, const int x_width_visible) {
     assert(self);
+    assert(parent);
 
     ui_component_init(&self->base, x, y, width, height);
     self->base.type = UI_COMPONENT_SCROLL_BAR_HORIZONTAL;
+    self->base.parent = (UIComponent_t *) parent;
 
     self->base.functions.destroy_func = (void (*)(void *)) &ui_horizontal_scroll_bar_destroy;
     self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_horizontal_scroll_bar_paint;
     self->base.functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &ui_horizontal_scroll_bar_update;
 
     self->properties.x_pos = 0;
-    self->properties.x_width_total = 1;
-    self->properties.x_width_visible = 1;
+    self->properties.x_width_total = x_width_total;
+    self->properties.x_width_visible = x_width_visible;
 
     self->flags.dragged = 0;
 
-    self->functions.on_x_offset = NULL;
+    self->functions.on_x_offset = parent->functions.on_x_offset;
 }
 
-UIHorizontalScrollBar_t *ui_horizontal_scroll_bar_create(const int x, const int y, const int width, const int height) {
+UIHorizontalScrollBar_t *ui_horizontal_scroll_bar_create(UIScrollPane_t *parent, const int x, const int y, const int width, const int height, const int x_width_total, const int x_width_visible) {
     UIHorizontalScrollBar_t *self = malloc(sizeof(UIHorizontalScrollBar_t));
-    ui_horizontal_scroll_bar_init(self, x, y, width, height);
+    ui_horizontal_scroll_bar_init(self, parent, x, y, width, height, x_width_total, x_width_visible);
     return self;
 }
 

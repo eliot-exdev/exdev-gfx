@@ -157,6 +157,8 @@ void ui_icon_update(UIIcon_t *self, exdev_timestamp_t time_elapsed, const Event_
 
 //--- UIScrollPane ---//
 #define SCROLL_BAR_SIZE 10
+struct UIScrollPane;
+typedef void (*on_x_offset_function)(struct UIScrollPane *self, int x_offset);
 struct UIHorizontalScrollBar;
 
 struct UIScrollPane {
@@ -168,6 +170,10 @@ struct UIScrollPane {
     struct {
         struct UIHorizontalScrollBar *h_bar;
     } children;
+
+    struct {
+        on_x_offset_function on_x_offset;
+    } functions;
     Framebuffer8Bit_t *fb;
 };
 
@@ -183,9 +189,9 @@ int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, int x_offset, i
 
 void ui_scroll_update(UIScrollPane_t *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
 
-//--- UISrollBar ---//
-typedef void (*on_x_offset_function)(UIScrollPane_t *self, int x_offset);
+void ui_scroll_on_x_offset(UIScrollPane_t *self, int x_offset);
 
+//--- UISrollBar ---//
 struct UIHorizontalScrollBar {
     UIComponent_t base;
     struct {
@@ -205,9 +211,9 @@ struct UIHorizontalScrollBar {
 
 typedef struct UIHorizontalScrollBar UIHorizontalScrollBar_t;
 
-void ui_horizontal_scroll_bar_init(UIHorizontalScrollBar_t *self, int x, int y, int width, int height);
+void ui_horizontal_scroll_bar_init(UIHorizontalScrollBar_t *self, UIScrollPane_t *parent,int x, int y, int width, int height, int x_width_total, int x_width_visible);
 
-UIHorizontalScrollBar_t *ui_horizontal_scroll_bar_create(int x, int y, int width, int height);
+UIHorizontalScrollBar_t *ui_horizontal_scroll_bar_create(UIScrollPane_t *parent, int x, int y, int width, int height, int x_width_total, int x_width_visible);
 
 void ui_horizontal_scroll_bar_destroy(UIHorizontalScrollBar_t *self);
 
