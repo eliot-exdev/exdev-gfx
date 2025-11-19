@@ -219,6 +219,10 @@ struct UIHorizontalScrollBar {
     struct {
         on_x_offset_function on_x_offset;
     } functions;
+
+    float f1;
+    float f2;
+    int bar_width;
 };
 
 typedef struct UIHorizontalScrollBar UIHorizontalScrollBar_t;
