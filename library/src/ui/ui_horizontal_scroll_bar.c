@@ -96,21 +96,17 @@ void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, const exdev_
                 int y = events[i].mouse_event.position_y;
                 ui_component_get_relative_position(&self->base, &x, &y);
 
-                const float f1 = (float) self->properties.x_width_visible / (float) self->properties.x_width_total;
-                const float f2 = (float) self->base.properties.width / (float) self->properties.x_width_visible;
-                const int bar_width = (int) (f1 * f2 * (float) self->base.properties.width);
-
                 if (x < 0) {
                     x = 0;
-                } else if (x > self->base.properties.width - bar_width) {
-                    x = self->base.properties.width - bar_width;
+                } else if (x > self->base.properties.width - self->bar_width) {
+                    x = self->base.properties.width - self->bar_width;
                 }
 
                 if (x != self->properties.x_pos) {
                     self->properties.x_pos = x;
                     self->base.flags.dirty_flag = 1;
                     if (self->functions.on_x_offset) {
-                        self->functions.on_x_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.x_pos / f1 / f2));
+                        self->functions.on_x_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.x_pos / self->f1 / self->f2));
                     }
                 }
             }
