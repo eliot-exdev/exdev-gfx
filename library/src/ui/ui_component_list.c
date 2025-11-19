@@ -4,6 +4,7 @@
 
 #include "exdevgfx/ui/ui.h"
 #include "exdevgfx/helper.h"
+#include "exdevgfx/logger.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -32,6 +33,10 @@ void ui_component_list_add(UIComponentList_t *self, UIComponent_t *component) {
 
     if (self->size > 0) {
         self->components = realloc(self->components, sizeof(UIComponent_t *) * (self->size + 1));
+        if (!self->components) {
+            log_warning("could allocate memory for component list");
+            return;
+        }
         self->size += 1;
     } else {
         self->components = malloc(sizeof(UIComponent_t *));
