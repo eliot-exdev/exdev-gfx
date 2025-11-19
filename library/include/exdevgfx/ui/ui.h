@@ -157,17 +157,29 @@ void ui_icon_update(UIIcon_t *self, exdev_timestamp_t time_elapsed, const Event_
 
 //--- UIScrollPane ---//
 #define SCROLL_BAR_SIZE 10
+
 struct UIScrollPane;
-typedef void (*on_x_offset_function)(struct UIScrollPane *self, int x_offset);
 struct UIHorizontalScrollBar;
+
+typedef void (*on_x_offset_function)(struct UIScrollPane *self, int x_offset);
+
+enum ui_scrolling_support {
+    UI_SCROLLING_SUPPORT_HORIZONTAL,
+    UI_SCROLLING_SUPPORT_VERTICAL,
+    UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL
+};
+
+typedef enum ui_scrolling_support UIScrollingSupport_t;
 
 struct UIScrollPane {
     UIComponent_t base;
     struct {
         int x_offset;
         int y_offset;
+        UIScrollingSupport_t scrolling_support;
     } properties;
     struct {
+
         struct UIHorizontalScrollBar *h_bar;
     } children;
 
@@ -179,9 +191,9 @@ struct UIScrollPane {
 
 typedef struct UIScrollPane UIScrollPane_t;
 
-void ui_scroll_init(UIScrollPane_t *self, int x, int y, int width, int height);
+void ui_scroll_init(UIScrollPane_t *self, int x, int y, int width, int height, UIScrollingSupport_t scrolling_support);
 
-UIScrollPane_t *ui_scroll_create(int x, int y, int width, int height);
+UIScrollPane_t *ui_scroll_create(int x, int y, int width, int height, UIScrollingSupport_t scrolling_su);
 
 void ui_scroll_destroy(UIScrollPane_t *self);
 
@@ -211,7 +223,7 @@ struct UIHorizontalScrollBar {
 
 typedef struct UIHorizontalScrollBar UIHorizontalScrollBar_t;
 
-void ui_horizontal_scroll_bar_init(UIHorizontalScrollBar_t *self, UIScrollPane_t *parent,int x, int y, int width, int height, int x_width_total, int x_width_visible);
+void ui_horizontal_scroll_bar_init(UIHorizontalScrollBar_t *self, UIScrollPane_t *parent, int x, int y, int width, int height, int x_width_total, int x_width_visible);
 
 UIHorizontalScrollBar_t *ui_horizontal_scroll_bar_create(UIScrollPane_t *parent, int x, int y, int width, int height, int x_width_total, int x_width_visible);
 
