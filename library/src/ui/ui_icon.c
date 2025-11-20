@@ -3,7 +3,6 @@
  */
 
 #include "exdevgfx/ui/ui.h"
-#include "exdevgfx/helper.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -33,7 +32,7 @@ void ui_icon_init(UIIcon_t *self, const int x, const int y, Framebuffer8Bit_t *f
     self->base.type = UI_COMPONENT_ICON;
     self->base.functions.destroy_func = (void (*)(void *)) &ui_icon_destroy;
     self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_icon_paint;
-    self->base.functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &ui_icon_update;
+    self->base.functions.update_func = (void (*)(void *, long, const Event_t *, int)) &ui_icon_update;
 
     self->properties.clickable = 1;
     self->flags.focused = 0;
@@ -68,7 +67,7 @@ int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb, const int x_offset, con
     return res;
 }
 
-void ui_icon_update(UIIcon_t *self, const exdev_timestamp_t time_elapsed, const Event_t *events, const int num_events) {
+void ui_icon_update(UIIcon_t *self, const long time_elapsed, const Event_t *events, const int num_events) {
     assert(self);
 
     if (!self->base.flags.enabled_flag) {

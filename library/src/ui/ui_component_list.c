@@ -3,7 +3,6 @@
  */
 
 #include "exdevgfx/ui/ui.h"
-#include "exdevgfx/helper.h"
 #include "exdevgfx/logger.h"
 
 #include <assert.h>

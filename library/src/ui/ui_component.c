@@ -3,7 +3,6 @@
  */
 
 #include "exdevgfx/ui/ui.h"
-#include "exdevgfx/helper.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -33,7 +32,7 @@ void ui_component_init(UIComponent_t *self, const int x, const int y, const int 
 
     self->functions.destroy_func = (void (*)(void *)) &ui_component_destroy;
     self->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_component_paint;
-    self->functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &ui_component_update;
+    self->functions.update_func = (void (*)(void *, long, const Event_t *, int)) &ui_component_update;
 
     self->parent = NULL;
     ui_component_list_init(&self->children);
@@ -72,7 +71,7 @@ int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, int const x_o
     return res;
 }
 
-void ui_component_update(UIComponent_t *self, const exdev_timestamp_t time_elapsed, const Event_t *events, const int num_events) {
+void ui_component_update(UIComponent_t *self, const long time_elapsed, const Event_t *events, const int num_events) {
     assert(self);
 
     if (!self->flags.enabled_flag) {

@@ -3,7 +3,6 @@
  */
 
 #include "exdevgfx/ui/ui.h"
-#include "exdevgfx/helper.h"
 
 #define EXDEVGFX2_LOG_LEVEL 2
 
@@ -22,7 +21,7 @@ void ui_horizontal_scroll_bar_init(UIHorizontalScrollBar_t *self, UIScrollPane_t
 
     self->base.functions.destroy_func = (void (*)(void *)) &ui_horizontal_scroll_bar_destroy;
     self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_horizontal_scroll_bar_paint;
-    self->base.functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &ui_horizontal_scroll_bar_update;
+    self->base.functions.update_func = (void (*)(void *, long, const Event_t *, int)) &ui_horizontal_scroll_bar_update;
 
     self->properties.x_pos = 0;
     self->properties.x_width_total = x_width_total;
@@ -66,7 +65,7 @@ int ui_horizontal_scroll_bar_paint(UIHorizontalScrollBar_t *self, Framebuffer8Bi
     return res;
 }
 
-void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, const exdev_timestamp_t, const Event_t *events, const int num_events) {
+void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, const long, const Event_t *events, const int num_events) {
     assert(self);
     assert(events);
 

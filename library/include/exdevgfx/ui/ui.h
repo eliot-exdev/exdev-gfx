@@ -9,10 +9,9 @@
 extern "C" {
 #endif
 
+#include <exdevgfx/window.h>
 #include <exdevgfx/framebuffer_8bit.h>
 #include <exdevgfx/events.h>
-#include <exdevgfx/window.h>
-#include <exdevgfx/helper.h>
 
 #define PEN_INDEX_BLACK 0
 #define PEN_INDEX_WHITE 1
@@ -64,7 +63,7 @@ typedef void (*destroy_function)(void *self);
 
 typedef int (*paint_function)(void *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
 
-typedef void (*update_function)(void *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
+typedef void (*update_function)(void *self, long time_elapsed, const Event_t *events, int num_events);
 
 struct UIComponent {
     UIComponentType_t type;
@@ -104,7 +103,7 @@ void ui_component_destroy(UIComponent_t *self);
 
 int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
 
-void ui_component_update(UIComponent_t *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
+void ui_component_update(UIComponent_t *self, long time_elapsed, const Event_t *events, int num_events);
 
 int ui_component_is_inside(const UIComponent_t *self, int x, int y);
 
@@ -153,7 +152,7 @@ void ui_icon_destroy(UIIcon_t *self);
 
 int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
 
-void ui_icon_update(UIIcon_t *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
+void ui_icon_update(UIIcon_t *self, long time_elapsed, const Event_t *events, int num_events);
 
 //--- UIScrollPane ---//
 #define SCROLL_BAR_SIZE 10
@@ -201,7 +200,7 @@ void ui_scroll_destroy(UIScrollPane_t *self);
 
 int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
 
-void ui_scroll_update(UIScrollPane_t *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
+void ui_scroll_update(UIScrollPane_t *self, long time_elapsed, const Event_t *events, int num_events);
 
 void ui_scroll_on_x_offset(UIScrollPane_t *self, int x_offset);
 
@@ -239,7 +238,7 @@ void ui_horizontal_scroll_bar_destroy(UIHorizontalScrollBar_t *self);
 
 int ui_horizontal_scroll_bar_paint(UIHorizontalScrollBar_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
 
-void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
+void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, long time_elapsed, const Event_t *events, int num_events);
 
 //--- UIVerticalScrollBar ---//
 struct UIVerticalScrollBar {
@@ -273,7 +272,7 @@ void ui_vertical_scroll_bar_destroy(UIVerticalScrollBar_t *self);
 
 int ui_vertical_scroll_bar_paint(UIVerticalScrollBar_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
 
-void ui_vertical_scroll_bar_update(UIVerticalScrollBar_t *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
+void ui_vertical_scroll_bar_update(UIVerticalScrollBar_t *self, long time_elapsed, const Event_t *events, int num_events);
 
 //--- UIApplication ---//
 struct UIApplication {
@@ -289,7 +288,7 @@ void application_init(UIApplication_t *self, int width, int height);
 
 void application_destroy(UIApplication_t *self);
 
-int application_run(UIApplication_t *self, exdev_timestamp_t wait_ms);
+int application_run(UIApplication_t *self, long wait_ms);
 
 #ifdef __cplusplus
 }

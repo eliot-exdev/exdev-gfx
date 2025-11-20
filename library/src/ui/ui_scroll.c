@@ -3,7 +3,6 @@
  */
 
 #include "exdevgfx/ui/ui.h"
-#include "exdevgfx/helper.h"
 
 #define EXDEVGFX2_LOG_LEVEL 1
 
@@ -44,7 +43,7 @@ void ui_scroll_init(UIScrollPane_t *self, int x, int y, int width, int height, c
 
     self->base.functions.destroy_func = (void (*)(void *)) &ui_scroll_destroy;
     self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_scroll_paint;
-    self->base.functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &ui_scroll_update;
+    self->base.functions.update_func = (void (*)(void *, long, const Event_t *, int)) &ui_scroll_update;
 
     if (scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL || scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
         self->functions.on_x_offset = ui_scroll_on_x_offset;
@@ -186,7 +185,7 @@ int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, const int x_off
     return res;
 }
 
-void ui_scroll_update(UIScrollPane_t *self, const exdev_timestamp_t time_elapsed, const Event_t *events, const int num_events) {
+void ui_scroll_update(UIScrollPane_t *self, const long time_elapsed, const Event_t *events, const int num_events) {
     assert(self);
 
     ui_component_update(&self->base, time_elapsed, events, num_events);
