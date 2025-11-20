@@ -18,6 +18,14 @@ void ui_scroll_on_x_offset(UIScrollPane_t *self, const int x_offset) {
     log_info_fmt("x offset: %d", x_offset);
 }
 
+void ui_scroll_on_y_offset(UIScrollPane_t *self, const int y_offset) {
+    assert(self);
+
+    self->properties.y_offset = y_offset;
+    self->base.flags.dirty_flag = 1;
+    log_info_fmt("y offset: %d", y_offset);
+}
+
 void ui_scroll_init(UIScrollPane_t *self, int x, int y, int width, int height, const UIScrollingSupport_t scrolling_support) {
     assert(self);
 
@@ -37,9 +45,15 @@ void ui_scroll_init(UIScrollPane_t *self, int x, int y, int width, int height, c
     } else {
         self->functions.on_x_offset = NULL;
     }
+    if (scrolling_support == UI_SCROLLING_SUPPORT_VERTICAL || scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
+        self->functions.on_y_offset = ui_scroll_on_y_offset;
+    } else {
+        self->functions.on_y_offset = NULL;
+    }
 
     self->fb = NULL;
     self->h_bar = NULL;
+    self->v_bar = NULL;
 }
 
 UIScrollPane_t *ui_scroll_create(const int x, const int y, const int width, const int height, const UIScrollingSupport_t scrolling_support) {
@@ -55,9 +69,15 @@ void ui_scroll_destroy(UIScrollPane_t *self) {
     ui_component_destroy(&self->base);
 
     if (self->h_bar) {
-        ui_horizontal_scroll_bar_destroy(self->h_bar);
+        self->h_bar->base.functions.destroy_func(self->h_bar);
         free(self->h_bar);
         self->h_bar = NULL;
+    }
+
+    if (self->v_bar) {
+        self->v_bar->base.functions.destroy_func(self->v_bar);
+        free(self->v_bar);
+        self->v_bar = NULL;
     }
 
     if (self->fb) {
@@ -100,6 +120,9 @@ int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, const int x_off
         if (self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL || self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
             self->h_bar = ui_horizontal_scroll_bar_create(self, 2, self->base.properties.width - SCROLL_BAR_SIZE - 2, self->base.properties.height - SCROLL_BAR_SIZE - 4, SCROLL_BAR_SIZE, width, self->base.properties.width);
         }
+        if (self->properties.scrolling_support == UI_SCROLLING_SUPPORT_VERTICAL || self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
+            self->v_bar = ui_vertical_scroll_bar_create(self, self->base.properties.width - SCROLL_BAR_SIZE - 2, 2, SCROLL_BAR_SIZE, self->base.properties.height - SCROLL_BAR_SIZE - 4, height, self->base.properties.height);
+        }
     }
 
     if (res) {
@@ -138,6 +161,10 @@ int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, const int x_off
         res |= self->h_bar->base.functions.paint_func(self->h_bar, fb, x, y, self->base.properties.width, self->base.properties.height);
     }
 
+    // draw v bar
+    if (self->h_bar) {
+        res |= self->v_bar->base.functions.paint_func(self->v_bar, fb, x, y, self->base.properties.width, self->base.properties.height);
+    }
     return res;
 }
 
@@ -148,5 +175,8 @@ void ui_scroll_update(UIScrollPane_t *self, const exdev_timestamp_t time_elapsed
 
     if (self->h_bar) {
         self->h_bar->base.functions.update_func(self->h_bar, time_elapsed, events, num_events);
+    }
+    if (self->v_bar) {
+        self->v_bar->base.functions.update_func(self->v_bar, time_elapsed, events, num_events);
     }
 }
