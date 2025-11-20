@@ -69,6 +69,7 @@ void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, const long, 
     assert(self);
     assert(events);
 
+    log_info_fmt("ui_horizontal_scroll_bar_update: %d", num_events);
     for (int i = 0; i < num_events; ++i) {
         if (events[i].type == EVENT_MOUSE) {
             if (events[i].mouse_event.button == MOUSE_BUTTON_0 && events[i].mouse_event.event == MOUSE_EVENT_BUTTON_PRESSED) {
