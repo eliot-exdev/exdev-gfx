@@ -205,7 +205,7 @@ void ui_scroll_update(UIScrollPane_t *self, exdev_timestamp_t time_elapsed, cons
 
 void ui_scroll_on_x_offset(UIScrollPane_t *self, int x_offset);
 
-void ui_scroll_on_x_offset(UIScrollPane_t *self, int y_offset);
+void ui_scroll_on_y_offset(UIScrollPane_t *self, int y_offset);
 
 //--- UIHorizontalSrollBar ---//
 struct UIHorizontalScrollBar {
