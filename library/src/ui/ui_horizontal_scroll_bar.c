@@ -32,8 +32,8 @@ void ui_horizontal_scroll_bar_init(UIHorizontalScrollBar_t *self, UIScrollPane_t
     self->functions.on_x_offset = parent->functions.on_x_offset;
 
     self->f1 = (float) self->properties.x_width_visible / (float) self->properties.x_width_total;
-    self->f2 = (float) self->base.properties.width / (float) self->properties.x_width_visible;
-    self->bar_width = (int) (self->f1 * self->f2 * (float) self->base.properties.width);
+    self->f1 = self->f1 * (float) self->base.properties.width / (float) self->properties.x_width_visible;
+    self->bar_width = (int) (self->f1 * (float) self->base.properties.width);
 }
 
 UIHorizontalScrollBar_t *ui_horizontal_scroll_bar_create(UIScrollPane_t *parent, const int x, const int y, const int width, const int height, const int x_width_total, const int x_width_visible) {
@@ -85,7 +85,7 @@ void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, const long m
                         self->base.flags.dirty_flag = 1;
                         self->flags.dragged = 1;
                         if (self->functions.on_x_offset) {
-                            self->functions.on_x_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.x_pos / self->f1 / self->f2));
+                            self->functions.on_x_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.x_pos / self->f1));
                         }
                     }
                 }
@@ -106,7 +106,7 @@ void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, const long m
                     self->properties.x_pos = x;
                     self->base.flags.dirty_flag = 1;
                     if (self->functions.on_x_offset) {
-                        self->functions.on_x_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.x_pos / self->f1 / self->f2));
+                        self->functions.on_x_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.x_pos / self->f1));
                     }
                 }
             }

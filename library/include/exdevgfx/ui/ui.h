@@ -224,7 +224,6 @@ struct UIHorizontalScrollBar {
     } functions;
 
     float f1;
-    float f2;
     int bar_width;
 };
 
@@ -258,7 +257,6 @@ struct UIVerticalScrollBar {
     } functions;
 
     float f1;
-    float f2;
     int bar_height;
 };
 
