@@ -65,6 +65,8 @@ typedef int (*paint_function)(void *self, Framebuffer8Bit_t *fb, int x_offset, i
 
 typedef void (*update_function)(void *self, long time_elapsed, const Event_t *events, int num_events);
 
+typedef void (*prepare_function)(void *self);
+
 struct UIComponent {
     UIComponentType_t type;
     int subtype;
@@ -85,6 +87,7 @@ struct UIComponent {
 
     struct {
         destroy_function destroy_func;
+        prepare_function prepare_func;
         paint_function paint_func;
         update_function update_func;
     } functions;
@@ -100,6 +103,8 @@ void ui_component_init(UIComponent_t *self, int x, int y, int width, int height)
 UIComponent_t *ui_component_create(int x, int y, int width, int height);
 
 void ui_component_destroy(UIComponent_t *self);
+
+void ui_component_prepare(UIComponent_t *self);
 
 int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
 
@@ -197,6 +202,8 @@ void ui_scroll_init(UIScrollPane_t *self, int x, int y, int width, int height, U
 UIScrollPane_t *ui_scroll_create(int x, int y, int width, int height, UIScrollingSupport_t scrolling_su);
 
 void ui_scroll_destroy(UIScrollPane_t *self);
+
+void ui_scroll_prepare(UIScrollPane_t *self);
 
 int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
 

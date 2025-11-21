@@ -66,6 +66,8 @@ int application_run(UIApplication_t *self, const exdev_timestamp_t wait_ms) {
 
     window_update_palette(self->window, &self->palette);
 
+    self->root.functions.prepare_func(&self->root);
+
     // loop
     while (self->resume) {
         begin_ms = now();
