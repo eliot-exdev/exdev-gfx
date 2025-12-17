@@ -14,13 +14,6 @@
 #include <proto/intuition.h>
 #include <intuition/screens.h>
 
-#ifdef __MORPHOS__
-
-#include <cybergraphx/cybergraphics.h>
-#include <proto/cybergraphics.h>
-
-#endif
-
 #include <proto/graphics.h>
 #include <devices/inputevent.h>
 #include <devices/keymap.h>
@@ -170,7 +163,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
                                WA_Width, width,
                                WA_Height, height,
                                WA_CustomScreen, w->screen,
-                               WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS,
+                               WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
                                WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_REPORTMOUSE | WFLG_RMBTRAP | WFLG_BACKDROP,
                                WA_Title, title,
                                TAG_DONE);
@@ -283,7 +276,7 @@ int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const i
 
     int numEvents = 0;
     event_init(events, maxEvents);
-
+    Event_t *mouse_motion = NULL;
     memset(&ievent, 0, sizeof(struct InputEvent));
 
     //    Wait(1L << w->window->UserPort->mp_SigBit);
@@ -399,14 +392,20 @@ int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const i
                               events[numEvents].mouse_event.position_y);
                 ++numEvents;
                 break;
-//            case IDCMP_MOUSEMOVE:
-//                events[numEvents].type = EVENT_MOUSE;
-//                events[numEvents].mouse_event.event = MOUSE_EVENT_MOVED;
-//                events[numEvents].mouse_event.button = MOUSE_BUTTON_NONE;
-//                events[numEvents].mouse_event.position_x = msg->MouseX;
-//                events[numEvents].mouse_event.position_y = msg->MouseY;
-//                ++numEvents;
-//                break;
+            case IDCMP_MOUSEMOVE:
+                if (!mouse_motion) {
+                    events[numEvents].type = EVENT_MOUSE;
+                    events[numEvents].mouse_event.event = MOUSE_EVENT_MOVED;
+                    events[numEvents].mouse_event.button = MOUSE_BUTTON_NONE;
+                    events[numEvents].mouse_event.position_x = msg->MouseX;
+                    events[numEvents].mouse_event.position_y = msg->MouseY;
+                    mouse_motion = events + numEvents;
+                    ++numEvents;
+                } else {
+                    mouse_motion->mouse_event.position_x = msg->MouseX;
+                    mouse_motion->mouse_event.position_y = msg->MouseY;
+                }
+                break;
         }
         GT_ReplyIMsg(msg);
     }

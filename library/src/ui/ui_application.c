@@ -72,7 +72,7 @@ int application_run(UIApplication_t *self, const exdev_timestamp_t wait_ms) {
     while (self->resume) {
         begin_ms = now();
         // ui events
-        num_events = window_poll_events(self->window, &close_event, events, MAX_EVENTS - 1);
+        num_events = window_poll_events(self->window, &close_event, events, MAX_EVENTS);
         for (int it_events = 0; it_events < num_events; ++it_events) {
             if (events[it_events].type == EVENT_KEY && events[it_events].key_event.event == KEY_EVENT_PRESSED) {
                 switch (events[it_events].key_event.key) {
@@ -83,10 +83,6 @@ int application_run(UIApplication_t *self, const exdev_timestamp_t wait_ms) {
                         break;
                 }
             }
-        }
-
-        if (num_events < MAX_EVENTS && window_get_mouse_position(self->window, &events[num_events])) {
-            ++num_events;
         }
         // update ui
         self->root.functions.update_func(&self->root, end_ms - begin_ms, events, num_events);
