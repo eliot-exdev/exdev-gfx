@@ -4,7 +4,7 @@
 
 #include "exdevgfx/ui/ui.h"
 
-#define EXDEVGFX2_LOG_LEVEL 2
+#define EXDEVGFX2_LOG_LEVEL 3
 
 #include "exdevgfx/logger.h"
 
@@ -65,7 +65,7 @@ int ui_vertical_scroll_bar_paint(UIVerticalScrollBar_t *self, Framebuffer8Bit_t 
     return res;
 }
 
-void ui_vertical_scroll_bar_update(UIVerticalScrollBar_t *self, const long, const Event_t *events, const int num_events) {
+void ui_vertical_scroll_bar_update(UIVerticalScrollBar_t *self, const long ms, const Event_t *events, const int num_events) {
     assert(self);
     assert(events);
 

@@ -24,7 +24,7 @@ function(StripTargetExdev TARGET_NAME)
 endfunction()
 
 set(CMAKE_C_STANDARD 99)
-add_compile_options(-Wall -Wextra -Werror -Wno-pointer-sign)
+add_compile_options(-Wall -Wextra -Werror -Wno-pointer-sign -Wno-unused-parameter)
 
 if(MORPHOS)
     message(STATUS "Compiling for MorphOs")
