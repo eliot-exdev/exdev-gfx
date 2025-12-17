@@ -95,6 +95,13 @@ target_link_libraries(test_sprite
         easing
         )
 
+add_executable(test_application
+        test_application.c
+)
+target_link_libraries(test_application
+        exdevgfx
+)
+
 install(TARGETS julia voxelspace
         RUNTIME DESTINATION bin
         )

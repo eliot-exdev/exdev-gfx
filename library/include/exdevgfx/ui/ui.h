@@ -4,15 +4,33 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 #include <exdevgfx/framebuffer_8bit.h>
 #include <exdevgfx/events.h>
+#include <exdevgfx/window.h>
 
 enum ui_component_type {
     UI_COMPONENT_CONTAINER,
     UI_COMPONENT_CUSTOM
 };
 
-struct UIComponentList_t;
+struct UIComponent;
+
+struct UIComponentList {
+    struct UIComponent **components;
+    int size;
+};
+typedef struct UIComponentList UIComponentList_t;
+
+void ui_component_list_init(UIComponentList_t *self);
+
+void ui_component_list_destroy(UIComponentList_t *self);
+
+void ui_component_list_add(UIComponentList_t *self, struct UIComponent *component);
+
+typedef void (*destroy_function)(void *self);
+
+typedef void (*paint_function)(void *self, Framebuffer8Bit_t *fb);
 
 struct UIComponent {
     enum ui_component_type type;
@@ -32,8 +50,13 @@ struct UIComponent {
         int draw_border;
     } flags;
 
+    struct {
+        destroy_function destroy_func;
+        paint_function paint_func;
+    } functions;
+
     struct UIComponent *parent;
-    struct UIComponentList_t *childs;
+    struct UIComponentList childs;
 };
 
 typedef struct UIComponent UIComponent_t;
@@ -48,17 +71,20 @@ int ui_component_get_y_abs(const UIComponent_t *self);
 
 void ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb);
 
-struct UIComponentList {
-    UIComponent_t *components;
-    int size;
+struct Application {
+    Window_t *window;
+    UIComponent_t *root;
+    Palette8Bit_t *palette;
+    int resume;
 };
-typedef struct UIComponentList UIComponentList_t;
 
-void ui_component_list_init(UIComponentList_t *self);
+typedef struct Application Application_t;
 
-void ui_component_list_destroy(UIComponentList_t *self);
+void application_init(Application_t *self, const char* name, int width, int height);
 
-void ui_component_list_add(UIComponentList_t *self, UIComponent_t *component);
+void application_destroy(Application_t *self);
+
+int application_run(Application_t *self);
 
 #ifdef __cplusplus
 }

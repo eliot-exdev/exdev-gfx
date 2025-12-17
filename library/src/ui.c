@@ -9,19 +9,28 @@ void ui_component_list_init(UIComponentList_t *self) {
     self->components = NULL;
     self->size = 0;
 }
+
 void ui_component_list_destroy(UIComponentList_t *self) {
     assert(self);
 
     for (int i = 0; i < self->size; ++i) {
-        ui_component_destroy(self->components + i);
-        free(self->components + 1);
+        ui_component_destroy(self->components[i]);
+        free(self->components[i]);
     }
 }
+
 void ui_component_list_add(UIComponentList_t *self, UIComponent_t *component) {
     assert(self);
     assert(component);
 
-
+    if (self->size > 0) {
+        self->components = realloc(self->components, sizeof(self->components) * (self->size + 1));
+        self->size += 1;
+    } else {
+        self->components = malloc(sizeof(self->components));
+        self->size = 1;
+    }
+    self->components[self->size - 1] = component;
 }
 
 void ui_component_init(UIComponent_t *self, const int x, const int y, const int width, const int height, UIComponent_t *parent) {
@@ -32,15 +41,28 @@ void ui_component_init(UIComponent_t *self, const int x, const int y, const int 
     self->properties.y = y;
     self->properties.width = width;
     self->properties.height = height;
-    self->properties.parent = parent;
+    self->properties.background_color = 0;
+    self->properties.border_color = 1;
 
     self->flags.dirty_flag = 1;
     self->flags.enabled_flag = 1;
     self->flags.fill_background = 1;
     self->flags.draw_border = 1;
+
+    self->functions.destroy_func = (void (*)(void *)) &ui_component_destroy;
+    self->functions.paint_func = (void (*)(void *, Framebuffer8Bit_t *)) &ui_component_paint;
+
+    self->parent = parent;
+    ui_component_list_init(&self->childs);
 }
 
-void ui_component_destroy(UIComponent_t *) {}
+void ui_component_destroy(UIComponent_t *self) {
+    for (int i = 0; i < self->childs.size; ++i) {
+        ui_component_destroy(self->childs.components[i]);
+        free(self->childs.components[i]);
+        self->childs.components[i] = NULL;
+    }
+}
 
 int ui_component_get_x_abs(const UIComponent_t *self) {
     assert(self);
@@ -50,6 +72,7 @@ int ui_component_get_x_abs(const UIComponent_t *self) {
     }
     return self->properties.x;
 }
+
 int ui_component_get_y_abs(const UIComponent_t *self) {
     assert(self);
 
@@ -63,20 +86,79 @@ void ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb) {
     assert(self);
     assert(fb);
 
-    if (!self->flags.dirty_flag) {
-        return;
+    if (self->flags.dirty_flag) {
+        const int x = ui_component_get_x_abs(self);
+        const int y = ui_component_get_y_abs(self);
+        if (self->flags.fill_background) {
+            framebuffer_8bit_fill_rect(fb, x, y, self->properties.width, self->properties.height, self->properties.background_color);
+        }
+
+        if (self->flags.draw_border) {
+            framebuffer_8bit_draw_rect(fb, x, y, self->properties.width, self->properties.height, self->properties.border_color);
+        }
+
+        self->flags.dirty_flag = 0;
     }
 
-    const int x = ui_component_get_x_abs(self);
-    const int y = ui_component_get_y_abs(self);
+    for (int i = 0; i < self->childs.size; ++i) {
+        self->childs.components[i]->functions.paint_func(self, fb);
+    }
+}
 
-    if (self->flags.fill_background) {
-        framebuffer_8bit_fill_rect(fb, x, y, self->properties.width, self->properties.height, self->properties.background_color);
+void application_init(Application_t *self, const char *name, const int width, const int height) {
+    assert(self);
+
+    self->window = window_create(width, height, name, FS_8_BIT);
+
+    self->root = malloc(sizeof(UIComponent_t));
+    ui_component_init(self->root, 0, 0, width, height, NULL);
+
+    self->palette = malloc(sizeof(Palette8Bit_t));
+    palette_8bit_init(self->palette, 2);
+    palette_8bit_set_pen(self->palette, &PEN_BLACK, 0); // background
+    palette_8bit_set_pen(self->palette, &PEN_WHITE, 1); // border
+
+    window_update_palette(self->window, self->palette);
+
+    self->resume = 1;
+}
+
+void application_destroy(Application_t *self) {
+    assert(self);
+
+    window_destroy(self->window);
+    self->window = NULL;
+
+    ui_component_destroy(self->root);
+    free(self->root);
+    self->root = NULL;
+
+    free(self->palette);
+    self->palette = NULL;
+
+    self->resume = 0;
+}
+
+int application_run(Application_t *self) {
+    assert(self);
+
+    char close_event = 0;
+    Event_t event;
+
+    while (self->resume) {
+        window_poll_events(self->window, &close_event, &event, 1);
+        if (event.type == EVENT_KEY && event.key_event.event == KEY_EVENT_PRESSED) {
+            switch (event.key_event.key) {
+                case KEY_TYPE_ESC:
+                    self->resume = 0;
+                    break;
+                default:
+                    break;
+            }
+        }
+        ui_component_paint(self->root, window_get_chunky_buffer(self->window));
+        window_blit_chunky_buffer(self->window);
     }
 
-    if (self->flags.draw_border) {
-        framebuffer_8bit_draw_rect(fb, x, y, self->properties.width, self->properties.height, self->properties.border_color);
-    }
-
-    self->flags.dirty_flag = 0;
+    return 0;
 }
