@@ -86,6 +86,8 @@ void mouse_event_init(MouseEvent_t *events, int num);
 
 void event_init(Event_t *events, int num);
 
+void event_copy(Event_t *dst,  const Event_t *src, int num);
+
 #ifdef __cplusplus
 extern "C" {
 #endif

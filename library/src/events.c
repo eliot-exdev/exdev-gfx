@@ -4,6 +4,8 @@
 
 #include <exdevgfx/events.h>
 
+#include <assert.h>
+
 void key_event_init(KeyEvent_t *events, const int num) {
     for (int i = 0; i < num; ++i) {
         events[i].event = KEY_EVENT_INVALID;
@@ -21,10 +23,20 @@ void mouse_event_init(MouseEvent_t *events, const int num) {
     }
 }
 
-void event_init(Event_t *events, const int num){
+void event_init(Event_t *events, const int num) {
     for (int i = 0; i < num; ++i) {
         events[i].type = EVENT_INVALID;
         key_event_init(&events[i].key_event, 1);
         mouse_event_init(&events[i].mouse_event, 1);
+    }
+}
+
+void event_copy(Event_t *dst, const Event_t *src, const int num) {
+    assert(src);
+    assert(dst);
+    assert(num >= 0);
+
+    for (int i = 0; i < num; ++i) {
+        dst[i] = src[i];
     }
 }
