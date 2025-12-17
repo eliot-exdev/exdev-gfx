@@ -262,7 +262,7 @@ void application_destroy(Application_t *self) {
 
 #define MAX_EVENTS 32
 
-int application_run(Application_t *self, exdev_timestamp_t wait_ms) {
+int application_run(Application_t *self, const exdev_timestamp_t wait_ms) {
     assert(self);
 
     char close_event = 0;
