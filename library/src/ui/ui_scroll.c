@@ -4,7 +4,9 @@
 
 #include "exdevgfx/ui/ui.h"
 #include "exdevgfx/helper.h"
-#define EXDEVGFX2_LOG_LEVEL 3
+
+#define EXDEVGFX2_LOG_LEVEL 1
+
 #include "exdevgfx/logger.h"
 
 #include <assert.h>
@@ -15,7 +17,9 @@ void ui_scroll_on_x_offset(UIScrollPane_t *self, const int x_offset) {
 
     self->properties.x_offset = x_offset;
     self->base.flags.dirty_flag = 1;
-    log_info_fmt("x offset: %d", x_offset);
+    if (self->v_bar) {
+        self->v_bar->base.flags.dirty_flag = 1;
+    }
 }
 
 void ui_scroll_on_y_offset(UIScrollPane_t *self, const int y_offset) {
@@ -23,7 +27,9 @@ void ui_scroll_on_y_offset(UIScrollPane_t *self, const int y_offset) {
 
     self->properties.y_offset = y_offset;
     self->base.flags.dirty_flag = 1;
-    log_info_fmt("y offset: %d", y_offset);
+    if (self->h_bar) {
+        self->h_bar->base.flags.dirty_flag = 1;
+    }
 }
 
 void ui_scroll_init(UIScrollPane_t *self, int x, int y, int width, int height, const UIScrollingSupport_t scrolling_support) {
@@ -118,10 +124,22 @@ int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, const int x_off
 
         // setup h bar
         if (self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL || self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
-            self->h_bar = ui_horizontal_scroll_bar_create(self, 2, self->base.properties.width - SCROLL_BAR_SIZE - 2, self->base.properties.height - SCROLL_BAR_SIZE - 4, SCROLL_BAR_SIZE, width, self->base.properties.width);
+            self->h_bar = ui_horizontal_scroll_bar_create(self,
+                                                          2,
+                                                          self->base.properties.width - SCROLL_BAR_SIZE - 2,
+                                                          self->base.properties.width - SCROLL_BAR_SIZE - 4,
+                                                          SCROLL_BAR_SIZE,
+                                                          width,
+                                                          self->base.properties.width);
         }
         if (self->properties.scrolling_support == UI_SCROLLING_SUPPORT_VERTICAL || self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
-            self->v_bar = ui_vertical_scroll_bar_create(self, self->base.properties.width - SCROLL_BAR_SIZE - 2, 2, SCROLL_BAR_SIZE, self->base.properties.height - SCROLL_BAR_SIZE - 4, height, self->base.properties.height);
+            self->v_bar = ui_vertical_scroll_bar_create(self,
+                                                        self->base.properties.width - SCROLL_BAR_SIZE - 2,
+                                                        2,
+                                                        SCROLL_BAR_SIZE,
+                                                        self->base.properties.height - SCROLL_BAR_SIZE - 4,
+                                                        height,
+                                                        self->base.properties.height);
         }
     }
 
@@ -148,7 +166,7 @@ int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, const int x_off
                                    self->fb,
                                    self->properties.x_offset,
                                    self->properties.y_offset,
-                                   self->base.properties.width - SCROLL_BAR_SIZE - 4,
+                                   self->base.properties.width - SCROLL_BAR_SIZE - 6,
                                    self->base.properties.height - SCROLL_BAR_SIZE - 6,
                                    x + 2,
                                    y + 2);
@@ -162,7 +180,7 @@ int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, const int x_off
     }
 
     // draw v bar
-    if (self->h_bar) {
+    if (self->v_bar) {
         res |= self->v_bar->base.functions.paint_func(self->v_bar, fb, x, y, self->base.properties.width, self->base.properties.height);
     }
     return res;
