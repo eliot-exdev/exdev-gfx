@@ -33,6 +33,9 @@ void ui_vertical_scroll_bar_init(UIVerticalScrollBar_t *self, UIScrollContainer_
     self->f1 = (float) y_height_visible / (float) y_height_total;
     self->f2 = (float) height / (float) y_height_visible;
     self->bar_height = (int) (self->f1 * self->f2 * ((float) height));
+    if (self->bar_height > self->base.properties.height) {
+        self->bar_height = self->base.properties.height;
+    }
     self->y_last = 0;
 }
 

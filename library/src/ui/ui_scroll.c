@@ -102,8 +102,8 @@ void ui_scroll_container_prepare(UIScrollContainer_t *self) {
     ui_component_prepare(&self->base);
 
     // find biggest x and y
-    int width = self->base.properties.width;
-    int height = self->base.properties.height;
+    int width = 1;
+    int height = 1;
     for (int i = 0; i < self->base.children.size; ++i) {
         const UIComponent_t *child = self->base.children.components[i];
         const int x_total = child->properties.x + child->properties.width;
@@ -121,8 +121,17 @@ void ui_scroll_container_prepare(UIScrollContainer_t *self) {
     framebuffer_8bit_init(self->fb, width, height);
     framebuffer_8bit_fill(self->fb, self->base.properties.background_color);
 
-    self->x_visible = self->base.properties.width - SCROLL_BAR_SIZE - 6;
-    self->y_visible = self->base.properties.height - SCROLL_BAR_SIZE - 6;
+    if (self->properties.scrolling_support == UI_SCROLLING_SUPPORT_VERTICAL || self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
+        self->x_visible = self->base.properties.width - SCROLL_BAR_SIZE - 6;
+    } else {
+        self->x_visible = self->base.properties.width - 4;
+    }
+
+    if (self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL || self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
+        self->y_visible = self->base.properties.height - SCROLL_BAR_SIZE - 6;
+    } else {
+        self->y_visible = self->base.properties.height - 4;
+    }
 
     // setup h bar
     if (self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL || self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
@@ -173,12 +182,20 @@ int ui_scroll_container_paint(UIScrollContainer_t *self, Framebuffer8Bit_t *fb, 
 
     if (res) {
         // blit fb
+        int x_blit = self->fb->width;
+        int y_blit = self->fb->height;
+        if (x_blit > self->x_visible) {
+            x_blit = self->x_visible;
+        }
+        if (y_blit > self->y_visible) {
+            y_blit = self->y_visible;
+        }
         framebuffer_8bit_blit_8bit(fb,
                                    self->fb,
                                    self->properties.x_offset,
                                    self->properties.y_offset,
-                                   self->x_visible,
-                                   self->y_visible,
+                                   x_blit,
+                                   y_blit,
                                    x + 2,
                                    y + 2);
 
