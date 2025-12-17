@@ -4,7 +4,7 @@
 
 #include "exdevgfx/ui/ui.h"
 
-#define EXDEVGFX2_LOG_LEVEL 3
+#define EXDEVGFX2_LOG_LEVEL 2
 
 #include "exdevgfx/logger.h"
 
@@ -30,9 +30,9 @@ void ui_vertical_scroll_bar_init(UIVerticalScrollBar_t *self, UIScrollContainer_
 
     self->functions.on_y_offset = parent->functions.on_y_offset;
 
-    self->f1 = (float) y_height_visible / (float) y_height_total;
-    self->f2 = (float) height / (float) y_height_visible;
-    self->bar_height = (int) (self->f1 * self->f2 * ((float) height));
+    self->f1 = (float) y_height_visible / ((float) y_height_total);
+    self->bar_height = (int) ((float) height * self->f1);
+    self->f1 = (float) (y_height_total - y_height_visible) / (float) (height - self->bar_height);
     if (self->bar_height > self->base.properties.height) {
         self->bar_height = self->base.properties.height;
     }
@@ -64,7 +64,7 @@ int ui_vertical_scroll_bar_paint(UIVerticalScrollBar_t *self, Framebuffer8Bit_t 
 
     // draw bar
     if (res) {
-        framebuffer_8bit_fill_rect(fb, x, y + self->properties.y_pos, SCROLL_BAR_SIZE, self->bar_height, PEN_INDEX_BLUE);
+        framebuffer_8bit_fill_rect(fb, x, y + self->properties.y_pos, SCROLL_BAR_SIZE, (int) self->bar_height, PEN_INDEX_BLUE);
     }
     return res;
 }
@@ -73,7 +73,7 @@ void ui_vertical_scroll_bar_update(UIVerticalScrollBar_t *self, const long ms, c
     assert(self);
     assert(events);
 
-    log_info_fmt("ui_vertical_scroll_bar_update: %d", num_events);
+    log_debug_fmt("ui_vertical_scroll_bar_update: %d", num_events);
     for (int i = 0; i < num_events; ++i) {
         if (events[i].type == EVENT_MOUSE) {
             if (events[i].mouse_event.button == MOUSE_BUTTON_0 && events[i].mouse_event.event == MOUSE_EVENT_BUTTON_PRESSED) {
@@ -110,7 +110,7 @@ void ui_vertical_scroll_bar_update(UIVerticalScrollBar_t *self, const long ms, c
 
                 self->base.flags.dirty_flag = 1;
                 if (self->functions.on_y_offset) {
-                    self->functions.on_y_offset((UIScrollContainer_t *) self->base.parent, (int) ((float) self->properties.y_pos / self->f1 * self->f2));
+                    self->functions.on_y_offset((UIScrollContainer_t *) self->base.parent, (int) ((float) self->properties.y_pos * self->f1));
                 }
             }
         }
