@@ -7,10 +7,10 @@
 
 #define WIDTH 640
 #define HEIGHT 480
-#define UPDATE_INTERVAL 50// ms
+#define UPDATE_INTERVAL 50 // ms
 
 void left_update(UIComponent_t *self, const long ms, const Event_t *events, const int num_events) {
-    ui_component_update(self, ms, events, num_events);// call update of base class
+    ui_component_update(self, ms, events, num_events); // call update of base class
 
     // handle mouse event
     for (int it_events = 0; it_events < num_events; ++it_events) {
@@ -94,11 +94,11 @@ int main() {
     // application
     UIApplication_t app;
     ui_application_init(&app, WIDTH, HEIGHT);
-    palette_8bit_read_from_dat(&app.palette, "assets/amiga_logo_8bit.pal");// read palette from file
+    palette_8bit_read_from_dat(&app.palette, "assets/amiga_logo_8bit.pal"); // read palette from file
 
     // left component
     UIComponent_t *left = ui_component_create(2, 2, 538, 476);
-    left->functions.update_func = (void (*)(void *, long, const Event_t *, int)) &left_update;// custom event handling
+    left->functions.update_func = (void (*)(void *, long, const Event_t *, int)) &left_update; // custom event handling
     ui_component_connect(&app.root, left);
 
     // icon
@@ -115,8 +115,8 @@ int main() {
 
     // right component
     UIComponent_t *right = ui_component_create(542, 2, 96, 476);
-    right->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &right_paint;   // custom paint
-    right->functions.update_func = (void (*)(void *, long, const Event_t *, int)) &right_update;// custom event handling
+    right->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &right_paint; // custom paint
+    right->functions.update_func = (void (*)(void *, long, const Event_t *, int)) &right_update; // custom event handling
     ui_component_connect(&app.root, right);
 
     // run
