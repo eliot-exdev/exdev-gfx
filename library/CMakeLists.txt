@@ -24,10 +24,14 @@ if (MORPHOS OR AMIGAOS)
             src/vertex2d.c
             src/vertex3d.c
             src/voxelspace.c
-            src/ui.c
             src_amiga/exdev_base_amiga.c
             src_amiga/helper_amiga.c
             src_amiga/window_amiga.c
+            src/ui/ui_component_list.c
+            src/ui/ui_component.c
+            src/ui/ui_icon.c
+            src/ui/ui_scroll.c
+            src/ui/ui_application.c
     )
     target_include_directories(${PROJECT_NAME}
             PUBLIC include
@@ -65,10 +69,14 @@ else ()
             src/vertex2d.c
             src/vertex3d.c
             src/voxelspace.c
-            src/ui.c
             src_linux/exdev_base_linux.c
             src_linux/helper_linux.c
             src_linux/window_linux_x11.c
+            src/ui/ui_component_list.c
+            src/ui/ui_component.c
+            src/ui/ui_icon.c
+            src/ui/ui_scroll.c
+            src/ui/ui_application.c
     )
     target_include_directories(${PROJECT_NAME}
             PUBLIC include
