@@ -7,9 +7,7 @@
 
 #define WIDTH 640
 #define HEIGHT 480
-#define UPDATE_INTERVAL 100 // 10 times a second
-
-static int i = 0;
+#define UPDATE_INTERVAL 40 // 25 times a second
 
 void left_update(UIComponent_t *self, const exdev_timestamp_t ms, const Event_t *events, const int num_events) {
     ui_component_update(self, ms, events, num_events); // call update of base class
@@ -37,10 +35,15 @@ void left_update(UIComponent_t *self, const exdev_timestamp_t ms, const Event_t 
     }
 }
 
-void right_paint(UIComponent_t *self, Framebuffer8Bit_t *fb) {
-    ui_component_paint(self, fb); // call paint of base class
-    framebuffer_8bit_fill_rect(fb, self->properties.x + 2, self->properties.y + i, self->properties.width - 3, 10, 38);
-    self->flags.dirty_flag = 1; // always paint again
+int right_paint(UIComponent_t *self, Framebuffer8Bit_t *fb) {
+    const int tmp = self->flags.dirty_flag;
+    int res = ui_component_paint(self, fb);
+    if (tmp) {
+        framebuffer_8bit_fill_rect(fb, self->properties.x + 2, self->properties.y, self->properties.width - 3, 10, 38);
+        self->flags.dirty_flag = 0;
+        res = 1;
+    }
+    return res;
 }
 
 void right_update(UIComponent_t *self, const exdev_timestamp_t ms, const Event_t *events, const int num_events) {
@@ -67,12 +70,6 @@ void right_update(UIComponent_t *self, const exdev_timestamp_t ms, const Event_t
             }
         }
     }
-
-    // update
-    i += 5;
-    if (i >= HEIGHT - 12) {
-        i = 0;
-    }
 }
 
 int main() {
@@ -95,7 +92,7 @@ int main() {
 
     UIComponent_t *right = malloc(sizeof(UIComponent_t));
     ui_component_init(right, 542, 2, 96, 476, &app.root);
-    right->functions.paint_func = (void (*)(void *, Framebuffer8Bit_t *)) &right_paint;
+    right->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *)) &right_paint;
     right->functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &right_update;
     ui_component_list_add(&app.root.childs, right);
 

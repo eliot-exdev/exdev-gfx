@@ -33,7 +33,7 @@ void ui_component_list_add(UIComponentList_t *self, struct UIComponent *componen
 
 typedef void (*destroy_function)(void *self);
 
-typedef void (*paint_function)(void *self, Framebuffer8Bit_t *fb);
+typedef int (*paint_function)(void *self, Framebuffer8Bit_t *fb);
 
 typedef void (*update_function)(void *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
 
@@ -69,7 +69,7 @@ void ui_component_init(UIComponent_t *self, int x, int y, int width, int height,
 
 void ui_component_destroy(UIComponent_t *self);
 
-void ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb);
+int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb);
 
 void ui_component_update(UIComponent_t *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
 
@@ -90,7 +90,7 @@ void ui_icon_init(UIIcon_t *self, int x, int y, Framebuffer8Bit_t *fb, UICompone
 
 void ui_icon_destroy(UIIcon_t *self);
 
-void ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb);
+int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb);
 
 void ui_icon_update(UIIcon_t *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
 
