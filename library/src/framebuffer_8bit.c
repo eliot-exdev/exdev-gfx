@@ -133,11 +133,11 @@ void framebuffer_8bit_fill_rect(Framebuffer8Bit_t *fb, int x, const int y, const
 void framebuffer_8bit_draw_rect(Framebuffer8Bit_t *fb, const int x, const int y, const int width, const int height, const Color8Bit_t c) {
     assert(fb);
 
-    framebuffer_8bit_draw_vertical_line(fb, x, y, y + height - 1, c);
-    framebuffer_8bit_draw_vertical_line(fb, x + width - 1, y, y + height - 1, c);
+    framebuffer_8bit_draw_vertical_line(fb, x, y, y + height, c);
+    framebuffer_8bit_draw_vertical_line(fb, x + width - 1, y, y + height, c);
 
-    framebuffer_8bit_draw_horizontal_line(fb, x, y, x + width - 1, c);
-    framebuffer_8bit_draw_horizontal_line(fb, x, y + height - 1, x + width - 1, c);
+    framebuffer_8bit_draw_horizontal_line(fb, x, y, x + width, c);
+    framebuffer_8bit_draw_horizontal_line(fb, x, y + height - 1, x + width, c);
 }
 
 int framebuffer_8bit_num_bytes(const Framebuffer8Bit_t *fb) {
