@@ -112,6 +112,8 @@ void ui_component_connect(void *parent, void *child);
 
 void ui_component_get_absolute_position(const UIComponent_t *self, int *x, int *y);
 
+void ui_component_get_relative_position(const UIComponent_t *self, int *x, int *y);
+
 //--- UIIcon ---//
 struct UIIcon;
 

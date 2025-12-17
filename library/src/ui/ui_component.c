@@ -97,6 +97,19 @@ void ui_component_get_absolute_position(const UIComponent_t *self, int *x, int *
     }
 }
 
+void ui_component_get_relative_position(const UIComponent_t *self, int *x, int *y) {
+    assert(self);
+    assert(x);
+    assert(y);
+
+    *x -= self->properties.x;
+    *y -= self->properties.y;
+
+    if (self->parent) {
+        ui_component_get_relative_position(self->parent, x, y);
+    }
+}
+
 int ui_component_is_inside(const UIComponent_t *self, const int x, const int y) {
     assert(self);
 
