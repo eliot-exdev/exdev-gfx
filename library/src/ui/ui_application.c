@@ -27,21 +27,8 @@ void application_destroy(UIApplication_t *self) {
     self->resume = 0;
 }
 
-#define MAX_EVENTS 4
-
-int application_run(UIApplication_t *self, const exdev_timestamp_t wait_ms) {
+void application_prepare(UIApplication_t *self) {
     assert(self);
-
-    char close_event = 0;
-    Event_t events[MAX_EVENTS];
-    int num_events = 0;
-    exdev_timestamp_t begin_ms = 0;
-    exdev_timestamp_t loop_time_ms = 0;
-    exdev_timestamp_t sleep_ms = 0;
-    exdev_timestamp_t end_ms = 0;
-
-    // open window
-    self->window = window_create(self->root.properties.width, self->root.properties.height, "app", FS_8_BIT);
 
     // setup palette
     palette_8bit_set_pen(&self->palette, &PEN_BLACK, PEN_INDEX_BLACK);
@@ -63,10 +50,26 @@ int application_run(UIApplication_t *self, const exdev_timestamp_t wait_ms) {
     palette_8bit_set_pen(&self->palette, &PEN_GRAY, PEN_INDEX_GRAY);
 
     palette_8bit_set_pen(&self->palette, &PEN_CYAN, PEN_INDEX_CYAN);
+    self->root.functions.prepare_func(&self->root);
+}
 
+#define MAX_EVENTS 4
+
+int application_run(UIApplication_t *self, const exdev_timestamp_t wait_ms) {
+    assert(self);
+
+    char close_event = 0;
+    Event_t events[MAX_EVENTS];
+    int num_events = 0;
+    exdev_timestamp_t begin_ms = 0;
+    exdev_timestamp_t loop_time_ms = 0;
+    exdev_timestamp_t sleep_ms = 0;
+    exdev_timestamp_t end_ms = 0;
+
+    // open window
+    self->window = window_create(self->root.properties.width, self->root.properties.height, "app", FS_8_BIT);
     window_update_palette(self->window, &self->palette);
 
-    self->root.functions.prepare_func(&self->root);
 
     // loop
     while (self->resume) {

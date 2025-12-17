@@ -293,6 +293,8 @@ void application_init(UIApplication_t *self, int width, int height);
 
 void application_destroy(UIApplication_t *self);
 
+void application_prepare(UIApplication_t *self);
+
 int application_run(UIApplication_t *self, long wait_ms);
 
 #ifdef __cplusplus

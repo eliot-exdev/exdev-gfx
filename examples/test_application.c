@@ -120,6 +120,7 @@ int main() {
     ui_component_connect(&app.root, right);
 
     // run
+    application_prepare(&app);
     application_run(&app, UPDATE_INTERVAL);
 
     // cleanup
