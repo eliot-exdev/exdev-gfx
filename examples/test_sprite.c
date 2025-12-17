@@ -73,7 +73,7 @@ int main() {
         log_warning("could not read sprite");
         return 1;
     }
-    if (palette_8bit_read_from_dat(&palette, "assets/guybrush_8bit_pallette.dat")) {
+    if (palette_8bit_read_from_dat(&palette, "assets/guybrush_8bit_palette.dat")) {
         log_warning("could not read palette");
         return 2;
     }
