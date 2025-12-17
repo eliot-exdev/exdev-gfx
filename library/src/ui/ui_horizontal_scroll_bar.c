@@ -4,7 +4,7 @@
 
 #include "exdevgfx/ui/ui.h"
 
-#define EXDEVGFX2_LOG_LEVEL 2
+#define EXDEVGFX2_LOG_LEVEL 3
 
 #include "exdevgfx/logger.h"
 
