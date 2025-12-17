@@ -84,7 +84,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
     x11_w->delWindow = XInternAtom(x11_w->display, "WM_DELETE_WINDOW", 0);
     XSetWMProtocols(x11_w->display, x11_w->window, &x11_w->delWindow, 1);
 
-    XSelectInput(x11_w->display, x11_w->window, ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask);
+    XSelectInput(x11_w->display, x11_w->window, ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask); // PointerMotionMask
 
     XMapWindow(x11_w->display, x11_w->window);
     XAutoRepeatOff(x11_w->display);
@@ -215,7 +215,7 @@ void window_fill_8bit(Window_t *w, const Framebuffer8Bit_t *gb) {
     XSync(x11_w->display, 0);
 }
 
-static const long EVENT_MASK = ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask;
+static const long EVENT_MASK = ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask; // PointerMotionMask
 
 int window_poll_events(Window_t *w, char *closeEvent, Event_t *events, const int maxEvents) {
     XEvent event;
@@ -335,14 +335,16 @@ int window_poll_events(Window_t *w, char *closeEvent, Event_t *events, const int
             events[numEvents].mouse_event.position_x = event.xbutton.x;
             events[numEvents].mouse_event.position_y = event.xbutton.y;
             ++numEvents;
-        } else if (event.type == MotionNotify) {
-            events[numEvents].type = EVENT_MOUSE;
-            events[numEvents].mouse_event.event = MOUSE_EVENT_MOVED;
-            events[numEvents].mouse_event.button = MOUSE_BUTTON_NONE;
-            events[numEvents].mouse_event.position_x = event.xmotion.x;
-            events[numEvents].mouse_event.position_y = event.xmotion.y;
-            ++numEvents;
-        } else if (event.type == ClientMessage) {
+        }
+//        else if (event.type == MotionNotify) {
+//            events[numEvents].type = EVENT_MOUSE;
+//            events[numEvents].mouse_event.event = MOUSE_EVENT_MOVED;
+//            events[numEvents].mouse_event.button = MOUSE_BUTTON_NONE;
+//            events[numEvents].mouse_event.position_x = event.xmotion.x;
+//            events[numEvents].mouse_event.position_y = event.xmotion.y;
+//            ++numEvents;
+//        }
+        else if (event.type == ClientMessage) {
             *closeEvent = 1;
         } else {
             log_warning_fmt("event %d", event.type);
@@ -350,4 +352,37 @@ int window_poll_events(Window_t *w, char *closeEvent, Event_t *events, const int
     }
     XSync(x11_w->display, 0);
     return numEvents;
+}
+
+int window_get_mouse_position(Window_t *w, Event_t *event) {
+    assert(w);
+    assert(event);
+
+    X11Window_t *x11_w = (X11Window_t *) w;
+    Window root_window;
+    Window child_window;
+    int root_x = 0;
+    int root_y = 0;
+    int child_x = 0;
+    int child_y = 0;
+    unsigned int mask = 0;
+
+    XRootWindow(x11_w->display, 0);
+    Bool res = XQueryPointer(x11_w->display,
+                             x11_w->window,
+                             &root_window,
+                             &child_window,
+                             &root_x,
+                             &root_y,
+                             &child_x,
+                             &child_y,
+                             &mask);
+    if (res && x11_w->fb.buffer && child_x >= 0 && child_y >= 0 && child_x <= x11_w->fb.width && child_y <= x11_w->fb.height) {
+        event->type = EVENT_MOUSE;
+        event->mouse_event.event = MOUSE_EVENT_MOVED;
+        event->mouse_event.position_x = child_x;
+        event->mouse_event.position_y = child_y;
+        return 1;
+    }
+    return 0;
 }

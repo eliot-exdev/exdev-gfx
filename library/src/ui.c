@@ -283,7 +283,7 @@ void application_destroy(Application_t *self) {
     self->resume = 0;
 }
 
-#define MAX_EVENTS 32
+#define MAX_EVENTS 4
 
 int application_run(Application_t *self, const exdev_timestamp_t wait_ms) {
     assert(self);
@@ -291,7 +291,6 @@ int application_run(Application_t *self, const exdev_timestamp_t wait_ms) {
     char close_event = 0;
     Event_t events[MAX_EVENTS];
     int num_events = 0;
-
     exdev_timestamp_t begin_ms = 0;
     exdev_timestamp_t loop_time_ms = 0;
     exdev_timestamp_t sleep_ms = 0;
@@ -327,7 +326,7 @@ int application_run(Application_t *self, const exdev_timestamp_t wait_ms) {
     while (self->resume) {
         begin_ms = now();
         // ui events
-        num_events = window_poll_events(self->window, &close_event, events, MAX_EVENTS);
+        num_events = window_poll_events(self->window, &close_event, events, MAX_EVENTS - 1);
         for (int it_events = 0; it_events < num_events; ++it_events) {
             if (events[it_events].type == EVENT_KEY && events[it_events].key_event.event == KEY_EVENT_PRESSED) {
                 switch (events[it_events].key_event.key) {
@@ -340,6 +339,9 @@ int application_run(Application_t *self, const exdev_timestamp_t wait_ms) {
             }
         }
 
+        if (window_get_mouse_position(self->window, &events[num_events])) {
+            ++num_events;
+        }
         // update ui
         self->root.functions.update_func(&self->root, end_ms - begin_ms, events, num_events);
 
