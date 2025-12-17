@@ -4,6 +4,8 @@
 
 #include "exdevgfx/helper.h"
 #include "exdevgfx/exdev_base.h"
+
+#include <proto/exec.h>
 #include <devices/timer.h>
 
 static struct timeval a;
