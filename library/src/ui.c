@@ -79,11 +79,11 @@ int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, int const x_o
     assert(self);
     assert(fb);
 
-    int res = 0;
+    int res = self->flags.dirty_flag;
     const int x = self->properties.x + x_offset;
     const int y = self->properties.y + y_offset;
 
-    if (self->flags.dirty_flag) {
+    if (res) {
         if (self->flags.fill_background) {
             framebuffer_8bit_fill_rect(fb, x, y, self->properties.width, self->properties.height, self->properties.background_color);
         }
@@ -93,11 +93,12 @@ int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, int const x_o
         }
 
         self->flags.dirty_flag = 0;
-        res = 1;
     }
 
     for (int i = 0; i < self->childs.size; ++i) {
-        res = res | self->childs.components[i]->functions.paint_func(self->childs.components[i], fb, x, y, self->properties.width, self->properties.height);
+        if (self->childs.components[i]->functions.paint_func(self->childs.components[i], fb, x, y, self->properties.width, self->properties.height)) {
+            res = 1;
+        }
     }
     return res;
 }
