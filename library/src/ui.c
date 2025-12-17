@@ -250,25 +250,25 @@ int application_run(Application_t *self, exdev_timestamp_t wait_ms) {
     self->window = window_create(self->root.properties.width, self->root.properties.height, "app", FS_8_BIT);
 
     // setup palette
-    palette_8bit_set_pen(&self->palette, &PEN_BLACK, 0);
-    palette_8bit_set_pen(&self->palette, &PEN_WHITE, 1);
+    palette_8bit_set_pen(&self->palette, &PEN_BLACK, PEN_INDEX_BLACK);
+    palette_8bit_set_pen(&self->palette, &PEN_WHITE, PEN_INDEX_WHITE);
 
-    palette_8bit_set_pen(&self->palette, &PEN_DARK_RED, 2);
-    palette_8bit_set_pen(&self->palette, &PEN_RED, 3);
+    palette_8bit_set_pen(&self->palette, &PEN_DARK_RED, PEN_INDEX_DARK_RED);
+    palette_8bit_set_pen(&self->palette, &PEN_RED, PEN_INDEX_RED);
 
-    palette_8bit_set_pen(&self->palette, &PEN_DARK_GREEN, 4);
-    palette_8bit_set_pen(&self->palette, &PEN_GREEN, 5);
+    palette_8bit_set_pen(&self->palette, &PEN_DARK_GREEN, PEN_INDEX_DARK_GREEN);
+    palette_8bit_set_pen(&self->palette, &PEN_GREEN, PEN_INDEX_GREEN);
 
-    palette_8bit_set_pen(&self->palette, &PEN_DARK_BLUE, 6);// background
-    palette_8bit_set_pen(&self->palette, &PEN_BLUE, 7);     // border
+    palette_8bit_set_pen(&self->palette, &PEN_DARK_BLUE, PEN_INDEX_DARK_BLUE);// background
+    palette_8bit_set_pen(&self->palette, &PEN_BLUE, PEN_INDEX_BLUE);          // border
 
-    palette_8bit_set_pen(&self->palette, &PEN_DARK_YELLOW, 8);
-    palette_8bit_set_pen(&self->palette, &PEN_YELLOW, 9);
+    palette_8bit_set_pen(&self->palette, &PEN_DARK_YELLOW, PEN_INDEX_DARK_YELLOW);
+    palette_8bit_set_pen(&self->palette, &PEN_YELLOW, PEN_INDEX_YELLOW);
 
-    palette_8bit_set_pen(&self->palette, &PEN_DARK_GRAY, 10);
-    palette_8bit_set_pen(&self->palette, &PEN_GRAY, 11);
+    palette_8bit_set_pen(&self->palette, &PEN_DARK_GRAY, PEN_INDEX_DARK_GRAY);
+    palette_8bit_set_pen(&self->palette, &PEN_GRAY, PEN_INDEX_GRAY);
 
-    palette_8bit_set_pen(&self->palette, &PEN_CYAN, 12);
+    palette_8bit_set_pen(&self->palette, &PEN_CYAN, PEN_INDEX_CYAN);
 
     window_update_palette(self->window, &self->palette);
 
