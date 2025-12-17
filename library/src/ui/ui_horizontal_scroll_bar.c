@@ -6,6 +6,7 @@
 #include "exdevgfx/helper.h"
 
 #define EXDEVGFX2_LOG_LEVEL 2
+
 #include "exdevgfx/logger.h"
 
 #include <assert.h>
@@ -25,7 +26,7 @@ void ui_horizontal_scroll_bar_init(UIHorizontalScrollBar_t *self, const int x, c
     self->properties.x_width_total = 0;
     self->properties.x_width_visible = 0;
 
-    self->functions.on_x_pos = NULL;
+    self->functions.on_x_offset = NULL;
 }
 
 UIHorizontalScrollBar_t *ui_horizontal_scroll_bar_create(const int x, const int y, const int width, const int height) {
@@ -54,14 +55,8 @@ int ui_horizontal_scroll_bar_paint(UIHorizontalScrollBar_t *self, Framebuffer8Bi
     if (res) {
         const float f1 = (float) self->properties.x_width_visible / (float) self->properties.x_width_total;
         const float f2 = (float) self->base.properties.width / (float) self->properties.x_width_visible;
-        const int bar_width_half = (int) (f1 * f2 * (float) self->base.properties.width * 0.5);
-        int x_bar_middle = self->properties.x_pos - bar_width_half;
-        if (x_bar_middle < bar_width_half) {
-            x_bar_middle = bar_width_half;
-        } else if (x_bar_middle > self->base.properties.width - bar_width_half) {
-            x_bar_middle = self->base.properties.width - bar_width_half;
-        }
-        framebuffer_8bit_fill_rect(fb, x + x_bar_middle - bar_width_half, y, bar_width_half * 2, SCROLL_BAR_SIZE, PEN_INDEX_BLUE);
+        const int bar_width = (int) (f1 * f2 * (float) self->base.properties.width);
+        framebuffer_8bit_fill_rect(fb, x + self->properties.x_pos, y, bar_width, SCROLL_BAR_SIZE, PEN_INDEX_BLUE);
     }
     return res;
 }
@@ -72,19 +67,23 @@ void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, const exdev_
 
     for (int i = 0; i < num_events; ++i) {
         if (events[i].type == EVENT_MOUSE) {
-            if (events[i].mouse_event.button == MOUSE_BUTTON_0 && events[i].mouse_event.event == MOUSE_EVENT_BUTTON_PRESSED) {
-                log_info("mouse event pressed");
+            if (events[i].mouse_event.button == MOUSE_BUTTON_0
+                && events[i].mouse_event.event == MOUSE_EVENT_BUTTON_PRESSED) {
                 if (ui_component_is_inside(&self->base, events[i].mouse_event.position_x, events[i].mouse_event.position_y)) {
-                    const float f1 = (float) self->properties.x_width_visible / (float) self->properties.x_width_total;
-                    const float f2 = (float) self->base.properties.width / (float) self->properties.x_width_visible;
-                    const int bar_width = (int) (f1 * f2 * (float) self->base.properties.width);
-
                     int x = events[i].mouse_event.position_x;
                     int y = events[i].mouse_event.position_y;
                     ui_component_get_relative_position(&self->base, &x, &y);
                     self->properties.x_pos = x;
+                    const float f1 = (float) self->properties.x_width_visible / (float) self->properties.x_width_total;
+                    const float f2 = (float) self->base.properties.width / (float) self->properties.x_width_visible;
+                    const int bar_width = (int) (f1 * f2 * (float) self->base.properties.width);
+                    if (self->properties.x_pos > self->base.properties.width - bar_width) {
+                        self->properties.x_pos = self->base.properties.width - bar_width;
+                    }
                     self->base.flags.dirty_flag = 1;
-                    log_info_fmt("updated x to: %d", self->properties.x_pos);
+                    if (self->functions.on_x_offset) {
+                        self->functions.on_x_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.x_pos / f1 /f2));
+                    }
                 }
             }
         }

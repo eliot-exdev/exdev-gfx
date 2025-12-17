@@ -4,9 +4,19 @@
 
 #include "exdevgfx/ui/ui.h"
 #include "exdevgfx/helper.h"
+#define EXDEVGFX2_LOG_LEVEL 3
+#include "exdevgfx/logger.h"
 
 #include <assert.h>
 #include <stdlib.h>
+
+void on_x_offset(UIScrollPane_t *self, const int x_offset) {
+    assert(self);
+
+    self->properties.x_offset = x_offset;
+    self->base.flags.dirty_flag = 1;
+    log_info_fmt("x offset: %d", x_offset);
+}
 
 void ui_scroll_init(UIScrollPane_t *self, int x, int y, int width, int height) {
     assert(self);
@@ -14,8 +24,8 @@ void ui_scroll_init(UIScrollPane_t *self, int x, int y, int width, int height) {
     ui_component_init(&self->base, x, y, width, height);
     self->base.type = UI_COMPONENT_SCROLL_PANE;
 
-    self->properties.x_pos = 0;
-    self->properties.y_pos = 0;
+    self->properties.x_offset = 0;
+    self->properties.y_offset = 0;
 
     self->base.functions.destroy_func = (void (*)(void *)) &ui_scroll_destroy;
     self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_scroll_paint;
@@ -23,6 +33,7 @@ void ui_scroll_init(UIScrollPane_t *self, int x, int y, int width, int height) {
 
     self->children.h_bar = ui_horizontal_scroll_bar_create(2, width - SCROLL_BAR_SIZE - 2, height - SCROLL_BAR_SIZE - 4, SCROLL_BAR_SIZE);
     self->children.h_bar->base.parent = &self->base;
+    self->children.h_bar->functions.on_x_offset = on_x_offset;
 
     self->fb = NULL;
 }
@@ -77,6 +88,7 @@ int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, const int x_off
         // setup fb
         self->fb = malloc(sizeof(Framebuffer8Bit_t));
         framebuffer_8bit_init(self->fb, width, height);
+        framebuffer_8bit_fill(self->fb, self->base.properties.background_color);
         self->children.h_bar->properties.x_width_total = width;
         self->children.h_bar->properties.x_width_visible = self->base.properties.width;
     }
@@ -84,7 +96,6 @@ int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, const int x_off
     if (res) {
         if (self->base.flags.fill_background) {
             framebuffer_8bit_fill_rect(fb, x, y, self->base.properties.width, self->base.properties.height, self->base.properties.background_color);
-            framebuffer_8bit_fill(self->fb, self->base.properties.background_color);
         }
 
         if (self->base.flags.draw_border) {
@@ -103,8 +114,8 @@ int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, const int x_off
         // blit fb
         framebuffer_8bit_blit_8bit(fb,
                                    self->fb,
-                                   self->properties.x_pos,
-                                   self->properties.y_pos,
+                                   self->properties.x_offset,
+                                   self->properties.y_offset,
                                    self->base.properties.width - SCROLL_BAR_SIZE - 4,
                                    self->base.properties.height - SCROLL_BAR_SIZE - 6,
                                    x + 2,
