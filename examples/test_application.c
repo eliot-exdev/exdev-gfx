@@ -88,7 +88,7 @@ int main() {
     exdev_base_init();
 
     // application
-    Application_t app;
+    UIApplication_t app;
     application_init(&app, WIDTH, HEIGHT);
     palette_8bit_read_from_dat(&app.palette, "assets/amiga_logo_8bit.pal");// read palette from file
 

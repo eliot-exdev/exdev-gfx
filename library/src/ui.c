@@ -266,7 +266,7 @@ void ui_icon_update(UIIcon_t *self, const exdev_timestamp_t time_elapsed, const 
     }
 }
 
-void application_init(Application_t *self, const int width, const int height) {
+void application_init(UIApplication_t *self, const int width, const int height) {
     assert(self);
 
     ui_component_init(&self->root, 0, 0, width, height);
@@ -274,7 +274,7 @@ void application_init(Application_t *self, const int width, const int height) {
     self->resume = 1;
 }
 
-void application_destroy(Application_t *self) {
+void application_destroy(UIApplication_t *self) {
     assert(self);
 
     window_destroy(self->window);
@@ -285,7 +285,7 @@ void application_destroy(Application_t *self) {
 
 #define MAX_EVENTS 4
 
-int application_run(Application_t *self, const exdev_timestamp_t wait_ms) {
+int application_run(UIApplication_t *self, const exdev_timestamp_t wait_ms) {
     assert(self);
 
     char close_event = 0;
