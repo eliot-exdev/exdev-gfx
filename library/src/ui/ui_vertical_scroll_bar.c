@@ -25,16 +25,13 @@ void ui_vertical_scroll_bar_init(UIVerticalScrollBar_t *self, UIScrollPane_t *pa
     self->base.functions.update_func = (void (*)(void *, long, const Event_t *, int)) &ui_vertical_scroll_bar_update;
 
     self->properties.y_pos = 0;
-    self->properties.y_height_total = y_height_total;
-    self->properties.y_height_visible = y_height_visible;
 
     self->flags.dragged = 0;
 
     self->functions.on_y_offset = parent->functions.on_y_offset;
 
-    self->f1 = (float) self->properties.y_height_visible / (float) self->properties.y_height_total;
-    self->f1 = self->f1 * (float) self->base.properties.height / (float) self->properties.y_height_visible;
-    self->bar_height = (int) (self->f1 * (float) self->base.properties.height);
+    self->f1 = (float) y_height_visible / (float) y_height_total;
+    self->bar_height = (int) (self->f1 * ((float) self->base.properties.height));
     self->y_last = 0;
 }
 

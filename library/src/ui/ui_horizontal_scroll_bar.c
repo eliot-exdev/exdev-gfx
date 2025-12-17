@@ -25,15 +25,14 @@ void ui_horizontal_scroll_bar_init(UIHorizontalScrollBar_t *self, UIScrollPane_t
     self->base.functions.update_func = (void (*)(void *, long, const Event_t *, int)) &ui_horizontal_scroll_bar_update;
 
     self->properties.x_pos = 0;
-    self->properties.x_width_total = x_width_total;
-    self->properties.x_width_visible = x_width_visible;
+//    self->properties.x_width_total = x_width_total;
+//    self->properties.x_width_visible = x_width_visible;
 
     self->flags.dragged = 0;
 
     self->functions.on_x_offset = parent->functions.on_x_offset;
 
-    self->f1 = (float) self->properties.x_width_visible / (float) self->properties.x_width_total;
-    self->f1 = self->f1 * (float) self->base.properties.width / (float) self->properties.x_width_visible;
+    self->f1 = (float) x_width_visible / (float) x_width_total;
     self->bar_width = (int) (self->f1 * ((float) self->base.properties.width));
     self->x_last = 0;
 }

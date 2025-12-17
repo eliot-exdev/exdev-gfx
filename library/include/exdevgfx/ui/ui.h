@@ -218,8 +218,6 @@ struct UIHorizontalScrollBar {
     UIComponent_t base;
     struct {
         int x_pos;
-        int x_width_total;
-        int x_width_visible;
     } properties;
 
     struct {
@@ -252,8 +250,6 @@ struct UIVerticalScrollBar {
     UIComponent_t base;
     struct {
         int y_pos;
-        int y_height_total;
-        int y_height_visible;
     } properties;
 
     struct {
