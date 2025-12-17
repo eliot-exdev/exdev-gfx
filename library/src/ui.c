@@ -56,6 +56,7 @@ void ui_component_init(UIComponent_t *self, const int x, const int y, const int 
 
     self->functions.destroy_func = (void (*)(void *)) &ui_component_destroy;
     self->functions.paint_func = (void (*)(void *, Framebuffer8Bit_t *, int, int)) &ui_component_paint;
+    self->functions.update_func = (void (*)(void *, exdev_timestamp_t)) &ui_component_update;
 
     self->parent = parent;
     ui_component_list_init(&self->childs);
@@ -67,24 +68,6 @@ void ui_component_destroy(UIComponent_t *self) {
         free(self->childs.components[i]);
         self->childs.components[i] = NULL;
     }
-}
-
-int ui_component_get_x_abs(const UIComponent_t *self) {
-    assert(self);
-
-    if (self->parent) {
-        return ui_component_get_x_abs(self->parent) + self->properties.x;
-    }
-    return self->properties.x;
-}
-
-int ui_component_get_y_abs(const UIComponent_t *self) {
-    assert(self);
-
-    if (self->parent) {
-        return ui_component_get_y_abs(self->parent) + self->properties.y;
-    }
-    return self->properties.y;
 }
 
 void ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, const int x, const int y) {
@@ -104,14 +87,22 @@ void ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, const int x,
     }
 
     for (int i = 0; i < self->childs.size; ++i) {
-        self->childs.components[i]->functions.paint_func(self,
+        self->childs.components[i]->functions.paint_func(self->childs.components[i],
                                                          fb,
                                                          x + self->childs.components[i]->properties.x,
                                                          y + self->childs.components[i]->properties.y);
     }
 }
 
-void application_init(Application_t *self, const char *name, const int width, const int height) {
+void ui_component_update(UIComponent_t *self, const exdev_timestamp_t time_elapsed) {
+    assert(self);
+
+    for (int i = 0; i < self->childs.size; ++i) {
+        self->childs.components[i]->functions.update_func(self->childs.components[i], time_elapsed);
+    }
+}
+
+void application_init(Application_t *self, const int width, const int height) {
     assert(self);
 
     self->root = malloc(sizeof(UIComponent_t));
@@ -121,9 +112,6 @@ void application_init(Application_t *self, const char *name, const int width, co
     palette_8bit_init(self->palette, 2);
     palette_8bit_set_pen(self->palette, &PEN_BLACK, 0); // background
     palette_8bit_set_pen(self->palette, &PEN_WHITE, 1); // border
-
-    self->window = window_create(width, height, name, FS_8_BIT);
-    window_update_palette(self->window, self->palette);
 
     self->resume = 1;
 }
@@ -150,10 +138,19 @@ int application_run(Application_t *self, exdev_timestamp_t wait_ms) {
     char close_event = 0;
     Event_t event;
 
-    while (self->resume) {
-        const exdev_timestamp_t before = now();
+    exdev_timestamp_t begin_ms = 0;
+    exdev_timestamp_t loop_time_ms = 0;
+    exdev_timestamp_t sleep_ms = 0;
+    exdev_timestamp_t end_ms = 0;
 
-        // handle events
+    // open window
+    self->window = window_create(self->root->properties.width, self->root->properties.height, "app", FS_8_BIT);
+    window_update_palette(self->window, self->palette);
+
+    // loop
+    while (self->resume) {
+        begin_ms = now();
+        // ui events
         window_poll_events(self->window, &close_event, &event, 1);
         if (event.type == EVENT_KEY && event.key_event.event == KEY_EVENT_PRESSED) {
             switch (event.key_event.key) {
@@ -165,14 +162,19 @@ int application_run(Application_t *self, exdev_timestamp_t wait_ms) {
             }
         }
 
-        // redraw ui
+        // update ui
+        self->root->functions.update_func(self->root, end_ms - begin_ms);
+
+        // paint ui
         self->root->functions.paint_func(self->root, window_get_chunky_buffer(self->window), 0, 0);
+
+        // blit ui to screen
         window_blit_chunky_buffer(self->window);
 
         // wait some time
-        const exdev_timestamp_t total = now() - before;
+        loop_time_ms = now() - begin_ms;
         if (wait_ms > 0) {
-            exdev_timestamp_t sleep_ms = wait_ms - total;
+            sleep_ms = wait_ms - loop_time_ms;
             if (sleep_ms <= 0) {
                 log_warning("running out of time - will sleep anyway");
                 sleep_ms = 10;
@@ -180,6 +182,7 @@ int application_run(Application_t *self, exdev_timestamp_t wait_ms) {
             log_debug_fmt("sleep for: %dms", sleep_ms);
             sleep_for_ms(sleep_ms);
         }
+        end_ms = now();
     }
 
     return 0;

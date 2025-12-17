@@ -34,6 +34,8 @@ typedef void (*destroy_function)(void *self);
 
 typedef void (*paint_function)(void *self, Framebuffer8Bit_t *fb, int x, int y);
 
+typedef void (*update_function)(void *self, exdev_timestamp_t time_elapsed);
+
 struct UIComponent {
     enum ui_component_type type;
     int subtype;
@@ -55,6 +57,7 @@ struct UIComponent {
     struct {
         destroy_function destroy_func;
         paint_function paint_func;
+        update_function update_func;
     } functions;
 
     struct UIComponent *parent;
@@ -67,11 +70,9 @@ void ui_component_init(UIComponent_t *self, int x, int y, int width, int height,
 
 void ui_component_destroy(UIComponent_t *self);
 
-int ui_component_get_x_abs(const UIComponent_t *self);
-
-int ui_component_get_y_abs(const UIComponent_t *self);
-
 void ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, int x, int y);
+
+void ui_component_update(UIComponent_t *self, exdev_timestamp_t time_elapsed);
 
 struct Application {
     Window_t *window;
@@ -82,7 +83,7 @@ struct Application {
 
 typedef struct Application Application_t;
 
-void application_init(Application_t *self, const char* name, int width, int height);
+void application_init(Application_t *self, int width, int height);
 
 void application_destroy(Application_t *self);
 
