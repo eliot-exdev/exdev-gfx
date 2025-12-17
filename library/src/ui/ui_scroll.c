@@ -32,14 +32,14 @@ void ui_scroll_init(UIScrollPane_t *self, int x, int y, int width, int height, c
     self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_scroll_paint;
     self->base.functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &ui_scroll_update;
 
-    self->children.h_bar = NULL;
-
     if (scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL || scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
         self->functions.on_x_offset = ui_scroll_on_x_offset;
     } else {
         self->functions.on_x_offset = NULL;
     }
+
     self->fb = NULL;
+    self->h_bar = NULL;
 }
 
 UIScrollPane_t *ui_scroll_create(const int x, const int y, const int width, const int height, const UIScrollingSupport_t scrolling_support) {
@@ -54,10 +54,10 @@ void ui_scroll_destroy(UIScrollPane_t *self) {
 
     ui_component_destroy(&self->base);
 
-    if (self->children.h_bar) {
-        ui_horizontal_scroll_bar_destroy(self->children.h_bar);
-        free(self->children.h_bar);
-        self->children.h_bar = NULL;
+    if (self->h_bar) {
+        ui_horizontal_scroll_bar_destroy(self->h_bar);
+        free(self->h_bar);
+        self->h_bar = NULL;
     }
 
     if (self->fb) {
@@ -97,7 +97,9 @@ int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, const int x_off
         framebuffer_8bit_fill(self->fb, self->base.properties.background_color);
 
         // setup h bar
-        self->children.h_bar = ui_horizontal_scroll_bar_create(self, 2, self->base.properties.width - SCROLL_BAR_SIZE - 2, self->base.properties.height - SCROLL_BAR_SIZE - 4, SCROLL_BAR_SIZE, width, self->base.properties.width);
+        if (self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL || self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
+            self->h_bar = ui_horizontal_scroll_bar_create(self, 2, self->base.properties.width - SCROLL_BAR_SIZE - 2, self->base.properties.height - SCROLL_BAR_SIZE - 4, SCROLL_BAR_SIZE, width, self->base.properties.width);
+        }
     }
 
     if (res) {
@@ -132,8 +134,8 @@ int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, const int x_off
     }
 
     // draw h bar
-    if (self->children.h_bar) {
-        res |= self->children.h_bar->base.functions.paint_func(self->children.h_bar, fb, x, y, self->base.properties.width, self->base.properties.height);
+    if (self->h_bar) {
+        res |= self->h_bar->base.functions.paint_func(self->h_bar, fb, x, y, self->base.properties.width, self->base.properties.height);
     }
 
     return res;
@@ -144,7 +146,7 @@ void ui_scroll_update(UIScrollPane_t *self, const exdev_timestamp_t time_elapsed
 
     ui_component_update(&self->base, time_elapsed, events, num_events);
 
-    if (self->children.h_bar) {
-        self->children.h_bar->base.functions.update_func(self->children.h_bar, time_elapsed, events, num_events);
+    if (self->h_bar) {
+        self->h_bar->base.functions.update_func(self->h_bar, time_elapsed, events, num_events);
     }
 }

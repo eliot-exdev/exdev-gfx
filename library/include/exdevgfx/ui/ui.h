@@ -178,15 +178,13 @@ struct UIScrollPane {
         int y_offset;
         UIScrollingSupport_t scrolling_support;
     } properties;
-    struct {
-
-        struct UIHorizontalScrollBar *h_bar;
-    } children;
 
     struct {
         on_x_offset_function on_x_offset;
     } functions;
+
     Framebuffer8Bit_t *fb;
+    struct UIHorizontalScrollBar *h_bar;
 };
 
 typedef struct UIScrollPane UIScrollPane_t;
