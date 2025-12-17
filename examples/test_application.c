@@ -84,6 +84,9 @@ static void icon_focus(UIIcon_t *self) {
     log_info_fmt("icon focus: %d", self->flags.focused);
 }
 
+#if defined(__MORPHOS__) || defined(__AMIGAOS__)
+unsigned long __stack = (16 * 1024 * 1024);
+#endif
 
 int main() {
     exdev_base_init();
