@@ -32,7 +32,7 @@ void ui_component_list_add(UIComponentList_t *self, struct UIComponent *componen
 
 typedef void (*destroy_function)(void *self);
 
-typedef void (*paint_function)(void *self, Framebuffer8Bit_t *fb);
+typedef void (*paint_function)(void *self, Framebuffer8Bit_t *fb, int x, int y);
 
 struct UIComponent {
     enum ui_component_type type;
@@ -71,7 +71,7 @@ int ui_component_get_x_abs(const UIComponent_t *self);
 
 int ui_component_get_y_abs(const UIComponent_t *self);
 
-void ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb);
+void ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, int x, int y);
 
 struct Application {
     Window_t *window;

@@ -55,7 +55,7 @@ void ui_component_init(UIComponent_t *self, const int x, const int y, const int 
     self->flags.draw_border = 1;
 
     self->functions.destroy_func = (void (*)(void *)) &ui_component_destroy;
-    self->functions.paint_func = (void (*)(void *, Framebuffer8Bit_t *)) &ui_component_paint;
+    self->functions.paint_func = (void (*)(void *, Framebuffer8Bit_t *, int, int)) &ui_component_paint;
 
     self->parent = parent;
     ui_component_list_init(&self->childs);
@@ -87,13 +87,11 @@ int ui_component_get_y_abs(const UIComponent_t *self) {
     return self->properties.y;
 }
 
-void ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb) {
+void ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, const int x, const int y) {
     assert(self);
     assert(fb);
 
     if (self->flags.dirty_flag) {
-        const int x = ui_component_get_x_abs(self);
-        const int y = ui_component_get_y_abs(self);
         if (self->flags.fill_background) {
             framebuffer_8bit_fill_rect(fb, x, y, self->properties.width, self->properties.height, self->properties.background_color);
         }
@@ -106,7 +104,10 @@ void ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb) {
     }
 
     for (int i = 0; i < self->childs.size; ++i) {
-        self->childs.components[i]->functions.paint_func(self, fb);
+        self->childs.components[i]->functions.paint_func(self,
+                                                         fb,
+                                                         x + self->childs.components[i]->properties.x,
+                                                         y + self->childs.components[i]->properties.y);
     }
 }
 
@@ -152,6 +153,8 @@ int application_run(Application_t *self, exdev_timestamp_t wait_ms) {
 
     while (self->resume) {
         const exdev_timestamp_t before = now();
+
+        // handle events
         window_poll_events(self->window, &close_event, &event, 1);
         if (event.type == EVENT_KEY && event.key_event.event == KEY_EVENT_PRESSED) {
             switch (event.key_event.key) {
@@ -162,11 +165,19 @@ int application_run(Application_t *self, exdev_timestamp_t wait_ms) {
                     break;
             }
         }
-        self->root->functions.paint_func(self->root, window_get_chunky_buffer(self->window));
+
+        // redraw ui
+        self->root->functions.paint_func(self->root, window_get_chunky_buffer(self->window), 0, 0);
         window_blit_chunky_buffer(self->window);
+
+        // wait some time
         const exdev_timestamp_t total = now() - before;
         if (wait_ms > 0) {
-            exdev_timestamp_t sleep_ms = wait_ms - total < 0 ? 10 : wait_ms - total;
+            exdev_timestamp_t sleep_ms = wait_ms - total;
+            if (sleep_ms <= 0) {
+                log_warning("running out of time - will sleep anyway");
+                sleep_ms = 10;
+            }
             log_debug_fmt("sleep for: %dms", sleep_ms);
             sleep_for_ms(sleep_ms);
         }
