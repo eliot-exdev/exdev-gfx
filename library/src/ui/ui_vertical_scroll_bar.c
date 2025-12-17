@@ -11,7 +11,8 @@
 #include <assert.h>
 #include <stdlib.h>
 
-void ui_vertical_scroll_bar_init(UIVerticalScrollBar_t *self, UIScrollPane_t *parent, const int x, const int y, const int width, const int height, const int y_height_total, const int y_height_visible) {
+void ui_vertical_scroll_bar_init(UIVerticalScrollBar_t *self, UIScrollPane_t *parent, const int x, const int y, const int width, const int height, const int y_height_total,
+                                 const int y_height_visible) {
     assert(self);
     assert(parent);
 
@@ -34,9 +35,11 @@ void ui_vertical_scroll_bar_init(UIVerticalScrollBar_t *self, UIScrollPane_t *pa
     self->f1 = (float) self->properties.y_height_visible / (float) self->properties.y_height_total;
     self->f1 = self->f1 * (float) self->base.properties.height / (float) self->properties.y_height_visible;
     self->bar_height = (int) (self->f1 * (float) self->base.properties.height);
+    self->y_last = 0;
 }
 
-UIVerticalScrollBar_t *ui_vertical_scroll_bar_create(UIScrollPane_t *parent, const int x, const int y, const int width, const int height, const int y_height_total, const int y_height_visible) {
+UIVerticalScrollBar_t *
+ui_vertical_scroll_bar_create(UIScrollPane_t *parent, const int x, const int y, const int width, const int height, const int y_height_total, const int y_height_visible) {
     UIVerticalScrollBar_t *self = malloc(sizeof(UIVerticalScrollBar_t));
     ui_vertical_scroll_bar_init(self, parent, x, y, width, height, y_height_total, y_height_visible);
     return self;
@@ -77,18 +80,8 @@ void ui_vertical_scroll_bar_update(UIVerticalScrollBar_t *self, const long ms, c
                     int x = events[i].mouse_event.position_x;
                     int y = events[i].mouse_event.position_y;
                     ui_component_get_relative_position(&self->base, &x, &y);
-
-                    if (y != self->properties.y_pos) {
-                        self->properties.y_pos = y;
-                        if (self->properties.y_pos > self->base.properties.height - self->bar_height) {
-                            self->properties.y_pos = self->base.properties.height - self->bar_height;
-                        }
-                        self->base.flags.dirty_flag = 1;
-                        self->flags.dragged = 1;
-                        if (self->functions.on_y_offset) {
-                            self->functions.on_y_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.y_pos / self->f1));
-                        }
-                    }
+                    self->flags.dragged = 1;
+                    self->y_last = y;
                 }
             } else if (self->flags.dragged && events[i].mouse_event.button == MOUSE_BUTTON_0 && events[i].mouse_event.event == MOUSE_EVENT_BUTTON_RELEASED) {
                 self->flags.dragged = 0;
@@ -97,18 +90,26 @@ void ui_vertical_scroll_bar_update(UIVerticalScrollBar_t *self, const long ms, c
                 int y = events[i].mouse_event.position_y;
                 ui_component_get_relative_position(&self->base, &x, &y);
 
-                if (y < 0) {
-                    y = 0;
-                } else if (y > self->base.properties.height - self->bar_height) {
-                    y = self->base.properties.height - self->bar_height;
+                if (y > self->y_last) {
+                    // move down
+                    const int y_offset = y - self->y_last;
+                    self->properties.y_pos = self->properties.y_pos + y_offset;
+                } else {
+                    // move up
+                    const int y_offset = self->y_last - y;
+                    self->properties.y_pos = self->properties.y_pos - y_offset;
+                }
+                self->y_last = y;
+
+                if (self->properties.y_pos < 0) {
+                    self->properties.y_pos = 0;
+                } else if (self->properties.y_pos > self->base.properties.height - self->bar_height) {
+                    self->properties.y_pos = self->base.properties.height - self->bar_height;
                 }
 
-                if (y != self->properties.y_pos) {
-                    self->properties.y_pos = y;
-                    self->base.flags.dirty_flag = 1;
-                    if (self->functions.on_y_offset) {
-                        self->functions.on_y_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.y_pos / self->f1));
-                    }
+                self->base.flags.dirty_flag = 1;
+                if (self->functions.on_y_offset) {
+                    self->functions.on_y_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.y_pos / self->f1));
                 }
             }
         }

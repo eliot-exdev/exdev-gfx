@@ -232,6 +232,7 @@ struct UIHorizontalScrollBar {
 
     float f1;
     int bar_width;
+    int x_last;
 };
 
 typedef struct UIHorizontalScrollBar UIHorizontalScrollBar_t;
@@ -265,6 +266,7 @@ struct UIVerticalScrollBar {
 
     float f1;
     int bar_height;
+    int y_last;
 };
 
 typedef struct UIVerticalScrollBar UIVerticalScrollBar_t;

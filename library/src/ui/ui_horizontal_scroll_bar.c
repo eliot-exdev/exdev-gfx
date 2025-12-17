@@ -4,17 +4,18 @@
 
 #include "exdevgfx/ui/ui.h"
 
-#define EXDEVGFX2_LOG_LEVEL 3
+#define EXDEVGFX2_LOG_LEVEL 2
 
 #include "exdevgfx/logger.h"
 
 #include <assert.h>
 #include <stdlib.h>
 
-void ui_horizontal_scroll_bar_init(UIHorizontalScrollBar_t *self, UIScrollPane_t *parent, const int x, const int y, const int width, const int height, const int x_width_total, const int x_width_visible) {
+void ui_horizontal_scroll_bar_init(UIHorizontalScrollBar_t *self, UIScrollPane_t *parent, const int x, const int y, const int width, const int height, const int x_width_total,
+                                   const int x_width_visible) {
     assert(self);
     assert(parent);
-
+    log_info_fmt("width visible: %d", x_width_visible);
     ui_component_init(&self->base, x, y, width, height);
     self->base.type = UI_COMPONENT_SCROLL_BAR_HORIZONTAL;
     self->base.parent = (UIComponent_t *) parent;
@@ -33,10 +34,12 @@ void ui_horizontal_scroll_bar_init(UIHorizontalScrollBar_t *self, UIScrollPane_t
 
     self->f1 = (float) self->properties.x_width_visible / (float) self->properties.x_width_total;
     self->f1 = self->f1 * (float) self->base.properties.width / (float) self->properties.x_width_visible;
-    self->bar_width = (int) (self->f1 * (float) self->base.properties.width);
+    self->bar_width = (int) (self->f1 * ((float) self->base.properties.width));
+    self->x_last = 0;
 }
 
-UIHorizontalScrollBar_t *ui_horizontal_scroll_bar_create(UIScrollPane_t *parent, const int x, const int y, const int width, const int height, const int x_width_total, const int x_width_visible) {
+UIHorizontalScrollBar_t *
+ui_horizontal_scroll_bar_create(UIScrollPane_t *parent, const int x, const int y, const int width, const int height, const int x_width_total, const int x_width_visible) {
     UIHorizontalScrollBar_t *self = malloc(sizeof(UIHorizontalScrollBar_t));
     ui_horizontal_scroll_bar_init(self, parent, x, y, width, height, x_width_total, x_width_visible);
     return self;
@@ -69,7 +72,7 @@ void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, const long m
     assert(self);
     assert(events);
 
-    log_info_fmt("ui_horizontal_scroll_bar_update: %d", num_events);
+    log_debug_fmt("ui_horizontal_scroll_bar_update: %d", num_events);
     for (int i = 0; i < num_events; ++i) {
         if (events[i].type == EVENT_MOUSE) {
             if (events[i].mouse_event.button == MOUSE_BUTTON_0 && events[i].mouse_event.event == MOUSE_EVENT_BUTTON_PRESSED) {
@@ -77,17 +80,8 @@ void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, const long m
                     int x = events[i].mouse_event.position_x;
                     int y = events[i].mouse_event.position_y;
                     ui_component_get_relative_position(&self->base, &x, &y);
-                    if (x != self->properties.x_pos) {
-                        self->properties.x_pos = x;
-                        if (self->properties.x_pos > self->base.properties.width - self->bar_width) {
-                            self->properties.x_pos = self->base.properties.width - self->bar_width;
-                        }
-                        self->base.flags.dirty_flag = 1;
-                        self->flags.dragged = 1;
-                        if (self->functions.on_x_offset) {
-                            self->functions.on_x_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.x_pos / self->f1));
-                        }
-                    }
+                    self->flags.dragged = 1;
+                    self->x_last = x;
                 }
             } else if (self->flags.dragged && events[i].mouse_event.button == MOUSE_BUTTON_0 && events[i].mouse_event.event == MOUSE_EVENT_BUTTON_RELEASED) {
                 self->flags.dragged = 0;
@@ -96,18 +90,26 @@ void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, const long m
                 int y = events[i].mouse_event.position_y;
                 ui_component_get_relative_position(&self->base, &x, &y);
 
-                if (x < 0) {
-                    x = 0;
-                } else if (x > self->base.properties.width - self->bar_width) {
-                    x = self->base.properties.width - self->bar_width;
+                if (x > self->x_last) {
+                    // move to right
+                    const int x_offset = x - self->x_last;
+                    self->properties.x_pos = self->properties.x_pos + x_offset;
+                } else {
+                    // move to left
+                    const int x_offset = self->x_last - x;
+                    self->properties.x_pos = self->properties.x_pos - x_offset;
+                }
+                self->x_last = x;
+
+                if (self->properties.x_pos < 0) {
+                    self->properties.x_pos = 0;
+                } else if (self->properties.x_pos > self->base.properties.width - self->bar_width) {
+                    self->properties.x_pos = self->base.properties.width - self->bar_width;
                 }
 
-                if (x != self->properties.x_pos) {
-                    self->properties.x_pos = x;
-                    self->base.flags.dirty_flag = 1;
-                    if (self->functions.on_x_offset) {
-                        self->functions.on_x_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.x_pos / self->f1));
-                    }
+                self->base.flags.dirty_flag = 1;
+                if (self->functions.on_x_offset) {
+                    self->functions.on_x_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.x_pos / self->f1));
                 }
             }
         }

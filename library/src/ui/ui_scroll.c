@@ -127,7 +127,7 @@ void ui_scroll_prepare(UIScrollPane_t *self) {
                                                       self->base.properties.width - SCROLL_BAR_SIZE - 4,
                                                       SCROLL_BAR_SIZE,
                                                       width,
-                                                      self->base.properties.width);
+                                                      self->base.properties.width - SCROLL_BAR_SIZE - 6);
     }
     if (self->properties.scrolling_support == UI_SCROLLING_SUPPORT_VERTICAL || self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
         self->v_bar = ui_vertical_scroll_bar_create(self,
@@ -136,7 +136,7 @@ void ui_scroll_prepare(UIScrollPane_t *self) {
                                                     SCROLL_BAR_SIZE,
                                                     self->base.properties.height - SCROLL_BAR_SIZE - 4,
                                                     height,
-                                                    self->base.properties.height);
+                                                    self->base.properties.height - SCROLL_BAR_SIZE - 6);
     }
 }
 
