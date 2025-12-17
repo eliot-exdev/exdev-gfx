@@ -7,10 +7,10 @@
 
 #define WIDTH 640
 #define HEIGHT 480
-#define UPDATE_INTERVAL 50 // ms
+#define UPDATE_INTERVAL 50// ms
 
 void left_update(UIComponent_t *self, const exdev_timestamp_t ms, const Event_t *events, const int num_events) {
-    ui_component_update(self, ms, events, num_events); // call update of base class
+    ui_component_update(self, ms, events, num_events);// call update of base class
 
     // handle mouse event
     for (int it_events = 0; it_events < num_events; ++it_events) {
@@ -47,7 +47,7 @@ int right_paint(UIComponent_t *self, Framebuffer8Bit_t *fb) {
 }
 
 void right_update(UIComponent_t *self, const exdev_timestamp_t ms, const Event_t *events, const int num_events) {
-    ui_component_update(self, ms, events, num_events); // call update of base class
+    ui_component_update(self, ms, events, num_events);// call update of base class
 
     // handle mouse event
     for (int it_events = 0; it_events < num_events; ++it_events) {
@@ -75,23 +75,22 @@ void right_update(UIComponent_t *self, const exdev_timestamp_t ms, const Event_t
 int main() {
     exdev_base_init();
 
+    // application
     Application_t app;
     application_init(&app, WIDTH, HEIGHT);
+    palette_8bit_read_from_dat(&app.palette, "assets/amiga_logo_8bit.pal");
 
-    UIComponent_t *left = malloc(sizeof(UIComponent_t));
-    ui_component_init(left, 2, 2, 538, 476);
+    // left component
+    UIComponent_t *left = ui_component_create(2, 2, 538, 476);
     left->functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &left_update;
     ui_component_connect(&app.root, left);
 
-    Framebuffer8Bit_t *icon_fb = malloc(sizeof(Framebuffer8Bit_t));
-    framebuffer_8bit_read_from_dat(icon_fb, "assets/amiga_logo_8bit.dat");
-    palette_8bit_read_from_dat(&app.palette, "assets/amiga_logo_8bit.pal");
-    UIIcon_t *icon = malloc(sizeof(UIIcon_t));
-    ui_icon_init(icon, 4, 4, icon_fb);
+    // icon
+    UIIcon_t *icon = ui_icon_create_with_path(4, 4, "assets/amiga_logo_8bit.dat");
     ui_component_connect(left, icon);
 
-    UIComponent_t *right = malloc(sizeof(UIComponent_t));
-    ui_component_init(right, 542, 2, 96, 476);
+    // right component
+    UIComponent_t *right = ui_component_create(542, 2, 96, 476);
     right->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *)) &right_paint;
     right->functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &right_update;
     ui_component_connect(&app.root, right);
