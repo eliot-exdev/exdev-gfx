@@ -40,7 +40,7 @@ void ui_component_list_add(UIComponentList_t *self, UIComponent_t *component) {
     self->components[self->size - 1] = component;
 }
 
-void ui_component_init(UIComponent_t *self, const int x, const int y, const int width, const int height, UIComponent_t *parent) {
+void ui_component_init(UIComponent_t *self, const int x, const int y, const int width, const int height) {
     assert(self);
     self->type = UI_COMPONENT_BASE;
     self->subtype = 0;
@@ -60,7 +60,7 @@ void ui_component_init(UIComponent_t *self, const int x, const int y, const int 
     self->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *)) &ui_component_paint;
     self->functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &ui_component_update;
 
-    self->parent = parent;
+    self->parent = NULL;
     ui_component_list_init(&self->childs);
 }
 
@@ -111,11 +111,23 @@ int ui_component_is_inside(const UIComponent_t *self, const int x, const int y) 
            y >= self->properties.y && y < self->properties.y + self->properties.height;
 }
 
-void ui_icon_init(UIIcon_t *self, int x, int y, Framebuffer8Bit_t *fb, UIComponent_t *parent) {
+void ui_component_connect(void *parent_, void *child_) {
+    assert(parent_);
+    assert(child_);
+
+    UIComponent_t *parent =parent_;
+    UIComponent_t *child = child_;
+
+    ui_component_list_add(&parent->childs, child);
+    child->parent=parent;
+}
+
+
+void ui_icon_init(UIIcon_t *self, const int x, const int y, Framebuffer8Bit_t *fb) {
     assert(self);
     assert(fb);
 
-    ui_component_init(&self->base, x, y, fb->width + 2, fb->height + 2, parent);
+    ui_component_init(&self->base, x, y, fb->width + 2, fb->height + 2);
     self->base.type = UI_COMPONENT_ICON;
     self->base.functions.destroy_func = (void (*)(void *)) &ui_icon_destroy;
     self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *)) &ui_icon_paint;
@@ -183,7 +195,7 @@ void ui_icon_update(UIIcon_t *self, const exdev_timestamp_t time_elapsed, const 
 void application_init(Application_t *self, const int width, const int height) {
     assert(self);
 
-    ui_component_init(&self->root, 0, 0, width, height, NULL);
+    ui_component_init(&self->root, 0, 0, width, height);
     palette_8bit_init(&self->palette, 0);
     self->resume = 1;
 
