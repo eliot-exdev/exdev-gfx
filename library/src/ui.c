@@ -48,6 +48,8 @@ void ui_component_init(UIComponent_t *self, const int x, const int y, const int 
     self->properties.y = y;
     self->properties.width = width;
     self->properties.height = height;
+    self->properties.background_color = PEN_INDEX_DARK_BLUE;
+    self->properties.border_color = PEN_INDEX_BLUE;
 
     self->flags.dirty_flag = 1;
     self->flags.enabled_flag = 1;
@@ -73,11 +75,11 @@ int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb) {
     int res = 0;
     if (self->flags.dirty_flag) {
         if (self->flags.fill_background) {
-            framebuffer_8bit_fill_rect(fb, self->properties.x, self->properties.y, self->properties.width, self->properties.height, PEN_INDEX_DARK_BLUE);
+            framebuffer_8bit_fill_rect(fb, self->properties.x, self->properties.y, self->properties.width, self->properties.height, self->properties.background_color);
         }
 
         if (self->flags.draw_border) {
-            framebuffer_8bit_draw_rect(fb, self->properties.x, self->properties.y, self->properties.width, self->properties.height, PEN_INDEX_BLUE);
+            framebuffer_8bit_draw_rect(fb, self->properties.x, self->properties.y, self->properties.width, self->properties.height, self->properties.border_color);
         }
 
         self->flags.dirty_flag = 0;
@@ -117,6 +119,7 @@ void ui_icon_init(UIIcon_t *self, int x, int y, Framebuffer8Bit_t *fb, UICompone
 
     self->icon = fb;
     self->flags.clickable = 1;
+    self->flags.has_focus = 0;
 }
 
 void ui_icon_destroy(UIIcon_t *self) {
@@ -145,6 +148,24 @@ void ui_icon_update(UIIcon_t *self, const exdev_timestamp_t time_elapsed, const 
     assert(self);
 
     ui_component_update(&self->base, time_elapsed, events, num_events);
+
+    for (int i = 0; i < num_events; ++i) {
+        if (events[i].type == EVENT_MOUSE && events[i].mouse_event.event == MOUSE_EVENT_MOVED) {
+            if (ui_component_is_inside(&self->base, events[i].mouse_event.position_x, events[i].mouse_event.position_y)) {
+                if (!self->flags.has_focus) {
+                    self->flags.has_focus = 1;
+                    self->base.properties.border_color = PEN_INDEX_DARK_YELLOW;
+                    self->base.flags.dirty_flag = 1;
+                }
+            } else {
+                if (self->flags.has_focus) {
+                    self->flags.has_focus = 0;
+                    self->base.properties.border_color = PEN_INDEX_BLUE;
+                    self->base.flags.dirty_flag = 1;
+                }
+            }
+        }
+    }
 }
 
 void application_init(Application_t *self, const int width, const int height) {
