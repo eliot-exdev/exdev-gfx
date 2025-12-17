@@ -195,6 +195,10 @@ struct UIHorizontalScrollBar {
     } properties;
 
     struct {
+        int dragged;
+    } flags;
+
+    struct {
         on_x_offset_function on_x_offset;
     } functions;
 };
