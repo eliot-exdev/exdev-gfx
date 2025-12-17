@@ -1,4 +1,9 @@
 #include "exdevgfx/ui/ui.h"
+#include "exdevgfx/helper.h"
+
+#define EXDEVGFX2_LOG_LEVEL 2
+
+#include "exdevgfx/logger.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -139,13 +144,14 @@ void application_destroy(Application_t *self) {
     self->resume = 0;
 }
 
-int application_run(Application_t *self) {
+int application_run(Application_t *self, exdev_timestamp_t wait_ms) {
     assert(self);
 
     char close_event = 0;
     Event_t event;
 
     while (self->resume) {
+        const exdev_timestamp_t before = now();
         window_poll_events(self->window, &close_event, &event, 1);
         if (event.type == EVENT_KEY && event.key_event.event == KEY_EVENT_PRESSED) {
             switch (event.key_event.key) {
@@ -156,8 +162,14 @@ int application_run(Application_t *self) {
                     break;
             }
         }
-        ui_component_paint(self->root, window_get_chunky_buffer(self->window));
+        self->root->functions.paint_func(self->root, window_get_chunky_buffer(self->window));
         window_blit_chunky_buffer(self->window);
+        const exdev_timestamp_t total = now() - before;
+        if (wait_ms > 0) {
+            exdev_timestamp_t sleep_ms = wait_ms - total < 0 ? 10 : wait_ms - total;
+            log_debug_fmt("sleep for: %dms", sleep_ms);
+            sleep_for_ms(sleep_ms);
+        }
     }
 
     return 0;
