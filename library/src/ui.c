@@ -114,8 +114,6 @@ void ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, const int x,
 void application_init(Application_t *self, const char *name, const int width, const int height) {
     assert(self);
 
-    self->window = window_create(width, height, name, FS_8_BIT);
-
     self->root = malloc(sizeof(UIComponent_t));
     ui_component_init(self->root, 0, 0, width, height, NULL);
 
@@ -124,6 +122,7 @@ void application_init(Application_t *self, const char *name, const int width, co
     palette_8bit_set_pen(self->palette, &PEN_BLACK, 0); // background
     palette_8bit_set_pen(self->palette, &PEN_WHITE, 1); // border
 
+    self->window = window_create(width, height, name, FS_8_BIT);
     window_update_palette(self->window, self->palette);
 
     self->resume = 1;
