@@ -7,7 +7,7 @@
 
 #define WIDTH 640
 #define HEIGHT 480
-#define UPDATE_INTERVAL 50 // ms
+#define UPDATE_INTERVAL 50// ms
 
 void left_update(UIComponent_t *self, const exdev_timestamp_t ms, const Event_t *events, const int num_events) {
     ui_component_update(self, ms, events, num_events);// call update of base class
@@ -72,27 +72,37 @@ void right_update(UIComponent_t *self, const exdev_timestamp_t ms, const Event_t
     }
 }
 
+static void icon_clicked(UIIcon_t *self) {
+    log_info_fmt("icon clicked: %d", self->flags.clicked);
+}
+static void icon_focus(UIIcon_t *self) {
+    log_info_fmt("icon focus: %d", self->flags.focus);
+}
+
+
 int main() {
     exdev_base_init();
 
     // application
     Application_t app;
     application_init(&app, WIDTH, HEIGHT);
-    palette_8bit_read_from_dat(&app.palette, "assets/amiga_logo_8bit.pal"); // read palette from file
+    palette_8bit_read_from_dat(&app.palette, "assets/amiga_logo_8bit.pal");// read palette from file
 
     // left component
     UIComponent_t *left = ui_component_create(2, 2, 538, 476);
-    left->functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &left_update; // custom event handling
+    left->functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &left_update;// custom event handling
     ui_component_connect(&app.root, left);
 
     // icon
     UIIcon_t *icon = ui_icon_create_with_path(4, 4, "assets/amiga_logo_8bit.dat");
+    icon->functions.on_clicked = &icon_clicked;
+    icon->functions.on_focus = &icon_focus;
     ui_component_connect(left, icon);
 
     // right component
     UIComponent_t *right = ui_component_create(542, 2, 96, 476);
-    right->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *)) &right_paint; // custom paint
-    right->functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &right_update; // custom event handling
+    right->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *)) &right_paint;                       // custom paint
+    right->functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &right_update;// custom event handling
     ui_component_connect(&app.root, right);
 
     // run
