@@ -95,9 +95,11 @@ int main() {
     right->functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &right_update;
     ui_component_connect(&app.root, right);
 
+    // run
     application_run(&app, UPDATE_INTERVAL);
-    application_destroy(&app);
 
+    // cleanup
+    application_destroy(&app);
     exdev_base_deinit();
 
     return 0;
