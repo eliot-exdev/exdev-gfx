@@ -6,7 +6,10 @@
 
 #include <stdio.h>
 #include <string.h>
+
+#if defined(__linux__) || defined(__APPLE__)
 #include <unistd.h>
+#endif
 //#include <math.h>
 
 #define PI_ 3.141593f
@@ -90,7 +93,9 @@ float rad_to_deg(const float rad) {
 //}
 
 #if defined(__AMIGA__) || defined(__MORPHOS__)
-void swap_bytes_int(int *i) {(void)i;}
+
+void swap_bytes_int(int *i) { (void) i; }
+
 #else
 
 void swap_bytes_int(int *i) {
@@ -119,6 +124,11 @@ float normalize_float(float f, const float d) {
     return f;
 }
 
+#if defined(__linux__) || defined(__APPLE__)
 void sleep_for_ms(const exdev_timestamp_t ms) {
+    if (ms <= 0) {
+        return;
+    }
     usleep(ms * 1000);
 }
+#endif
