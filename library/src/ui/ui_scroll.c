@@ -61,6 +61,8 @@ void ui_scroll_init(UIScrollPane_t *self, int x, int y, int width, int height, c
     self->fb = NULL;
     self->h_bar = NULL;
     self->v_bar = NULL;
+    self->x_visible = 0;
+    self->y_visible = 0;
 }
 
 UIScrollPane_t *ui_scroll_create(const int x, const int y, const int width, const int height, const UIScrollingSupport_t scrolling_support) {
@@ -119,6 +121,9 @@ void ui_scroll_prepare(UIScrollPane_t *self) {
     framebuffer_8bit_init(self->fb, width, height);
     framebuffer_8bit_fill(self->fb, self->base.properties.background_color);
 
+    self->x_visible = self->base.properties.width - SCROLL_BAR_SIZE - 6;
+    self->y_visible = self->base.properties.height - SCROLL_BAR_SIZE - 6;
+
     // setup h bar
     if (self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL || self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
         self->h_bar = ui_horizontal_scroll_bar_create(self,
@@ -127,7 +132,7 @@ void ui_scroll_prepare(UIScrollPane_t *self) {
                                                       self->base.properties.width - SCROLL_BAR_SIZE - 4,
                                                       SCROLL_BAR_SIZE,
                                                       width,
-                                                      self->base.properties.width - SCROLL_BAR_SIZE - 6);
+                                                      self->x_visible);
     }
     if (self->properties.scrolling_support == UI_SCROLLING_SUPPORT_VERTICAL || self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
         self->v_bar = ui_vertical_scroll_bar_create(self,
@@ -136,7 +141,7 @@ void ui_scroll_prepare(UIScrollPane_t *self) {
                                                     SCROLL_BAR_SIZE,
                                                     self->base.properties.height - SCROLL_BAR_SIZE - 4,
                                                     height,
-                                                    self->base.properties.height - SCROLL_BAR_SIZE - 6);
+                                                    self->y_visible);
     }
 }
 
@@ -172,8 +177,8 @@ int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, const int x_off
                                    self->fb,
                                    self->properties.x_offset,
                                    self->properties.y_offset,
-                                   self->base.properties.width - SCROLL_BAR_SIZE - 6,
-                                   self->base.properties.height - SCROLL_BAR_SIZE - 6,
+                                   self->x_visible,
+                                   self->y_visible,
                                    x + 2,
                                    y + 2);
 
@@ -194,10 +199,42 @@ int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, const int x_off
 
 void ui_scroll_update(UIScrollPane_t *self, const long time_elapsed, const Event_t *events, const int num_events) {
     assert(self);
-    ui_component_update(&self->base, time_elapsed, events, num_events);
+    assert(events);
+
+    int x_abs = 0;
+    int y_abs = 0;
+    ui_component_get_absolute_position(&self->base, &x_abs, &y_abs);
+    Event_t *cpy = malloc(sizeof(Event_t) * num_events);
+    event_copy(cpy, events, num_events);
+
+    for (int i = 0; i < num_events; ++i) {
+        Event_t *e = cpy + i;
+        if (e->type == EVENT_MOUSE) {
+            if (e->mouse_event.position_x > x_abs + self->x_visible + 2) {
+                e->mouse_event.position_x += self->properties.x_offset + x_abs + self->base.properties.width;
+            } else if (e->mouse_event.position_x <= x_abs) {
+                e->mouse_event.position_x -= self->properties.x_offset + 2;
+            } else {
+                e->mouse_event.position_x += self->properties.x_offset - 2;
+            }
+            if (e->mouse_event.position_y > y_abs + self->y_visible + 2) {
+                e->mouse_event.position_y += self->properties.y_offset + x_abs + self->base.properties.height;
+            } else if (e->mouse_event.position_y <= y_abs) {
+                e->mouse_event.position_y -= self->properties.y_offset + 2;
+            } else {
+                e->mouse_event.position_y += self->properties.y_offset - 2;
+            }
+        }
+    }
+    ui_component_update(&self->base, time_elapsed, cpy, num_events);
+
+    free(cpy);
+    cpy = NULL;
+
     if (self->h_bar) {
         self->h_bar->base.functions.update_func(self->h_bar, time_elapsed, events, num_events);
     }
+
     if (self->v_bar) {
         self->v_bar->base.functions.update_func(self->v_bar, time_elapsed, events, num_events);
     }

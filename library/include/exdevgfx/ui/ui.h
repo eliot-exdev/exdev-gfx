@@ -193,6 +193,8 @@ struct UIScrollPane {
     Framebuffer8Bit_t *fb;
     struct UIHorizontalScrollBar *h_bar;
     struct UIVerticalScrollBar *v_bar;
+    int x_visible;
+    int y_visible;
 };
 
 typedef struct UIScrollPane UIScrollPane_t;
