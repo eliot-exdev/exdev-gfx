@@ -10,6 +10,26 @@ extern "C" {
 #include <exdevgfx/window.h>
 #include <exdevgfx/helper.h>
 
+#define PEN_INDEX_BLACK 0
+#define PEN_INDEX_WHITE 1
+
+#define PEN_INDEX_DARK_RED 2
+#define PEN_INDEX_RED 3
+
+#define PEN_INDEX_GREEN 4
+#define PEN_INDEX_DARK_GREEN 5
+
+#define PEN_INDEX_DARK_BLUE 6
+#define PEN_INDEX_BLUE 7
+
+#define PEN_INDEX_DARK_YELLOW 8
+#define PEN_INDEX_YELLOW 9
+
+#define PEN_INDEX_DARK_GRAY 10
+#define PEN_INDEX_GRAY 11
+
+#define PEN_INDEX_CYAN 12
+
 //--- UIComponent ---//
 enum ui_component_type {
     UI_COMPONENT_BASE,
