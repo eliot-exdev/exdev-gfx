@@ -24,6 +24,7 @@ if (MORPHOS OR AMIGAOS)
             src/vertex2d.c
             src/vertex3d.c
             src/voxelspace.c
+            src/ui.c
             src_amiga/exdev_base_amiga.c
             src_amiga/helper_amiga.c
             src_amiga/window_amiga.c
@@ -64,6 +65,7 @@ else ()
             src/vertex2d.c
             src/vertex3d.c
             src/voxelspace.c
+            src/ui.c
             src_linux/exdev_base_linux.c
             src_linux/helper_linux.c
             src_linux/window_linux_x11.c
