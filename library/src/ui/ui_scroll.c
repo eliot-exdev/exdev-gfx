@@ -42,6 +42,7 @@ void ui_scroll_init(UIScrollPane_t *self, int x, int y, int width, int height, c
     self->properties.scrolling_support = scrolling_support;
 
     self->base.functions.destroy_func = (void (*)(void *)) &ui_scroll_destroy;
+    self->base.functions.prepare_func = (void (*)(void *)) &ui_scroll_prepare;
     self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_scroll_paint;
     self->base.functions.update_func = (void (*)(void *, long, const Event_t *, int)) &ui_scroll_update;
 
@@ -50,6 +51,7 @@ void ui_scroll_init(UIScrollPane_t *self, int x, int y, int width, int height, c
     } else {
         self->functions.on_x_offset = NULL;
     }
+
     if (scrolling_support == UI_SCROLLING_SUPPORT_VERTICAL || scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
         self->functions.on_y_offset = ui_scroll_on_y_offset;
     } else {
@@ -92,6 +94,52 @@ void ui_scroll_destroy(UIScrollPane_t *self) {
     }
 }
 
+void ui_scroll_prepare(UIScrollPane_t *self) {
+    assert(self);
+
+    ui_component_prepare(&self->base);
+
+    // find biggest x and y
+    int width = self->base.properties.width;
+    int height = self->base.properties.height;
+    for (int i = 0; i < self->base.children.size; ++i) {
+        const UIComponent_t *child = self->base.children.components[i];
+        const int x_total = child->properties.x + child->properties.width;
+        const int y_total = child->properties.y + child->properties.height;
+        if (x_total > width) {
+            width = x_total;
+        }
+        if (y_total > height) {
+            height = y_total;
+        }
+    }
+
+    // setup fb
+    self->fb = malloc(sizeof(Framebuffer8Bit_t));
+    framebuffer_8bit_init(self->fb, width, height);
+    framebuffer_8bit_fill(self->fb, self->base.properties.background_color);
+
+    // setup h bar
+    if (self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL || self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
+        self->h_bar = ui_horizontal_scroll_bar_create(self,
+                                                      2,
+                                                      self->base.properties.width - SCROLL_BAR_SIZE - 2,
+                                                      self->base.properties.width - SCROLL_BAR_SIZE - 4,
+                                                      SCROLL_BAR_SIZE,
+                                                      width,
+                                                      self->base.properties.width);
+    }
+    if (self->properties.scrolling_support == UI_SCROLLING_SUPPORT_VERTICAL || self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
+        self->v_bar = ui_vertical_scroll_bar_create(self,
+                                                    self->base.properties.width - SCROLL_BAR_SIZE - 2,
+                                                    2,
+                                                    SCROLL_BAR_SIZE,
+                                                    self->base.properties.height - SCROLL_BAR_SIZE - 4,
+                                                    height,
+                                                    self->base.properties.height);
+    }
+}
+
 int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, const int x_offset, const int y_offset, const int, const int) {
     assert(self);
     assert(fb);
@@ -100,47 +148,6 @@ int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, const int x_off
     const int x = self->base.properties.x + x_offset;
     const int y = self->base.properties.y + y_offset;
 
-    if (!self->fb) {
-        // find biggest x and y
-        int width = x;
-        int height = y;
-        for (int i = 0; i < self->base.children.size; ++i) {
-            const UIComponent_t *child = self->base.children.components[i];
-            const int x_total = child->properties.x + child->properties.width;
-            const int y_total = child->properties.y + child->properties.height;
-            if (x_total > width) {
-                width = x_total;
-            }
-            if (y_total > height) {
-                height = y_total;
-            }
-        }
-
-        // setup fb
-        self->fb = malloc(sizeof(Framebuffer8Bit_t));
-        framebuffer_8bit_init(self->fb, width, height);
-        framebuffer_8bit_fill(self->fb, self->base.properties.background_color);
-
-        // setup h bar
-        if (self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL || self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
-            self->h_bar = ui_horizontal_scroll_bar_create(self,
-                                                          2,
-                                                          self->base.properties.width - SCROLL_BAR_SIZE - 2,
-                                                          self->base.properties.width - SCROLL_BAR_SIZE - 4,
-                                                          SCROLL_BAR_SIZE,
-                                                          width,
-                                                          self->base.properties.width);
-        }
-        if (self->properties.scrolling_support == UI_SCROLLING_SUPPORT_VERTICAL || self->properties.scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
-            self->v_bar = ui_vertical_scroll_bar_create(self,
-                                                        self->base.properties.width - SCROLL_BAR_SIZE - 2,
-                                                        2,
-                                                        SCROLL_BAR_SIZE,
-                                                        self->base.properties.height - SCROLL_BAR_SIZE - 4,
-                                                        height,
-                                                        self->base.properties.height);
-        }
-    }
 
     if (res) {
         if (self->base.flags.fill_background) {

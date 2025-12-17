@@ -31,6 +31,7 @@ void ui_component_init(UIComponent_t *self, const int x, const int y, const int 
     self->flags.draw_border = 1;
 
     self->functions.destroy_func = (void (*)(void *)) &ui_component_destroy;
+    self->functions.prepare_func = (void (*)(void *)) &ui_component_prepare;
     self->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_component_paint;
     self->functions.update_func = (void (*)(void *, long, const Event_t *, int)) &ui_component_update;
 
@@ -39,7 +40,16 @@ void ui_component_init(UIComponent_t *self, const int x, const int y, const int 
 }
 
 void ui_component_destroy(UIComponent_t *self) {
+    assert(self);
     ui_component_list_destroy(&self->children);
+}
+
+void ui_component_prepare(UIComponent_t *self) {
+    assert(self);
+
+    for (int i = 0; i < self->children.size; ++i) {
+        self->children.components[i]->functions.prepare_func(self->children.components[i]);
+    }
 }
 
 int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, int const x_offset, const int y_offset, const int, const int) {
