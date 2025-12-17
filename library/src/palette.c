@@ -14,11 +14,22 @@
 
 const Pen_t PEN_BLACK = {0, 0, 0};
 const Pen_t PEN_WHITE = {PEN_MAX, PEN_MAX, PEN_MAX};
+
 const Pen_t PEN_GRAY = {PEN_HALF, PEN_HALF, PEN_HALF};
+const Pen_t PEN_DARK_GRAY = {PEN_QUARTER, PEN_QUARTER, PEN_QUARTER};
+
 const Pen_t PEN_RED = {PEN_MAX, 0, 0};
+const Pen_t PEN_DARK_RED = {PEN_HALF, 0, 0};
+
 const Pen_t PEN_GREEN = {0, PEN_MAX, 0};
+const Pen_t PEN_DARK_GREEN = {0, PEN_HALF, 0};
+
 const Pen_t PEN_BLUE = {0, 0, PEN_MAX};
+const Pen_t PEN_DARK_BLUE = {0, 0, PEN_HALF};
+
 const Pen_t PEN_YELLOW = {PEN_MAX, PEN_MAX, 0};
+const Pen_t PEN_DARK_YELLOW = {PEN_HALF, PEN_HALF, 0};
+
 const Pen_t PEN_CYAN = {0, PEN_MAX, PEN_MAX};
 
 void pen_init(Pen_t *p, const unsigned int r, const unsigned int g, const unsigned int b) {

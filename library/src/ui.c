@@ -40,6 +40,8 @@ void ui_component_list_add(UIComponentList_t *self, UIComponent_t *component) {
     self->components[self->size - 1] = component;
 }
 
+static Color8Bit_t BACKGROUND_COLOR = 0;
+static Color8Bit_t BORDER_COLOR = 0;
 void ui_component_init(UIComponent_t *self, const int x, const int y, const int width, const int height, UIComponent_t *parent) {
     assert(self);
     self->type = UI_COMPONENT_BASE;
@@ -48,8 +50,6 @@ void ui_component_init(UIComponent_t *self, const int x, const int y, const int 
     self->properties.y = y;
     self->properties.width = width;
     self->properties.height = height;
-    self->properties.background_color = 0;
-    self->properties.border_color = 1;
 
     self->flags.dirty_flag = 1;
     self->flags.enabled_flag = 1;
@@ -74,11 +74,11 @@ void ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb) {
 
     if (self->flags.dirty_flag) {
         if (self->flags.fill_background) {
-            framebuffer_8bit_fill_rect(fb, self->properties.x, self->properties.y, self->properties.width, self->properties.height, self->properties.background_color);
+            framebuffer_8bit_fill_rect(fb, self->properties.x, self->properties.y, self->properties.width, self->properties.height, BACKGROUND_COLOR);
         }
 
         if (self->flags.draw_border) {
-            framebuffer_8bit_draw_rect(fb, self->properties.x, self->properties.y, self->properties.width, self->properties.height, self->properties.border_color);
+            framebuffer_8bit_draw_rect(fb, self->properties.x, self->properties.y, self->properties.width, self->properties.height, BORDER_COLOR);
         }
 
         self->flags.dirty_flag = 0;
@@ -148,12 +148,9 @@ void application_init(Application_t *self, const int width, const int height) {
     assert(self);
 
     ui_component_init(&self->root, 0, 0, width, height, NULL);
-    palette_8bit_init(&self->palette,0);
+    palette_8bit_init(&self->palette, 0);
     self->resume = 1;
 
-    //    palette_8bit_init(self->palette, 2);
-//    palette_8bit_set_pen(self->palette, &PEN_BLACK, 0); // background
-//    palette_8bit_set_pen(self->palette, &PEN_WHITE, 1); // border
 }
 
 void application_destroy(Application_t *self) {
@@ -181,6 +178,19 @@ int application_run(Application_t *self, exdev_timestamp_t wait_ms) {
 
     // open window
     self->window = window_create(self->root.properties.width, self->root.properties.height, "app", FS_8_BIT);
+
+    // setup palette
+    palette_8bit_add_pen(&self->palette, &PEN_BLACK);
+    palette_8bit_add_pen(&self->palette, &PEN_WHITE);
+    palette_8bit_add_pen(&self->palette, &PEN_RED);
+    palette_8bit_add_pen(&self->palette, &PEN_DARK_RED);
+    palette_8bit_add_pen(&self->palette, &PEN_GREEN);
+    palette_8bit_add_pen(&self->palette, &PEN_DARK_GREEN);
+    BORDER_COLOR = palette_8bit_add_pen(&self->palette, &PEN_BLUE);
+    BACKGROUND_COLOR = palette_8bit_add_pen(&self->palette, &PEN_DARK_BLUE);
+    palette_8bit_add_pen(&self->palette, &PEN_YELLOW);
+    palette_8bit_add_pen(&self->palette, &PEN_DARK_YELLOW);
+    palette_8bit_add_pen(&self->palette, &PEN_CYAN);
     window_update_palette(self->window, &self->palette);
 
     // loop
