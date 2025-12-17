@@ -1,8 +1,9 @@
-Short:        Technical demo of a voxelspace renderer
-Uploader:     Andre Geisler
-Author:       Andre Geisler
+Short:        Technical demo of a voxelspace renderer inspired by Comanche
+Kurz:         Technische Demo eines Voxelrenderers inspiriert von Comanche
+Uploader:     eliot@exdev.de (Andre Geisler)
+Author:       eliot@exdev.de (Andre Geisler)
 Type:         misc/misc
-Requires:     c2plib
+Requires:     dev/misc/c2plib.lha
 Version:      0.9
 Architecture: m68k-amigaos >= 3.1.4; ppc-morphos
 Distribution: Aminet
