@@ -57,7 +57,7 @@ void ui_component_init(UIComponent_t *self, const int x, const int y, const int 
     self->flags.draw_border = 1;
 
     self->functions.destroy_func = (void (*)(void *)) &ui_component_destroy;
-    self->functions.paint_func = (void (*)(void *, Framebuffer8Bit_t *, int, int)) &ui_component_paint;
+    self->functions.paint_func = (void (*)(void *, Framebuffer8Bit_t *)) &ui_component_paint;
     self->functions.update_func = (void (*)(void *, exdev_timestamp_t)) &ui_component_update;
 
     self->parent = parent;
@@ -68,27 +68,24 @@ void ui_component_destroy(UIComponent_t *self) {
     ui_component_list_destroy(&self->childs);
 }
 
-void ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, const int x, const int y) {
+void ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb) {
     assert(self);
     assert(fb);
 
     if (self->flags.dirty_flag) {
         if (self->flags.fill_background) {
-            framebuffer_8bit_fill_rect(fb, x, y, self->properties.width, self->properties.height, self->properties.background_color);
+            framebuffer_8bit_fill_rect(fb, self->properties.x, self->properties.y, self->properties.width, self->properties.height, self->properties.background_color);
         }
 
         if (self->flags.draw_border) {
-            framebuffer_8bit_draw_rect(fb, x, y, self->properties.width, self->properties.height, self->properties.border_color);
+            framebuffer_8bit_draw_rect(fb, self->properties.x, self->properties.y, self->properties.width, self->properties.height, self->properties.border_color);
         }
 
         self->flags.dirty_flag = 0;
     }
 
     for (int i = 0; i < self->childs.size; ++i) {
-        self->childs.components[i]->functions.paint_func(self->childs.components[i],
-                                                         fb,
-                                                         x + self->childs.components[i]->properties.x,
-                                                         y + self->childs.components[i]->properties.y);
+        self->childs.components[i]->functions.paint_func(self->childs.components[i], fb);
     }
 }
 
@@ -164,7 +161,7 @@ int application_run(Application_t *self, exdev_timestamp_t wait_ms) {
         self->root->functions.update_func(self->root, end_ms - begin_ms);
 
         // paint ui
-        self->root->functions.paint_func(self->root, window_get_chunky_buffer(self->window), 0, 0);
+        self->root->functions.paint_func(self->root, window_get_chunky_buffer(self->window));
 
         // blit ui to screen
         window_blit_chunky_buffer(self->window);
