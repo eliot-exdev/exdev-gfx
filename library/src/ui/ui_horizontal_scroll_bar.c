@@ -76,17 +76,19 @@ void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, const exdev_
                     int x = events[i].mouse_event.position_x;
                     int y = events[i].mouse_event.position_y;
                     ui_component_get_relative_position(&self->base, &x, &y);
-                    self->properties.x_pos = x;
-                    const float f1 = (float) self->properties.x_width_visible / (float) self->properties.x_width_total;
-                    const float f2 = (float) self->base.properties.width / (float) self->properties.x_width_visible;
-                    const int bar_width = (int) (f1 * f2 * (float) self->base.properties.width);
-                    if (self->properties.x_pos > self->base.properties.width - bar_width) {
-                        self->properties.x_pos = self->base.properties.width - bar_width;
-                    }
-                    self->base.flags.dirty_flag = 1;
-                    self->flags.dragged = 1;
-                    if (self->functions.on_x_offset) {
-                        self->functions.on_x_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.x_pos / f1 / f2));
+                    if (x != self->properties.x_pos) {
+                        self->properties.x_pos = x;
+                        const float f1 = (float) self->properties.x_width_visible / (float) self->properties.x_width_total;
+                        const float f2 = (float) self->base.properties.width / (float) self->properties.x_width_visible;
+                        const int bar_width = (int) (f1 * f2 * (float) self->base.properties.width);
+                        if (self->properties.x_pos > self->base.properties.width - bar_width) {
+                            self->properties.x_pos = self->base.properties.width - bar_width;
+                        }
+                        self->base.flags.dirty_flag = 1;
+                        self->flags.dragged = 1;
+                        if (self->functions.on_x_offset) {
+                            self->functions.on_x_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.x_pos / f1 / f2));
+                        }
                     }
                 }
             } else if (self->flags.dragged && events[i].mouse_event.button == MOUSE_BUTTON_0 && events[i].mouse_event.event == MOUSE_EVENT_BUTTON_RELEASED) {
@@ -95,19 +97,22 @@ void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, const exdev_
                 int x = events[i].mouse_event.position_x;
                 int y = events[i].mouse_event.position_y;
                 ui_component_get_relative_position(&self->base, &x, &y);
-                self->properties.x_pos = x;
-                if (self->properties.x_pos < 0) {
-                    self->properties.x_pos = 0;
+                if (x < 0) {
+                    x = 0;
                 }
-                const float f1 = (float) self->properties.x_width_visible / (float) self->properties.x_width_total;
-                const float f2 = (float) self->base.properties.width / (float) self->properties.x_width_visible;
-                const int bar_width = (int) (f1 * f2 * (float) self->base.properties.width);
-                if (self->properties.x_pos > self->base.properties.width - bar_width) {
-                    self->properties.x_pos = self->base.properties.width - bar_width;
-                }
-                self->base.flags.dirty_flag = 1;
-                if (self->functions.on_x_offset) {
-                    self->functions.on_x_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.x_pos / f1 / f2));
+
+                if (x != self->properties.x_pos) {
+                    self->properties.x_pos = x;
+                    const float f1 = (float) self->properties.x_width_visible / (float) self->properties.x_width_total;
+                    const float f2 = (float) self->base.properties.width / (float) self->properties.x_width_visible;
+                    const int bar_width = (int) (f1 * f2 * (float) self->base.properties.width);
+                    if (self->properties.x_pos > self->base.properties.width - bar_width) {
+                        self->properties.x_pos = self->base.properties.width - bar_width;
+                    }
+                    self->base.flags.dirty_flag = 1;
+                    if (self->functions.on_x_offset) {
+                        self->functions.on_x_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.x_pos / f1 / f2));
+                    }
                 }
             }
         }
