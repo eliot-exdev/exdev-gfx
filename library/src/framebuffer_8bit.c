@@ -504,7 +504,7 @@ void framebuffer_8bit_blit_8bit(Framebuffer8Bit_t *fb, const Framebuffer8Bit_t *
 
     for (int j = 0; j < height; ++j) {
         for (int i = 0; i < width; ++i) { // memcpy might be faster
-            *framebuffer_8bit_pixel_at(fb, i + to_x, j + to_y) = *framebuffer_8bit_pixel_at(src, j + x, j + y);
+            *framebuffer_8bit_pixel_at(fb, i + to_x, j + to_y) = *framebuffer_8bit_pixel_at(src, i + x, j + y);
         }
     }
 }
