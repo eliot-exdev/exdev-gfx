@@ -51,10 +51,10 @@ easing_mos_gcc: library/easing/src/Back.c library/easing/src/Bounce.c library/ea
                 library/easing/src/Sine.c
 	$(CC_GCC) -c $(^) ${INCLUDES_MOS} ${C_FLAGS_MOS_GCC}
 
-easing_mos: library/easing/src/Back.c library/easing/src/Bounce.c library/easing/src/Circ.c library/easing/src/Cubic.c library/easing/src/Elastic.c\
+easing_060: library/easing/src/Back.c library/easing/src/Bounce.c library/easing/src/Circ.c library/easing/src/Cubic.c library/easing/src/Elastic.c\
                 library/easing/src/Expo.c library/easing/src/Linear.c library/easing/src/Quad.c library/easing/src/Quart.c library/easing/src/Quint.c\
                 library/easing/src/Sine.c
-	$(CC) -c $(^) ${INCLUDES_MOS} ${C_FLAGS_MOS}
+	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060}
 
 EASING_OBJECTS = Back.o Bounce.o Circ.o Cubic.o Elastic.o Expo.o Linear.o Quad.o Quart.o Quint.o Sine.o
 
@@ -62,11 +62,11 @@ test_sprite_mos_gcc: library/src/palette.c library/src/events.c library/src/colo
                      library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c library/src_amiga/window_amiga.c examples/test_sprite.c
 	$(MAKE) easing_mos_gcc
 	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) $(EASING_OBJECTS) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
-    
-test_sprite_mos: library/src/palette.c library/src/events.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src/font.c library/src/vertex2d.c\
-                 library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c library/src_amiga/window_amiga.c examples/test_sprite.c
-	$(MAKE) easing_mos
-	$(CC) -o ${@} ${INCLUDES_MOS} $(^) $(EASING_OBJECTS) ${C_FLAGS_MOS} ${LD_FLAGS_MOS}
+
+ test_sprite_060: library/src/palette.c library/src/events.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src/font.c library/src/vertex2d.c\
+                      library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c library/src_amiga/window_amiga.c examples/test_sprite.c
+	$(MAKE) easing_060
+	$(CC) -o ${@} ${INCLUDES_AOS} $(^) $(EASING_OBJECTS) ${C_FLAGS_060} ${LD_FLAGS_060}
 
 #--- julia ---#
 julia: julia_mos julia_mos_gcc
