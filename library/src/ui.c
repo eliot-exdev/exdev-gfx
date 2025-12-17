@@ -339,7 +339,7 @@ int application_run(Application_t *self, const exdev_timestamp_t wait_ms) {
             }
         }
 
-        if (window_get_mouse_position(self->window, &events[num_events])) {
+        if (num_events < MAX_EVENTS && window_get_mouse_position(self->window, &events[num_events])) {
             ++num_events;
         }
         // update ui
