@@ -4,7 +4,7 @@ Uploader:     eliot@exdev.de (Andre Geisler)
 Author:       eliot@exdev.de (Andre Geisler)
 Type:         misc/misc
 Requires:     dev/misc/c2plib.lha
-Version:      0.9
+Version:      0.9.1
 Architecture: m68k-amigaos >= 3.1.4; ppc-morphos
 Distribution: Aminet
 URL:          https://github.com/eliot-exdev/exdev-gfx.git
@@ -74,6 +74,8 @@ F4                 decrease render distance
 F5                 increase render distance
 
 # History
+- 0.9.1 2025-10-31
+  - changed AGA/C2P resolution to 320x256
 
 - 0.9 2025-06-05
   - optimized sky rendering
