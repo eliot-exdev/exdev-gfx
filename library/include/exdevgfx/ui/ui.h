@@ -10,9 +10,10 @@ extern "C" {
 #include <exdevgfx/window.h>
 #include <exdevgfx/helper.h>
 
-
+//--- UIComponent ---//
 enum ui_component_type {
-    UI_COMPONENT_CONTAINER,
+    UI_COMPONENT_BASE,
+    UI_COMPONENT_ICON,
     UI_COMPONENT_CUSTOM
 };
 
@@ -76,10 +77,30 @@ void ui_component_update(UIComponent_t *self, exdev_timestamp_t time_elapsed, co
 
 int ui_component_is_inside(const UIComponent_t *self, int x, int y);
 
+//--- UIIcon ---//
+struct UIIcon {
+    UIComponent_t base;
+    Framebuffer8Bit_t *icon;
+    struct {
+        int clickable;
+    } flags;
+};
+
+typedef struct UIIcon UIIcon_t;
+
+void ui_icon_init(UIIcon_t *self, int x, int y, Framebuffer8Bit_t *fb, UIComponent_t *parent);
+
+void ui_icon_destroy(UIIcon_t *self);
+
+void ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb);
+
+void ui_icon_update(UIIcon_t *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
+
+//--- Application ---//
 struct Application {
     Window_t *window;
-    UIComponent_t *root;
-    Palette8Bit_t *palette;
+    UIComponent_t root;
+    Palette8Bit_t palette;
     int resume;
 };
 

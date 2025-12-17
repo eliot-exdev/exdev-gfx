@@ -42,7 +42,7 @@ void ui_component_list_add(UIComponentList_t *self, UIComponent_t *component) {
 
 void ui_component_init(UIComponent_t *self, const int x, const int y, const int width, const int height, UIComponent_t *parent) {
     assert(self);
-    self->type = UI_COMPONENT_CONTAINER;
+    self->type = UI_COMPONENT_BASE;
     self->subtype = 0;
     self->properties.x = x;
     self->properties.y = y;
@@ -104,18 +104,56 @@ int ui_component_is_inside(const UIComponent_t *self, const int x, const int y) 
            y >= self->properties.y && y < self->properties.y + self->properties.height;
 }
 
+void ui_icon_init(UIIcon_t *self, int x, int y, Framebuffer8Bit_t *fb, UIComponent_t *parent) {
+    assert(self);
+    assert(fb);
+
+    ui_component_init(&self->base, x, y, fb->width + 2, fb->height + 2, parent);
+    self->base.type = UI_COMPONENT_ICON;
+    self->base.functions.destroy_func = (void (*)(void *)) &ui_icon_destroy;
+    self->base.functions.paint_func = (void (*)(void *, Framebuffer8Bit_t *)) &ui_icon_paint;
+    self->base.functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &ui_icon_update;
+
+    self->icon = fb;
+    self->flags.clickable = 1;
+}
+
+void ui_icon_destroy(UIIcon_t *self) {
+    assert(self);
+    ui_component_destroy(&self->base);
+    framebuffer_8bit_deinit(self->icon);
+    free(self->icon);
+    self->icon = NULL;
+}
+
+void ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb) {
+    assert(self);
+    assert(fb);
+
+    const int tmp = self->base.flags.dirty_flag;
+    ui_component_paint(&self->base, fb);
+
+    if (tmp) {
+        framebuffer_8bit_draw_framebuffer(fb, self->base.properties.x + 1, self->base.properties.y + 1, self->icon);
+    }
+}
+
+void ui_icon_update(UIIcon_t *self, const exdev_timestamp_t time_elapsed, const Event_t *events, const int num_events) {
+    assert(self);
+
+    ui_component_update(&self->base, time_elapsed, events, num_events);
+}
+
 void application_init(Application_t *self, const int width, const int height) {
     assert(self);
 
-    self->root = malloc(sizeof(UIComponent_t));
-    ui_component_init(self->root, 0, 0, width, height, NULL);
-
-    self->palette = malloc(sizeof(Palette8Bit_t));
-    palette_8bit_init(self->palette, 2);
-    palette_8bit_set_pen(self->palette, &PEN_BLACK, 0); // background
-    palette_8bit_set_pen(self->palette, &PEN_WHITE, 1); // border
-
+    ui_component_init(&self->root, 0, 0, width, height, NULL);
+    palette_8bit_init(&self->palette,0);
     self->resume = 1;
+
+    //    palette_8bit_init(self->palette, 2);
+//    palette_8bit_set_pen(self->palette, &PEN_BLACK, 0); // background
+//    palette_8bit_set_pen(self->palette, &PEN_WHITE, 1); // border
 }
 
 void application_destroy(Application_t *self) {
@@ -123,14 +161,7 @@ void application_destroy(Application_t *self) {
 
     window_destroy(self->window);
     self->window = NULL;
-
-    ui_component_destroy(self->root);
-    free(self->root);
-    self->root = NULL;
-
-    free(self->palette);
-    self->palette = NULL;
-
+    ui_component_destroy(&self->root);
     self->resume = 0;
 }
 
@@ -149,8 +180,8 @@ int application_run(Application_t *self, exdev_timestamp_t wait_ms) {
     exdev_timestamp_t end_ms = 0;
 
     // open window
-    self->window = window_create(self->root->properties.width, self->root->properties.height, "app", FS_8_BIT);
-    window_update_palette(self->window, self->palette);
+    self->window = window_create(self->root.properties.width, self->root.properties.height, "app", FS_8_BIT);
+    window_update_palette(self->window, &self->palette);
 
     // loop
     while (self->resume) {
@@ -170,10 +201,10 @@ int application_run(Application_t *self, exdev_timestamp_t wait_ms) {
         }
 
         // update ui
-        self->root->functions.update_func(self->root, end_ms - begin_ms, events, num_events);
+        self->root.functions.update_func(&self->root, end_ms - begin_ms, events, num_events);
 
         // paint ui
-        self->root->functions.paint_func(self->root, window_get_chunky_buffer(self->window));
+        self->root.functions.paint_func(&self->root, window_get_chunky_buffer(self->window));
 
         // blit ui to screen
         window_blit_chunky_buffer(self->window);
