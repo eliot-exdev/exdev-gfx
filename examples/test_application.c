@@ -93,7 +93,7 @@ int main() {
 
     // application
     UIApplication_t app;
-    application_init(&app, WIDTH, HEIGHT);
+    ui_application_init(&app, WIDTH, HEIGHT);
     palette_8bit_read_from_dat(&app.palette, "assets/amiga_logo_8bit.pal");// read palette from file
 
     // left component
@@ -120,11 +120,11 @@ int main() {
     ui_component_connect(&app.root, right);
 
     // run
-    application_prepare(&app);
-    application_run(&app, UPDATE_INTERVAL);
+    ui_application_prepare(&app);
+    ui_application_run(&app, UPDATE_INTERVAL);
 
     // cleanup
-    application_destroy(&app);
+    ui_application_destroy(&app);
     exdev_base_deinit();
 
     return 0;

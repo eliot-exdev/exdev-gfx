@@ -10,7 +10,7 @@
 
 #include <assert.h>
 
-void application_init(UIApplication_t *self, const int width, const int height) {
+void ui_application_init(UIApplication_t *self, const int width, const int height) {
     assert(self);
 
     ui_component_init(&self->root, 0, 0, width, height);
@@ -18,7 +18,7 @@ void application_init(UIApplication_t *self, const int width, const int height) 
     self->resume = 1;
 }
 
-void application_destroy(UIApplication_t *self) {
+void ui_application_destroy(UIApplication_t *self) {
     assert(self);
 
     window_destroy(self->window);
@@ -27,7 +27,7 @@ void application_destroy(UIApplication_t *self) {
     self->resume = 0;
 }
 
-void application_prepare(UIApplication_t *self) {
+void ui_application_prepare(UIApplication_t *self) {
     assert(self);
 
     // setup palette
@@ -55,7 +55,7 @@ void application_prepare(UIApplication_t *self) {
 
 #define MAX_EVENTS 4
 
-int application_run(UIApplication_t *self, const exdev_timestamp_t wait_ms) {
+int ui_application_run(UIApplication_t *self, const exdev_timestamp_t wait_ms) {
     assert(self);
 
     char close_event = 0;

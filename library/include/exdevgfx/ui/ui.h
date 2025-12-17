@@ -289,13 +289,13 @@ struct UIApplication {
 
 typedef struct UIApplication UIApplication_t;
 
-void application_init(UIApplication_t *self, int width, int height);
+void ui_application_init(UIApplication_t *self, int width, int height);
 
-void application_destroy(UIApplication_t *self);
+void ui_application_destroy(UIApplication_t *self);
 
-void application_prepare(UIApplication_t *self);
+void ui_application_prepare(UIApplication_t *self);
 
-int application_run(UIApplication_t *self, long wait_ms);
+int ui_application_run(UIApplication_t *self, long wait_ms);
 
 #ifdef __cplusplus
 }
