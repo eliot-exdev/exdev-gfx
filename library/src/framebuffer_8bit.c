@@ -15,6 +15,42 @@
 #include <assert.h>
 #include <math.h>
 
+void tiles_8bit_init_from_framebuffer(Tiles8bit_t *dst, const Framebuffer8Bit_t *src, const int width, const int height) {
+    assert(dst);
+    assert(src);
+
+    const int num_cols = src->width / width;
+    const int num_rows = src->height / height;
+
+    dst->num = num_cols * num_rows;
+
+    dst->tiles = malloc(sizeof(Framebuffer8Bit_t) * dst->num);
+
+    for (int i = 0; i < dst->num; ++i) {
+        framebuffer_8bit_init(dst->tiles + i, width, height);
+    }
+
+    int i = 0;
+    for (int y = 0; y < num_rows; ++y) {
+        for (int x = 0; x < num_cols; ++x) {
+            framebuffer_8bit_blit_8bit(dst->tiles + i, src, x * width, y * width, width, height, 0, 0);
+            ++i;
+        }
+    }
+}
+
+void tiles_8bit_deinit(Tiles8bit_t *tiles) {
+    assert(tiles);
+
+    for (int i = 0; i < tiles->num; ++i) {
+        framebuffer_8bit_deinit(tiles->tiles + i);
+    }
+
+    free(tiles->tiles);
+    tiles->tiles = NULL;
+    tiles->num = 0;
+}
+
 void framebuffer_8bit_init(Framebuffer8Bit_t *fb, const int width, const int height) {
     assert(fb);
 

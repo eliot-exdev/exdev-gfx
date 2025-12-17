@@ -21,6 +21,16 @@ struct Framebuffer8Bit {
 };
 typedef struct Framebuffer8Bit Framebuffer8Bit_t;
 
+struct Tiles8bit {
+    Framebuffer8Bit_t *tiles;
+    int num;
+};
+typedef struct Tiles8bit Tiles8bit_t;
+
+void tiles_8bit_init_from_framebuffer(Tiles8bit_t *dst, const Framebuffer8Bit_t *src, int width, int height);
+
+void tiles_8bit_deinit(Tiles8bit_t *tiles);
+
 void framebuffer_8bit_init(Framebuffer8Bit_t *fb, int width, int height);
 
 int framebuffer_8bit_init_from_framebuffer(Framebuffer8Bit_t *f, Palette8Bit_t *p, const Framebuffer_t *fb, int init_palette);
@@ -71,7 +81,6 @@ void framebuffer_8bit_draw_framebuffer_shifted(Framebuffer8Bit_t *fb, int x_shif
 void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, int center_x, int center_y, const Framebuffer8Bit_t *src, float scale, int alpha);
 
 void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, int center_x, int center_y, const Framebuffer8Bit_t *src, float angle, int alpha);
-
 
 void framebuffer_fill_8bit(Framebuffer_t *fb, const Framebuffer8Bit_t *src, const Palette8Bit_t *p);
 
