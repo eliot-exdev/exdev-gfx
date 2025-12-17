@@ -21,6 +21,7 @@ extern int exdev_base_initiated;
 #include <proto/dos.h>
 #include <proto/timer.h>
 
+extern struct timerequest time_request;
 //extern struct IOStdReq ioreq;
 //extern struct IORequest timer_ioreq;
 

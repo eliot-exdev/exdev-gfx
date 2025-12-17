@@ -38,6 +38,7 @@ struct Library *TimerBase = 0;
 #elif __AMIGA__
 struct Device *TimerBase = 0;
 #endif
+struct timerequest time_request;
 
 #ifdef USE_C2P
 struct Library *C2PBase;
@@ -75,6 +76,7 @@ int exdev_base_init() {
     ConsoleDevice = (struct Device *) console_ioreq.io_Device;
 #endif
 
+    OpenDevice("timer.device", UNIT_MICROHZ, &time_request.tr_node, 0);
     OpenDevice("timer.device", 0, &timer_ioreq, 0);
 #ifdef __MORPHOS__
     TimerBase = (struct Library *) timer_ioreq.io_Device;
@@ -110,7 +112,7 @@ int exdev_base_deinit() {
 #endif
 
     CloseDevice(&timer_ioreq);
-
+    CloseDevice(&time_request.tr_node);
     CloseDevice((struct IORequest *) &console_ioreq);
 
     if (AslBase) {
