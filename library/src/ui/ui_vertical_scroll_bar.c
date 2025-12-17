@@ -3,7 +3,6 @@
  */
 
 #include "exdevgfx/ui/ui.h"
-#include "exdevgfx/helper.h"
 
 #define EXDEVGFX2_LOG_LEVEL 2
 
@@ -22,7 +21,7 @@ void ui_vertical_scroll_bar_init(UIVerticalScrollBar_t *self, UIScrollPane_t *pa
 
     self->base.functions.destroy_func = (void (*)(void *)) &ui_vertical_scroll_bar_destroy;
     self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_vertical_scroll_bar_paint;
-    self->base.functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &ui_vertical_scroll_bar_update;
+    self->base.functions.update_func = (void (*)(void *, long, const Event_t *, int)) &ui_vertical_scroll_bar_update;
 
     self->properties.y_pos = 0;
     self->properties.y_height_total = y_height_total;
@@ -66,7 +65,7 @@ int ui_vertical_scroll_bar_paint(UIVerticalScrollBar_t *self, Framebuffer8Bit_t 
     return res;
 }
 
-void ui_vertical_scroll_bar_update(UIVerticalScrollBar_t *self, const exdev_timestamp_t, const Event_t *events, const int num_events) {
+void ui_vertical_scroll_bar_update(UIVerticalScrollBar_t *self, const long, const Event_t *events, const int num_events) {
     assert(self);
     assert(events);
 

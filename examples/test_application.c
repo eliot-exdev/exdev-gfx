@@ -9,7 +9,7 @@
 #define HEIGHT 480
 #define UPDATE_INTERVAL 50// ms
 
-void left_update(UIComponent_t *self, const exdev_timestamp_t ms, const Event_t *events, const int num_events) {
+void left_update(UIComponent_t *self, const long ms, const Event_t *events, const int num_events) {
     ui_component_update(self, ms, events, num_events);// call update of base class
 
     // handle mouse event
@@ -50,7 +50,7 @@ int right_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, const int x_offset, 
     return res;
 }
 
-void right_update(UIComponent_t *self, const exdev_timestamp_t ms, const Event_t *events, const int num_events) {
+void right_update(UIComponent_t *self, const long ms, const Event_t *events, const int num_events) {
     ui_component_update(self, ms, events, num_events);// call update of base class
 
     // handle mouse event
@@ -98,7 +98,7 @@ int main() {
 
     // left component
     UIComponent_t *left = ui_component_create(2, 2, 538, 476);
-    left->functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &left_update;// custom event handling
+    left->functions.update_func = (void (*)(void *, long, const Event_t *, int)) &left_update;// custom event handling
     ui_component_connect(&app.root, left);
 
     // icon
@@ -116,7 +116,7 @@ int main() {
     // right component
     UIComponent_t *right = ui_component_create(542, 2, 96, 476);
     right->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &right_paint;   // custom paint
-    right->functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &right_update;// custom event handling
+    right->functions.update_func = (void (*)(void *, long, const Event_t *, int)) &right_update;// custom event handling
     ui_component_connect(&app.root, right);
 
     // run
