@@ -34,7 +34,7 @@ typedef void (*destroy_function)(void *self);
 
 typedef void (*paint_function)(void *self, Framebuffer8Bit_t *fb);
 
-typedef void (*update_function)(void *self, exdev_timestamp_t time_elapsed);
+typedef void (*update_function)(void *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
 
 struct UIComponent {
     enum ui_component_type type;
@@ -72,7 +72,9 @@ void ui_component_destroy(UIComponent_t *self);
 
 void ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb);
 
-void ui_component_update(UIComponent_t *self, exdev_timestamp_t time_elapsed);
+void ui_component_update(UIComponent_t *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
+
+int ui_component_is_inside(const UIComponent_t *self, int x, int y);
 
 struct Application {
     Window_t *window;
