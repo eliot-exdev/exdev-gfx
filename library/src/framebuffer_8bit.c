@@ -59,6 +59,16 @@ void framebuffer_8bit_init(Framebuffer8Bit_t *fb, const int width, const int hei
     fb->buffer = (Color8Bit_t *) ALLOC_FAST_MEM(width * height);
 }
 
+Framebuffer8Bit_t *framebuffer_8bit_copy(const Framebuffer8Bit_t *fb) {
+    assert(fb);
+
+    Framebuffer8Bit_t *copy = malloc(sizeof(Framebuffer8Bit_t));
+    framebuffer_8bit_init(copy, fb->width, fb->height);
+    framebuffer_8bit_draw_framebuffer(copy, 0, 0, fb);
+
+    return copy;
+}
+
 int framebuffer_8bit_init_from_framebuffer(Framebuffer8Bit_t *f, Palette8Bit_t *p, const Framebuffer_t *fb, const int init_palette) {
     assert(f);
     assert(p);

@@ -33,6 +33,8 @@ void tiles_8bit_deinit(Tiles8bit_t *tiles);
 
 void framebuffer_8bit_init(Framebuffer8Bit_t *fb, int width, int height);
 
+Framebuffer8Bit_t *framebuffer_8bit_copy(const Framebuffer8Bit_t *fb);
+
 int framebuffer_8bit_init_from_framebuffer(Framebuffer8Bit_t *f, Palette8Bit_t *p, const Framebuffer_t *fb, int init_palette);
 
 Color8Bit_t *framebuffer_8bit_pixel_at(const Framebuffer8Bit_t *fb, int x, int y);
