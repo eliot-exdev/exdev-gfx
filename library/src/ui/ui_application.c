@@ -1,5 +1,5 @@
 /**
-* Copyright 2025 Andre Geisler (andre@exdev.de)
+ * Copyright 2025 Andre Geisler (andre@exdev.de)
  */
 
 #include "exdevgfx/ui/ui.h"
