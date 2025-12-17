@@ -11,7 +11,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
-void ui_scroll_on_x_offset(UIScrollPane_t *self, const int x_offset) {
+void ui_scroll_container_on_x_offset(UIScrollContainer_t *self, const int x_offset) {
     assert(self);
 
     self->properties.x_offset = x_offset;
@@ -21,7 +21,7 @@ void ui_scroll_on_x_offset(UIScrollPane_t *self, const int x_offset) {
     }
 }
 
-void ui_scroll_on_y_offset(UIScrollPane_t *self, const int y_offset) {
+void ui_scroll_container_on_y_offset(UIScrollContainer_t *self, const int y_offset) {
     assert(self);
 
     self->properties.y_offset = y_offset;
@@ -31,7 +31,7 @@ void ui_scroll_on_y_offset(UIScrollPane_t *self, const int y_offset) {
     }
 }
 
-void ui_scroll_init(UIScrollPane_t *self, int x, int y, int width, int height, const UIScrollingSupport_t scrolling_support) {
+void ui_scroll_container_init(UIScrollContainer_t *self, int x, int y, int width, int height, const UIScrollingSupport_t scrolling_support) {
     assert(self);
 
     ui_component_init(&self->base, x, y, width, height);
@@ -41,19 +41,19 @@ void ui_scroll_init(UIScrollPane_t *self, int x, int y, int width, int height, c
     self->properties.y_offset = 0;
     self->properties.scrolling_support = scrolling_support;
 
-    self->base.functions.destroy_func = (void (*)(void *)) &ui_scroll_destroy;
-    self->base.functions.prepare_func = (void (*)(void *)) &ui_scroll_prepare;
-    self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_scroll_paint;
-    self->base.functions.update_func = (void (*)(void *, long, const Event_t *, int)) &ui_scroll_update;
+    self->base.functions.destroy_func = (void (*)(void *)) &ui_scroll_container_destroy;
+    self->base.functions.prepare_func = (void (*)(void *)) &ui_scroll_container_prepare;
+    self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_scroll_container_paint;
+    self->base.functions.update_func = (void (*)(void *, long, const Event_t *, int)) &ui_scroll_container_update;
 
     if (scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL || scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
-        self->functions.on_x_offset = ui_scroll_on_x_offset;
+        self->functions.on_x_offset = ui_scroll_container_on_x_offset;
     } else {
         self->functions.on_x_offset = NULL;
     }
 
     if (scrolling_support == UI_SCROLLING_SUPPORT_VERTICAL || scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
-        self->functions.on_y_offset = ui_scroll_on_y_offset;
+        self->functions.on_y_offset = ui_scroll_container_on_y_offset;
     } else {
         self->functions.on_y_offset = NULL;
     }
@@ -65,14 +65,14 @@ void ui_scroll_init(UIScrollPane_t *self, int x, int y, int width, int height, c
     self->y_visible = 0;
 }
 
-UIScrollPane_t *ui_scroll_create(const int x, const int y, const int width, const int height, const UIScrollingSupport_t scrolling_support) {
-    UIScrollPane_t *self = malloc(sizeof(UIScrollPane_t));
-    ui_scroll_init(self, x, y, width, height, scrolling_support);
+UIScrollContainer_t *ui_scroll_container_create(const int x, const int y, const int width, const int height, const UIScrollingSupport_t scrolling_support) {
+    UIScrollContainer_t *self = malloc(sizeof(UIScrollContainer_t));
+    ui_scroll_container_init(self, x, y, width, height, scrolling_support);
 
     return self;
 }
 
-void ui_scroll_destroy(UIScrollPane_t *self) {
+void ui_scroll_container_destroy(UIScrollContainer_t *self) {
     assert(self);
 
     ui_component_destroy(&self->base);
@@ -96,7 +96,7 @@ void ui_scroll_destroy(UIScrollPane_t *self) {
     }
 }
 
-void ui_scroll_prepare(UIScrollPane_t *self) {
+void ui_scroll_container_prepare(UIScrollContainer_t *self) {
     assert(self);
 
     ui_component_prepare(&self->base);
@@ -145,7 +145,7 @@ void ui_scroll_prepare(UIScrollPane_t *self) {
     }
 }
 
-int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, const int x_offset, const int y_offset, const int, const int) {
+int ui_scroll_container_paint(UIScrollContainer_t *self, Framebuffer8Bit_t *fb, const int x_offset, const int y_offset, const int, const int) {
     assert(self);
     assert(fb);
 
@@ -197,7 +197,7 @@ int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, const int x_off
     return res;
 }
 
-void ui_scroll_update(UIScrollPane_t *self, const long time_elapsed, const Event_t *events, const int num_events) {
+void ui_scroll_container_update(UIScrollContainer_t *self, const long time_elapsed, const Event_t *events, const int num_events) {
     assert(self);
     assert(events);
 

@@ -11,7 +11,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
-void ui_vertical_scroll_bar_init(UIVerticalScrollBar_t *self, UIScrollPane_t *parent, const int x, const int y, const int width, const int height, const int y_height_total,
+void ui_vertical_scroll_bar_init(UIVerticalScrollBar_t *self, UIScrollContainer_t *parent, const int x, const int y, const int width, const int height, const int y_height_total,
                                  const int y_height_visible) {
     assert(self);
     assert(parent);
@@ -37,7 +37,7 @@ void ui_vertical_scroll_bar_init(UIVerticalScrollBar_t *self, UIScrollPane_t *pa
 }
 
 UIVerticalScrollBar_t *
-ui_vertical_scroll_bar_create(UIScrollPane_t *parent, const int x, const int y, const int width, const int height, const int y_height_total, const int y_height_visible) {
+ui_vertical_scroll_bar_create(UIScrollContainer_t *parent, const int x, const int y, const int width, const int height, const int y_height_total, const int y_height_visible) {
     UIVerticalScrollBar_t *self = malloc(sizeof(UIVerticalScrollBar_t));
     ui_vertical_scroll_bar_init(self, parent, x, y, width, height, y_height_total, y_height_visible);
     return self;
@@ -107,7 +107,7 @@ void ui_vertical_scroll_bar_update(UIVerticalScrollBar_t *self, const long ms, c
 
                 self->base.flags.dirty_flag = 1;
                 if (self->functions.on_y_offset) {
-                    self->functions.on_y_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.y_pos / self->f1 * self->f2));
+                    self->functions.on_y_offset((UIScrollContainer_t *) self->base.parent, (int) ((float) self->properties.y_pos / self->f1 * self->f2));
                 }
             }
         }

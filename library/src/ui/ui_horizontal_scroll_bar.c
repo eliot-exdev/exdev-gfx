@@ -11,7 +11,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
-void ui_horizontal_scroll_bar_init(UIHorizontalScrollBar_t *self, UIScrollPane_t *parent, const int x, const int y, const int width, const int height, const int x_width_total,
+void ui_horizontal_scroll_bar_init(UIHorizontalScrollBar_t *self, UIScrollContainer_t *parent, const int x, const int y, const int width, const int height, const int x_width_total,
                                    const int x_width_visible) {
     assert(self);
     assert(parent);
@@ -42,7 +42,7 @@ void ui_horizontal_scroll_bar_init(UIHorizontalScrollBar_t *self, UIScrollPane_t
 }
 
 UIHorizontalScrollBar_t *
-ui_horizontal_scroll_bar_create(UIScrollPane_t *parent, const int x, const int y, const int width, const int height, const int x_width_total, const int x_width_visible) {
+ui_horizontal_scroll_bar_create(UIScrollContainer_t *parent, const int x, const int y, const int width, const int height, const int x_width_total, const int x_width_visible) {
     UIHorizontalScrollBar_t *self = malloc(sizeof(UIHorizontalScrollBar_t));
     ui_horizontal_scroll_bar_init(self, parent, x, y, width, height, x_width_total, x_width_visible);
     return self;
@@ -113,7 +113,7 @@ void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, const long m
                 self->base.flags.dirty_flag = 1;
                 if (self->functions.on_x_offset) {
                     log_info_fmt("x pos: %d", self->properties.x_pos);
-                    self->functions.on_x_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.x_pos / self->f1 * self->f2));
+                    self->functions.on_x_offset((UIScrollContainer_t *) self->base.parent, (int) ((float) self->properties.x_pos / self->f1 * self->f2));
                 }
             }
         }
