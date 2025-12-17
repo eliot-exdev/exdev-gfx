@@ -160,8 +160,10 @@ void ui_icon_update(UIIcon_t *self, exdev_timestamp_t time_elapsed, const Event_
 
 struct UIScrollPane;
 struct UIHorizontalScrollBar;
+struct UIVerticalScrollBar;
 
 typedef void (*on_x_offset_function)(struct UIScrollPane *self, int x_offset);
+typedef void (*on_y_offset_function)(struct UIScrollPane *self, int y_offset);
 
 enum ui_scrolling_support {
     UI_SCROLLING_SUPPORT_HORIZONTAL,
@@ -181,10 +183,12 @@ struct UIScrollPane {
 
     struct {
         on_x_offset_function on_x_offset;
+        on_y_offset_function on_y_offset;
     } functions;
 
     Framebuffer8Bit_t *fb;
     struct UIHorizontalScrollBar *h_bar;
+    struct UIVerticalScrollBar *v_bar;
 };
 
 typedef struct UIScrollPane UIScrollPane_t;
@@ -201,7 +205,9 @@ void ui_scroll_update(UIScrollPane_t *self, exdev_timestamp_t time_elapsed, cons
 
 void ui_scroll_on_x_offset(UIScrollPane_t *self, int x_offset);
 
-//--- UISrollBar ---//
+void ui_scroll_on_x_offset(UIScrollPane_t *self, int y_offset);
+
+//--- UIHorizontalSrollBar ---//
 struct UIHorizontalScrollBar {
     UIComponent_t base;
     struct {
@@ -234,6 +240,40 @@ void ui_horizontal_scroll_bar_destroy(UIHorizontalScrollBar_t *self);
 int ui_horizontal_scroll_bar_paint(UIHorizontalScrollBar_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
 
 void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
+
+//--- UIVerticalScrollBar ---//
+struct UIVerticalScrollBar {
+    UIComponent_t base;
+    struct {
+        int y_pos;
+        int y_height_total;
+        int y_height_visible;
+    } properties;
+
+    struct {
+        int dragged;
+    } flags;
+
+    struct {
+        on_y_offset_function on_y_offset;
+    } functions;
+
+    float f1;
+    float f2;
+    int bar_height;
+};
+
+typedef struct UIVerticalScrollBar UIVerticalScrollBar_t;
+
+void ui_vertical_scroll_bar_init(UIVerticalScrollBar_t *self, UIScrollPane_t *parent, int x, int y, int width, int height, int y_height_total, int y_height_visible);
+
+UIVerticalScrollBar_t *ui_vertical_scroll_bar_create(UIScrollPane_t *parent, int x, int y, int width, int height, int y_height_total, int y_height_visible);
+
+void ui_vertical_scroll_bar_destroy(UIVerticalScrollBar_t *self);
+
+int ui_vertical_scroll_bar_paint(UIVerticalScrollBar_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
+
+void ui_vertical_scroll_bar_update(UIVerticalScrollBar_t *self, exdev_timestamp_t time_elapsed, const Event_t *events, int num_events);
 
 //--- UIApplication ---//
 struct UIApplication {
