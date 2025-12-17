@@ -79,6 +79,7 @@ void right_update(UIComponent_t *self, const exdev_timestamp_t ms, const Event_t
 static void icon_clicked(UIIcon_t *self) {
     log_info_fmt("icon clicked: %d", self->flags.clicked);
 }
+
 static void icon_focus(UIIcon_t *self) {
     log_info_fmt("icon focus: %d", self->flags.focused);
 }
@@ -102,6 +103,12 @@ int main() {
     icon->functions.on_clicked = &icon_clicked;
     icon->functions.on_focus = &icon_focus;
     ui_component_connect(left, icon);
+
+    // scroll component
+    UIScroll_t *scroll = ui_scroll_create(100, 100, 100, 100);
+    ui_component_connect(scroll, ui_icon_create_with_path(2, 2, "assets/amiga_logo_8bit.dat"));
+    ui_component_connect(scroll, ui_icon_create_with_path(68, 68, "assets/amiga_logo_8bit.dat"));
+    ui_component_connect(&app.root, scroll);
 
     // right component
     UIComponent_t *right = ui_component_create(542, 2, 96, 476);

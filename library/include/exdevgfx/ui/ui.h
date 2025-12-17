@@ -110,11 +110,12 @@ void ui_component_get_absolute_position(const UIComponent_t *self, int *x, int *
 struct UIIcon;
 
 typedef void (*on_focus_function)(struct UIIcon *self);
+
 typedef void (*on_click_function)(struct UIIcon *self);
 
 struct UIIcon {
     UIComponent_t base;
-    Framebuffer8Bit_t *icon;
+
     struct {
         int clickable;
     } properties;
@@ -128,6 +129,8 @@ struct UIIcon {
         on_focus_function on_focus;
         on_click_function on_clicked;
     } functions;
+
+    Framebuffer8Bit_t *icon;
 };
 
 typedef struct UIIcon UIIcon_t;
@@ -157,6 +160,8 @@ struct UIScroll {
 typedef struct UIScroll UIScroll_t;
 
 void ui_scroll_init(UIScroll_t *self, int x, int y, int width, int height);
+
+UIScroll_t *ui_scroll_create(int x, int y, int width, int height);
 
 void ui_scroll_destroy(UIScroll_t *self);
 
