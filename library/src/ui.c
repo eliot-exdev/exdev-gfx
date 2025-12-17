@@ -100,6 +100,7 @@ int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, int const x_o
             res = 1;
         }
     }
+
     return res;
 }
 
@@ -263,6 +264,94 @@ void ui_icon_update(UIIcon_t *self, const exdev_timestamp_t time_elapsed, const 
             }
         }
     }
+}
+
+void ui_scroll_init(UIScroll_t *self, int x, int y, int width, int height) {
+    assert(self);
+
+    ui_component_init(&self->base, x, y, width, height);
+    self->properties.x_pos = 0;
+    self->properties.y_pos = 0;
+    self->fb = NULL;
+}
+
+void ui_scroll_destroy(UIScroll_t *self) {
+    assert(self);
+
+    ui_component_destroy(&self->base);
+    if (self->fb) {
+        framebuffer_8bit_deinit(self->fb);
+        free(self->fb);
+        self->fb = NULL;
+    }
+}
+
+int ui_scroll_paint(UIScroll_t *self, Framebuffer8Bit_t *fb, const int x_offset, const int y_offset, const int, const int) {
+    assert(self);
+    assert(fb);
+
+    int res = self->base.flags.dirty_flag;
+    const int x = self->base.properties.x + x_offset;
+    const int y = self->base.properties.y + y_offset;
+
+    if (!self->fb) {
+        // find biggest x and y
+        int width = 0;
+        int height = 0;
+        for (int i = 0; i < self->base.childs.size; ++i) {
+            const UIComponent_t *child = self->base.childs.components[i];
+            const int x_total = child->properties.x + child->properties.width;
+            const int y_total = child->properties.y + child->properties.height;
+            if (x_total > width) {
+                width = x_total;
+            }
+            if (y_total > height) {
+                height = y_total;
+            }
+        }
+
+        // setup fb
+        self->fb = malloc(sizeof(Framebuffer8Bit_t));
+        framebuffer_8bit_init(self->fb, width, height);
+    }
+
+    // draw children to back buffer
+    for (int i = 0; i < self->base.childs.size; ++i) {
+        if (self->base.childs.components[i]->functions.paint_func(self->base.childs.components[i], self->fb, x, y, self->fb->width, self->fb->height)) {
+            res = 1;
+        }
+    }
+
+
+    if (res) {
+        if (self->base.flags.fill_background) {
+            framebuffer_8bit_fill_rect(fb, x, y, self->base.properties.width, self->base.properties.height, self->base.properties.background_color);
+        }
+
+        if (self->base.flags.draw_border) {
+            framebuffer_8bit_draw_rect(fb, x, y, self->base.properties.width, self->base.properties.height, self->base.properties.border_color);
+        }
+
+        // blit fb
+        framebuffer_8bit_blit_8bit(fb,
+                                   self->fb,
+                                   self->properties.x_pos,
+                                   self->properties.y_pos,
+                                   self->base.properties.width - 4,
+                                   self->base.properties.height - 4,
+                                   x + 2,
+                                   y + 2);
+
+        self->base.flags.dirty_flag = 0;
+    }
+
+    return res;
+}
+
+void ui_scroll_update(UIScroll_t *self, const exdev_timestamp_t time_elapsed, const Event_t *events, const int num_events) {
+    assert(self);
+
+    ui_component_update(&self->base, time_elapsed, events, num_events);
 }
 
 void application_init(UIApplication_t *self, const int width, const int height) {
