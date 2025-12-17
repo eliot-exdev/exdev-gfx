@@ -4,7 +4,7 @@
 
 #include "exdevgfx/ui/ui.h"
 
-#define EXDEVGFX2_LOG_LEVEL 3
+#define EXDEVGFX2_LOG_LEVEL 2
 
 #include "exdevgfx/logger.h"
 
@@ -172,8 +172,8 @@ int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, const int x_off
                                    self->fb,
                                    self->properties.x_offset,
                                    self->properties.y_offset,
-                                   self->base.properties.width - SCROLL_BAR_SIZE - 8,
-                                   self->base.properties.height - SCROLL_BAR_SIZE - 8,
+                                   self->base.properties.width - SCROLL_BAR_SIZE - 6,
+                                   self->base.properties.height - SCROLL_BAR_SIZE - 6,
                                    x + 2,
                                    y + 2);
 
@@ -194,15 +194,11 @@ int ui_scroll_paint(UIScrollPane_t *self, Framebuffer8Bit_t *fb, const int x_off
 
 void ui_scroll_update(UIScrollPane_t *self, const long time_elapsed, const Event_t *events, const int num_events) {
     assert(self);
-    log_info_fmt("ui_scroll_update: %d", num_events);
     ui_component_update(&self->base, time_elapsed, events, num_events);
-    log_info_fmt("ui_scroll_update after base: %d", num_events);
     if (self->h_bar) {
         self->h_bar->base.functions.update_func(self->h_bar, time_elapsed, events, num_events);
     }
-    log_info_fmt("ui_scroll_update after horizontal bar: %d", num_events);
     if (self->v_bar) {
         self->v_bar->base.functions.update_func(self->v_bar, time_elapsed, events, num_events);
     }
-    log_info_fmt("ui_scroll_update after vertical bar: %d", num_events);
 }

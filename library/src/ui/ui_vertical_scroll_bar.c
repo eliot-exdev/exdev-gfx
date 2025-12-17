@@ -31,7 +31,8 @@ void ui_vertical_scroll_bar_init(UIVerticalScrollBar_t *self, UIScrollPane_t *pa
     self->functions.on_y_offset = parent->functions.on_y_offset;
 
     self->f1 = (float) y_height_visible / (float) y_height_total;
-    self->bar_height = (int) (self->f1 * ((float) self->base.properties.height));
+    self->f2 = (float) height / (float) y_height_visible;
+    self->bar_height = (int) (self->f1 * self->f2 * ((float) height));
     self->y_last = 0;
 }
 
@@ -106,7 +107,7 @@ void ui_vertical_scroll_bar_update(UIVerticalScrollBar_t *self, const long ms, c
 
                 self->base.flags.dirty_flag = 1;
                 if (self->functions.on_y_offset) {
-                    self->functions.on_y_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.y_pos / self->f1));
+                    self->functions.on_y_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.y_pos / self->f1 * self->f2));
                 }
             }
         }

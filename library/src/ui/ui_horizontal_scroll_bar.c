@@ -16,6 +16,7 @@ void ui_horizontal_scroll_bar_init(UIHorizontalScrollBar_t *self, UIScrollPane_t
     assert(self);
     assert(parent);
     log_info_fmt("width visible: %d", x_width_visible);
+    log_info_fmt("width total: %d", x_width_total);
     ui_component_init(&self->base, x, y, width, height);
     self->base.type = UI_COMPONENT_SCROLL_BAR_HORIZONTAL;
     self->base.parent = (UIComponent_t *) parent;
@@ -33,8 +34,11 @@ void ui_horizontal_scroll_bar_init(UIHorizontalScrollBar_t *self, UIScrollPane_t
     self->functions.on_x_offset = parent->functions.on_x_offset;
 
     self->f1 = (float) x_width_visible / (float) x_width_total;
-    self->bar_width = (int) (self->f1 * ((float) self->base.properties.width));
+    self->f2 = (float) width / (float) x_width_visible;
+    self->bar_width = (int) (self->f1 * self->f2 * ((float) width));
     self->x_last = 0;
+    log_info_fmt("width: %d", width);
+    log_info_fmt("bar width: %d", self->bar_width);
 }
 
 UIHorizontalScrollBar_t *
@@ -108,7 +112,8 @@ void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, const long m
 
                 self->base.flags.dirty_flag = 1;
                 if (self->functions.on_x_offset) {
-                    self->functions.on_x_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.x_pos / self->f1));
+                    log_info_fmt("x pos: %d", self->properties.x_pos);
+                    self->functions.on_x_offset((UIScrollPane_t *) self->base.parent, (int) ((float) self->properties.x_pos / self->f1 * self->f2));
                 }
             }
         }
