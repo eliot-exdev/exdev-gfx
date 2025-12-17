@@ -64,7 +64,7 @@ void ui_component_init(UIComponent_t *self, const int x, const int y, const int 
     self->flags.draw_border = 1;
 
     self->functions.destroy_func = (void (*)(void *)) &ui_component_destroy;
-    self->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *)) &ui_component_paint;
+    self->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_component_paint;
     self->functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &ui_component_update;
 
     self->parent = NULL;
@@ -75,18 +75,21 @@ void ui_component_destroy(UIComponent_t *self) {
     ui_component_list_destroy(&self->childs);
 }
 
-int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb) {
+int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, int const x_offset, const int y_offset, const int, const int) {
     assert(self);
     assert(fb);
 
     int res = 0;
+    const int x = self->properties.x + x_offset;
+    const int y = self->properties.y + y_offset;
+
     if (self->flags.dirty_flag) {
         if (self->flags.fill_background) {
-            framebuffer_8bit_fill_rect(fb, self->properties.x, self->properties.y, self->properties.width, self->properties.height, self->properties.background_color);
+            framebuffer_8bit_fill_rect(fb, x, y, self->properties.width, self->properties.height, self->properties.background_color);
         }
 
         if (self->flags.draw_border) {
-            framebuffer_8bit_draw_rect(fb, self->properties.x, self->properties.y, self->properties.width, self->properties.height, self->properties.border_color);
+            framebuffer_8bit_draw_rect(fb, x, y, self->properties.width, self->properties.height, self->properties.border_color);
         }
 
         self->flags.dirty_flag = 0;
@@ -94,7 +97,7 @@ int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb) {
     }
 
     for (int i = 0; i < self->childs.size; ++i) {
-        res = res | self->childs.components[i]->functions.paint_func(self->childs.components[i], fb);
+        res = res | self->childs.components[i]->functions.paint_func(self->childs.components[i], fb, x, y, self->properties.width, self->properties.height);
     }
     return res;
 }
@@ -111,11 +114,28 @@ void ui_component_update(UIComponent_t *self, const exdev_timestamp_t time_elaps
     }
 }
 
+void ui_component_get_absolute_position(const UIComponent_t *self, int *x, int *y) {
+    assert(self);
+    assert(x);
+    assert(y);
+
+    *x += self->properties.x;
+    *y += self->properties.y;
+
+    if (self->parent) {
+        ui_component_get_absolute_position(self->parent, x, y);
+    }
+}
+
 int ui_component_is_inside(const UIComponent_t *self, const int x, const int y) {
     assert(self);
 
-    return x >= self->properties.x && x < self->properties.x + self->properties.width &&
-           y >= self->properties.y && y < self->properties.y + self->properties.height;
+    int x_ = 0;
+    int y_ = 0;
+
+    ui_component_get_absolute_position(self, &x_, &y_);
+
+    return x >= x_ && x < (x_ + self->properties.width) && y >= y_ && y < (y_ + self->properties.height);
 }
 
 void ui_component_connect(void *parent_, void *child_) {
@@ -153,7 +173,7 @@ void ui_icon_init(UIIcon_t *self, const int x, const int y, Framebuffer8Bit_t *f
     ui_component_init(&self->base, x, y, fb->width + 2, fb->height + 2);
     self->base.type = UI_COMPONENT_ICON;
     self->base.functions.destroy_func = (void (*)(void *)) &ui_icon_destroy;
-    self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *)) &ui_icon_paint;
+    self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_icon_paint;
     self->base.functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &ui_icon_update;
 
     self->icon = fb;
@@ -172,16 +192,18 @@ void ui_icon_destroy(UIIcon_t *self) {
     self->icon = NULL;
 }
 
-int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb) {
+int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb, const int x_offset, const int y_offset, const int width, const int height) {
     assert(self);
     assert(fb);
 
-    const int tmp = self->base.flags.dirty_flag;
-    int res = ui_component_paint(&self->base, fb);
+    const int res = self->base.flags.dirty_flag;
+    const int x = self->base.properties.x + x_offset;
+    const int y = self->base.properties.y + y_offset;
 
-    if (tmp) {
-        framebuffer_8bit_draw_framebuffer(fb, self->base.properties.x + 1, self->base.properties.y + 1, self->icon);
-        res = 1;
+    // draw base
+    ui_component_paint(&self->base, fb, x_offset, y_offset, width, height);
+    if (res) {
+        framebuffer_8bit_draw_framebuffer(fb, x + 1, y + 1, self->icon);
     }
     return res;
 }
@@ -321,7 +343,12 @@ int application_run(Application_t *self, const exdev_timestamp_t wait_ms) {
         self->root.functions.update_func(&self->root, end_ms - begin_ms, events, num_events);
 
         // paint ui
-        if (self->root.functions.paint_func(&self->root, window_get_chunky_buffer(self->window))) {
+        if (self->root.functions.paint_func(&self->root,
+                                            window_get_chunky_buffer(self->window),
+                                            0,
+                                            0,
+                                            window_get_chunky_buffer(self->window)->width,
+                                            window_get_chunky_buffer(self->window)->height)) {
             // blit ui to screen
             log_debug("blit to screen required");
             window_blit_chunky_buffer(self->window);

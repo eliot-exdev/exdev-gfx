@@ -35,11 +35,15 @@ void left_update(UIComponent_t *self, const exdev_timestamp_t ms, const Event_t 
     }
 }
 
-int right_paint(UIComponent_t *self, Framebuffer8Bit_t *fb) {
+int right_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, const int x_offset, const int y_offset, int, int) {
     const int tmp = self->flags.dirty_flag;
-    int res = ui_component_paint(self, fb);
+
+    const int x = self->properties.x + x_offset;
+    const int y = self->properties.y + y_offset;
+
+    int res = ui_component_paint(self, fb, x_offset, y_offset, self->properties.width, self->properties.height);
     if (tmp) {
-        framebuffer_8bit_fill_rect(fb, self->properties.x + 2, self->properties.y, self->properties.width - 3, 10, PEN_INDEX_BLUE);
+        framebuffer_8bit_fill_rect(fb, x + 2, y + 2, self->properties.width - 3, 10, PEN_INDEX_BLUE);
         self->flags.dirty_flag = 0;
         res = 1;
     }
@@ -94,14 +98,14 @@ int main() {
     ui_component_connect(&app.root, left);
 
     // icon
-    UIIcon_t *icon = ui_icon_create_with_path(4, 4, "assets/amiga_logo_8bit.dat");
+    UIIcon_t *icon = ui_icon_create_with_path(2, 2, "assets/amiga_logo_8bit.dat");
     icon->functions.on_clicked = &icon_clicked;
     icon->functions.on_focus = &icon_focus;
     ui_component_connect(left, icon);
 
     // right component
     UIComponent_t *right = ui_component_create(542, 2, 96, 476);
-    right->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *)) &right_paint;                       // custom paint
+    right->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &right_paint;   // custom paint
     right->functions.update_func = (void (*)(void *, exdev_timestamp_t, const Event_t *, int)) &right_update;// custom event handling
     ui_component_connect(&app.root, right);
 
