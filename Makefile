@@ -35,9 +35,12 @@ exdev_gfx_mos_gcc.a: library/src/args.c\
                    library/src/palette.c\
                    library/src/vertex2d.c\
                    library/src/vertex3d.c\
-                   library/src/voxelspace.c
-	$(CC_GCC) ${INCLUDES_MOS} ${C_FLAGS_MOS_GCC} $(^)
-	$(AR) $(@) args.o color.o events.o font.o framebuffer.o framebuffer_8bit.o framebuffer_rgba.o heightmap.o helper.o julia.o matrix.o palette.o vertex2d.o vertex3d.o voxelspace.o
+                   library/src/voxelspace.c\
+                   library/src_amiga/exdev_base_amiga.c\
+                   library/src_amiga/helper_amiga.c\
+                   library/src_amiga/window_amiga.c
+	$(CC_GCC) -c ${INCLUDES_MOS} ${C_FLAGS_MOS_GCC} $(^)
+	$(AR) -r $(@) args.o color.o events.o font.o framebuffer.o framebuffer_8bit.o framebuffer_rgba.o heightmap.o helper.o julia.o matrix.o palette.o vertex2d.o vertex3d.o voxelspace.o exdev_base_amiga.o helper_amiga.o window_amiga.o
 
 #--- exdev-gfx-ui ---#
 exdev_gfx_ui_mos_gcc.a : library/src/ui/ui_application.c\
@@ -47,17 +50,13 @@ exdev_gfx_ui_mos_gcc.a : library/src/ui/ui_application.c\
                       library/src/ui/ui_horizontal_scroll_bar.c\
                       library/src/ui/ui_vertical_scroll_bar.c\
                       library/src/ui/ui_icon.c
-	$(CC_GCC) ${INCLUDES_MOS} ${C_FLAGS_MOS_GCC} $(^)
-	$(AR) $(@) ui_application.o ui_component.o ui_component_list.o ui_scroll.o ui_horizontal_scroll_bar.o ui_vertical_scrobb_bar.o ui_icon.o
+	$(CC_GCC) -c ${INCLUDES_MOS} ${C_FLAGS_MOS_GCC} $(^)
+	$(AR) -r $(@) ui_application.o ui_component.o ui_component_list.o ui_scroll.o ui_horizontal_scroll_bar.o ui_vertical_scroll_bar.o ui_icon.o
 
 #--- application ---#
 application: application_mos_gcc application_060
 
-application_mos_gcc: library/src/events.c library/src/palette.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c\
-                     library/src/ui/ui_application.c library/src/ui/ui_component.c library/src/ui/ui_component_list.c\
-                     library/src/ui/ui_scroll.c library/src/ui/ui_horizontal_scroll_bar.c library/src/ui/ui_vertical_scroll_bar.c\
-                     library/src/ui/ui_icon.c \
-                     library/src/vertex2d.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/test_application.c
+application_mos_gcc: examples/test_application.c exdev_gfx_ui_mos_gcc.a exdev_gfx_mos_gcc.a
 	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
 
 application_060: library/src/events.c library/src/palette.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c\
@@ -68,14 +67,13 @@ application_060: library/src/events.c library/src/palette.c library/src/color.c 
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060}
 
 #--- voxelspace ---#
-voxelspace: voxelspace_mos voxelspace_mos_gcc voxelspace_060 voxelspace_060_c2p 
+voxelspace: voxelspace_mos voxelspace_mos_gcc voxelspace_060 voxelspace_060_c2p
 
 voxelspace_mos: library/src/vertex3d.c library/src/events.c library/src/vertex2d.c library/src/matrix.c library/src/palette.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c library/src/heightmap.c\
                 library/src/voxelspace.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/voxelspace_main.c
 	$(CC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS} ${LD_FLAGS_MOS}
-    
-voxelspace_mos_gcc: library/src/vertex3d.c library/src/events.c library/src/vertex2d.c library/src/matrix.c library/src/palette.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c library/src/heightmap.c\
-                library/src/voxelspace.c library/src/args.c library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c examples/voxelspace_main.c
+
+voxelspace_mos_gcc: examples/voxelspace_main.c exdev_gfx_mos_gcc.a
 	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
 
 voxelspace_060: library/src/vertex3d.c library/src/events.c library/src/vertex2d.c library/src/matrix.c library/src/palette.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src_amiga/window_amiga.c library/src/font.c library/src/heightmap.c\
@@ -150,11 +148,11 @@ test_3d: test_3d_mos_gcc test_3d_mos test_3d_060
 test_3d_mos_gcc: library/src/framebuffer_8bit.c library/src/events.c  library/src/framebuffer.c library/src/matrix.c library/src_amiga/window_amiga.c library/src/font.c library/src/helper.c library/src_amiga/helper_amiga.c library/src_amiga/exdev_base_amiga.c\
                  library/src/vertex3d.c library/src/vertex2d.c library/src/args.c library/src/sw_renderer_8bit.c library/src/palette.c examples/test_3d.c
 	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
-    
+
 test_3d_mos: library/src/framebuffer_8bit.c library/src/events.c  library/src/framebuffer.c library/src/matrix.c library/src_amiga/window_amiga.c library/src/font.c library/src/helper.c library/src_amiga/helper_amiga.c library/src_amiga/exdev_base_amiga.c\
              library/src/vertex3d.c library/src/vertex2d.c library/src/args.c library/src/sw_renderer_8bit.c library/src/palette.c examples/test_3d.c
 	$(CC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS} ${LD_FLAGS_MOS}
-    
+
 test_3d_060: library/src/framebuffer_8bit.c library/src/events.c  library/src/framebuffer.c library/src/matrix.c library/src_amiga/window_amiga.c library/src/font.c library/src/helper.c library/src_amiga/helper_amiga.c library/src_amiga/exdev_base_amiga.c\
              library/src/vertex3d.c library/src/vertex2d.c library/src/args.c library/src/sw_renderer_8bit.c library/src/palette.c examples/test_3d.c
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060} -DLOW_RESOLUTION
@@ -166,7 +164,7 @@ dist_julia: julia_060 julia_mos julia_nofpu
 
 #--- dist voxelspace ---#
 dist_voxelspace: voxelspace
-	rm -rf ram:voxelspace 
+	rm -rf ram:voxelspace
 	rm -f ram:voxelspace.lha
 	mkdir ram:voxelspace
 	mkdir ram:voxelspace/assets
@@ -180,6 +178,5 @@ dist_voxelspace: voxelspace
 
 #--- clean ---#
 .PHONY: clean
-clean: 
-	$(RM) -f julia_* voxelspace_* application_* test_sprite_* *.o library/easing/src/*.o
-
+clean:
+	$(RM) -f julia_* voxelspace_* application_* test_sprite_* *.o library/easing/src/*.o *.a
