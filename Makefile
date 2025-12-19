@@ -20,6 +20,36 @@ INCLUDES_AOS=-Ilibrary/include -Ilibrary/easing/include
 
 all: voxelspace julia test_sprite other
 
+#--- exdev-gfx ---#
+exdev_gfx_mos_gcc.a: library/src/args.c\
+                   library/src/color.c\
+                   library/src/events.c\
+                   library/src/font.c\
+                   library/src/framebuffer.c\
+                   library/src/framebuffer_8bit.c\
+                   library/src/framebuffer_rgba.c\
+                   library/src/heightmap.c\
+                   library/src/helper.c\
+                   library/src/julia.c\
+                   library/src/matrix.c\
+                   library/src/palette.c\
+                   library/src/vertex2d.c\
+                   library/src/vertex3d.c\
+                   library/src/voxelspace.c
+	$(CC_GCC) ${INCLUDES_MOS} ${C_FLAGS_MOS_GCC} $(^)
+	$(AR) $(@) args.o color.o events.o font.o framebuffer.o framebuffer_8bit.o framebuffer_rgba.o heightmap.o helper.o julia.o matrix.o palette.o vertex2d.o vertex3d.o voxelspace.o
+
+#--- exdev-gfx-ui ---#
+exdev_gfx_ui_mos_gcc.a : library/src/ui/ui_application.c\
+                      library/src/ui/ui_component.c\
+                      library/src/ui/ui_component_list.c\
+                      library/src/ui/ui_scroll.c\
+                      library/src/ui/ui_horizontal_scroll_bar.c\
+                      library/src/ui/ui_vertical_scroll_bar.c\
+                      library/src/ui/ui_icon.c
+	$(CC_GCC) ${INCLUDES_MOS} ${C_FLAGS_MOS_GCC} $(^)
+	$(AR) $(@) ui_application.o ui_component.o ui_component_list.o ui_scroll.o ui_horizontal_scroll_bar.o ui_vertical_scrobb_bar.o ui_icon.o
+
 #--- application ---#
 application: application_mos_gcc application_060
 
