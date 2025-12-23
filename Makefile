@@ -1,13 +1,13 @@
 C_FLAGS_MOS=-speed -final -DNDEBUG -D__MORPHOS__
 C_FLAGS_MOS_GCC=-Ofast -noixemul -mcpu=G4 -maltivec -mabi=altivec -DNDEBUG -D__MORPHOS__
 
-C_FLAGS_060=+aos68k -fpu=68060 -cpu=68060 -speed -final -DNDEBUG -D__AMIGA__
-C_FLAGS_030_FPU=+aos68k -fpu=68881 -cpu=68030 -speed -final -DNDEBUG -D__AMIGA__
+C_FLAGS_060=+aos68k -c99 -fpu=68060 -cpu=68060 -speed -final -DNDEBUG -D__AMIGA__
+C_FLAGS_030_FPU=+aos68k -c99 -fpu=68881 -cpu=68030 -speed -final -DNDEBUG -D__AMIGA__
 
 LD_FLAGS_MOS=-lm
 LD_FLAGS_MOS_GCC=-lm
 
-LD_FLAGS_060=-lm060 
+LD_FLAGS_060=-lm060
 LD_FLAGS_030_FPU=-lm881
 
 CC=vc
@@ -17,6 +17,7 @@ PREFIX=ram:exdevgfx
 
 INCLUDES_MOS=-Ilibrary/include -Ilibrary/easing/include
 INCLUDES_AOS=-Ilibrary/include -Ilibrary/easing/include
+
 
 all: voxelspace julia test_sprite other
 
@@ -61,7 +62,28 @@ exdev_gfx_aos_060.a: library/src/args.c\
                    library/src_amiga/helper_amiga.c\
                    library/src_amiga/window_amiga.c
 	$(CC) -c ${INCLUDES_AOS} ${C_FLAGS_060} $(^)
-	$(AR) -r $(@) args.o color.o events.o font.o framebuffer.o framebuffer_8bit.o framebuffer_rgba.o heightmap.o helper.o julia.o matrix.o palette.o vertex2d.o vertex3d.o voxelspace.o exdev_base_amiga.o helper_amiga.o window_amiga.o
+	$(AR) -r $(@) library/src/args.o library/src/color.o library/src/events.o library/src/font.o library/src/framebuffer.o library/src/framebuffer_8bit.o library/src/framebuffer_rgba.o library/src/heightmap.o library/src/helper.o library/src/julia.o library/src/matrix.o library/src/palette.o library/src/vertex2d.o library/src/vertex3d.o library/src/voxelspace.o library/src_amiga/exdev_base_amiga.o library/src_amiga/helper_amiga.o library/src_amiga/window_amiga.o
+
+exdev_gfx_aos_060_c2p.a: library/src/args.c\
+                   library/src/color.c\
+                   library/src/events.c\
+                   library/src/font.c\
+                   library/src/framebuffer.c\
+                   library/src/framebuffer_8bit.c\
+                   library/src/framebuffer_rgba.c\
+                   library/src/heightmap.c\
+                   library/src/helper.c\
+                   library/src/julia.c\
+                   library/src/matrix.c\
+                   library/src/palette.c\
+                   library/src/vertex2d.c\
+                   library/src/vertex3d.c\
+                   library/src/voxelspace.c\
+                   library/src_amiga/exdev_base_amiga.c\
+                   library/src_amiga/helper_amiga.c\
+                   library/src_amiga/window_amiga.c
+	$(CC) -c ${INCLUDES_AOS} -IWork:workspace/c2plib/sdk/C ${C_FLAGS_060} $(^) -DUSE_C2P
+	$(AR) -r $(@) library/src/args.o library/src/color.o library/src/events.o library/src/font.o library/src/framebuffer.o library/src/framebuffer_8bit.o library/src/framebuffer_rgba.o library/src/heightmap.o library/src/helper.o library/src/julia.o library/src/matrix.o library/src/palette.o library/src/vertex2d.o library/src/vertex3d.o library/src/voxelspace.o library/src_amiga/exdev_base_amiga.o library/src_amiga/helper_amiga.o library/src_amiga/window_amiga.o
 
 #--- exdev-gfx-ui ---#
 exdev_gfx_ui_mos_gcc.a : library/src/ui/ui_application.c\
@@ -82,7 +104,37 @@ exdev_gfx_ui_aos_060.a : library/src/ui/ui_application.c\
                       library/src/ui/ui_vertical_scroll_bar.c\
                       library/src/ui/ui_icon.c
 	$(CC) -c ${INCLUDES_AOS} ${C_FLAGS_060} $(^)
-	$(AR) -r $(@) ui_application.o ui_component.o ui_component_list.o ui_scroll.o ui_horizontal_scroll_bar.o ui_vertical_scroll_bar.o ui_icon.o
+	$(AR) -r $(@) library/src/ui/ui_application.o library/src/ui/ui_component.o library/src/ui/ui_component_list.o library/src/ui/ui_scroll.o library/src/ui/ui_horizontal_scroll_bar.o library/src/ui/ui_vertical_scroll_bar.o library/src/ui/ui_icon.o
+
+#--- exdev-gfx-easing ---#
+exdev_gfx_easing_mos_gcc.a : library/easing/src/Back.c\
+                          library/easing/src/Bounce.c\
+                          library/easing/src/Circ.c\
+                          library/easing/src/Cubic.c\
+                          library/easing/src/Elastic.c\
+                          library/easing/src/Expo.c\
+                          library/easing/src/Linear.c\
+                          library/easing/src/Quad.c\
+                          library/easing/src/Quart.c\
+                          library/easing/src/Quint.c\
+                          library/easing/src/Sine.c
+	$(CC_GCC) -c ${INCLUDES_MOS} ${C_FLAGS_MOS_GCC} $(^)
+	$(AR) -r $(@) Back.o Bounce.o Circ.o Cubic.o Elastic.o Expo.o Linear.o Quad.o Quart.o Quint.o Sine.o
+
+exdev_gfx_easing_aos_060.a : library/easing/src/Back.c\
+                          library/easing/src/Bounce.c\
+                          library/easing/src/Circ.c\
+                          library/easing/src/Cubic.c\
+                          library/easing/src/Elastic.c\
+                          library/easing/src/Expo.c\
+                          library/easing/src/Linear.c\
+                          library/easing/src/Quad.c\
+                          library/easing/src/Quart.c\
+                          library/easing/src/Quint.c\
+                          library/easing/src/Sine.c
+	$(CC) -c ${INCLUDES_AOS} ${C_FLAGS_060} $(^)
+	$(AR) -r $(@) Back.o Bounce.o Circ.o Cubic.o Elastic.o Expo.o Linear.o Quad.o Quart.o Quint.o Sine.o
+
 
 #--- application ---#
 application: application_mos_gcc application_060
@@ -90,8 +142,8 @@ application: application_mos_gcc application_060
 application_mos_gcc: examples/test_application.c exdev_gfx_ui_mos_gcc.a exdev_gfx_mos_gcc.a
 	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
 
-application_060: examples/test_application.c  exdev_gfx_ui_aos_060.a exdev_gfx_aos_060.a
-	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060}
+application_060: examples/test_application.c exdev_gfx_ui_aos_060.a exdev_gfx_aos_060.a
+	$(CC) -o ${@} ${INCLUDES_AOS} examples/test_application.c library/src/ui/ui_application.o library/src/ui/ui_component.o library/src/ui/ui_component_list.o library/src/ui/ui_scroll.o library/src/ui/ui_horizontal_scroll_bar.o library/src/ui/ui_vertical_scroll_bar.o library/src/ui/ui_icon.o library/src/args.o library/src/color.o library/src/events.o library/src/font.o library/src/framebuffer.o library/src/framebuffer_8bit.o library/src/framebuffer_rgba.o library/src/heightmap.o library/src/helper.o library/src/julia.o library/src/matrix.o library/src/palette.o library/src/vertex2d.o library/src/vertex3d.o library/src/voxelspace.o library/src_amiga/exdev_base_amiga.o library/src_amiga/helper_amiga.o library/src_amiga/window_amiga.o ${C_FLAGS_060} ${LD_FLAGS_060}
 
 #--- voxelspace ---#
 voxelspace: voxelspace_mos voxelspace_mos_gcc voxelspace_060 voxelspace_060_c2p
@@ -116,29 +168,12 @@ voxelspace_060_c2p: library/src/vertex3d.c library/src/events.c library/src/vert
 #	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_030_FPU} ${LD_FLAGS_030_FPU} -DLOW_RESOLUTION
 
 #--- test sprite ---#
-test_sprite: test_sprite_mos test_sprite_mos_gcc
+test_sprite: test_sprite_060 test_sprite_mos_gcc
 
-easing_mos_gcc: library/easing/src/Back.c library/easing/src/Bounce.c library/easing/src/Circ.c library/easing/src/Cubic.c library/easing/src/Elastic.c\
-                library/easing/src/Expo.c library/easing/src/Linear.c library/easing/src/Quad.c library/easing/src/Quart.c library/easing/src/Quint.c\
-                library/easing/src/Sine.c
-	$(CC_GCC) -c $(^) ${INCLUDES_MOS} ${C_FLAGS_MOS_GCC}
+test_sprite_mos_gcc: examples/test_sprite.c exdev_gfx_easing_mos_gcc.a exdev_gfx_mos_gcc.a
+	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
 
-easing_060: library/easing/src/Back.c library/easing/src/Bounce.c library/easing/src/Circ.c library/easing/src/Cubic.c library/easing/src/Elastic.c\
-                library/easing/src/Expo.c library/easing/src/Linear.c library/easing/src/Quad.c library/easing/src/Quart.c library/easing/src/Quint.c\
-                library/easing/src/Sine.c
-	$(CC) -c $(^) ${INCLUDES_AOS} ${C_FLAGS_060}
-
-EASING_OBJECTS = Back.o Bounce.o Circ.o Cubic.o Elastic.o Expo.o Linear.o Quad.o Quart.o Quint.o Sine.o
-EASING_OBJECTS_VBCC = library/easing/src/Back.o library/easing/src/Bounce.o library/easing/src/Circ.o library/easing/src/Cubic.o\
-                      library/easing/src/Elastic.o library/easing/src/Expo.o library/easing/src/Linear.o library/easing/src/Quad.o\
-                      library/easing/src/Quart.o library/easing/src/Quint.o library/easing/src/Sine.o
-
-test_sprite_mos_gcc: library/src/palette.c library/src/events.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src/font.c library/src/vertex2d.c\
-                     library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c library/src_amiga/window_amiga.c examples/test_sprite.c
-	$(MAKE) easing_mos_gcc
-	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) $(EASING_OBJECTS) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
-
- test_sprite_060: library/src/palette.c library/src/events.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src/font.c library/src/vertex2d.c\
+test_sprite_060: library/src/palette.c library/src/events.c library/src/color.c library/src/framebuffer.c library/src/framebuffer_8bit.c library/src/font.c library/src/vertex2d.c\
                       library/src/helper.c library/src_amiga/exdev_base_amiga.c library/src_amiga/helper_amiga.c library/src_amiga/window_amiga.c examples/test_sprite.c
 	$(MAKE) easing_060
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) $(EASING_OBJECTS_VBCC) ${C_FLAGS_060} ${LD_FLAGS_060}
@@ -206,4 +241,4 @@ dist_voxelspace: voxelspace
 #--- clean ---#
 .PHONY: clean
 clean:
-	$(RM) -f julia_* voxelspace_* application_* test_sprite_* *.o library/easing/src/*.o *.a
+	$(RM) -f julia_* voxelspace_* application_* test_sprite_* *.o library/easing/src/*.o *.a library/src/*.o library/src_amiga/*.o
