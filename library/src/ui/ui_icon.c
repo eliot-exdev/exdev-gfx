@@ -36,6 +36,7 @@ void ui_icon_init(UIIcon_t *self, const int x, const int y, Framebuffer8Bit_t *f
 
     self->properties.clickable = 1;
     self->flags.focused = 0;
+    self->flags.clicked = 0;
 
     self->functions.on_clicked = NULL;
     self->functions.on_focus = NULL;
