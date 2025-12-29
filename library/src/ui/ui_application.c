@@ -68,8 +68,11 @@ int ui_application_run(UIApplication_t *self, const exdev_timestamp_t wait_ms) {
 
     // open window
     self->window = window_create(self->root.properties.width, self->root.properties.height, "app", FS_8_BIT);
+    if (!self->window) {
+        log_warning("failed to create window");
+        return 1;
+    }
     window_update_palette(self->window, &self->palette);
-
 
     // loop
     while (self->resume) {
