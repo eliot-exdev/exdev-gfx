@@ -55,8 +55,10 @@ void ui_application_prepare(UIApplication_t *self) {
 
 #define MAX_EVENTS 4
 
-int ui_application_run(UIApplication_t *self, const exdev_timestamp_t wait_ms) {
+int ui_application_run(UIApplication_t *self, const char *title, const exdev_timestamp_t wait_ms) {
     assert(self);
+    assert(title);
+    assert(wait_ms>0);
 
     char close_event = 0;
     Event_t events[MAX_EVENTS];
@@ -67,7 +69,7 @@ int ui_application_run(UIApplication_t *self, const exdev_timestamp_t wait_ms) {
     exdev_timestamp_t end_ms = 0;
 
     // open window
-    self->window = window_create(self->root.properties.width, self->root.properties.height, "app", FS_8_BIT);
+    self->window = window_create(self->root.properties.width, self->root.properties.height, title, FS_8_BIT);
     if (!self->window) {
         log_warning("failed to create window");
         return 1;

@@ -121,7 +121,7 @@ int main() {
 
     // run
     ui_application_prepare(&app);
-    ui_application_run(&app, UPDATE_INTERVAL);
+    ui_application_run(&app, "test_application",UPDATE_INTERVAL);
 
     // cleanup
     ui_application_destroy(&app);

@@ -295,7 +295,7 @@ void ui_application_destroy(UIApplication_t *self);
 
 void ui_application_prepare(UIApplication_t *self);
 
-int ui_application_run(UIApplication_t *self, long wait_ms);
+int ui_application_run(UIApplication_t *self, const char* title, long wait_ms);
 
 #ifdef __cplusplus
 }
