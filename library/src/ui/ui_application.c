@@ -21,8 +21,10 @@ void ui_application_init(UIApplication_t *self, const int width, const int heigh
 void ui_application_destroy(UIApplication_t *self) {
     assert(self);
 
-    window_destroy(self->window);
-    self->window = NULL;
+    if (self->window) {
+        window_destroy(self->window);
+        self->window = NULL;
+    }
     ui_component_destroy(&self->root);
     self->resume = 0;
 }
@@ -58,7 +60,7 @@ void ui_application_prepare(UIApplication_t *self) {
 int ui_application_run(UIApplication_t *self, const char *title, const exdev_timestamp_t wait_ms) {
     assert(self);
     assert(title);
-    assert(wait_ms>0);
+    assert(wait_ms > 0);
 
     char close_event = 0;
     Event_t events[MAX_EVENTS];
