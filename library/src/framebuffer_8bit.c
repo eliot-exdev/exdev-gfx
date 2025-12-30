@@ -15,6 +15,17 @@
 #include <assert.h>
 #include <math.h>
 
+void tiles_8bit_init(Tiles8bit_t *tiles, const int num, const int width, const int height) {
+    assert(tiles);
+    assert(num > 0);
+
+    tiles->tiles = malloc(sizeof(Framebuffer8Bit_t) * num);
+    for (int i = 0; i < num; ++i) {
+        framebuffer_8bit_init(tiles->tiles + i, width, height);
+    }
+    tiles->num = num;
+}
+
 void tiles_8bit_init_from_framebuffer(Tiles8bit_t *dst, const Framebuffer8Bit_t *src, const int width, const int height) {
     assert(dst);
     assert(src);
@@ -64,9 +75,20 @@ Framebuffer8Bit_t *framebuffer_8bit_copy(const Framebuffer8Bit_t *fb) {
 
     Framebuffer8Bit_t *copy = malloc(sizeof(Framebuffer8Bit_t));
     framebuffer_8bit_init(copy, fb->width, fb->height);
-    framebuffer_8bit_draw_framebuffer(copy, 0, 0, fb);
+    memcpy(copy->buffer, fb->buffer, fb->width * fb->height);
 
     return copy;
+}
+
+void framebuffer_8bit_copy_to(const Framebuffer8Bit_t *src, Framebuffer8Bit_t *dst) {
+    assert(src);
+    assert(dst);
+
+    if (dst->height != src->height || dst->width != src->width) {
+        framebuffer_8bit_deinit(dst);
+        framebuffer_8bit_init(dst, src->width, src->height);
+    }
+    memcpy(dst->buffer, src->buffer, src->width * src->height);
 }
 
 int framebuffer_8bit_init_from_framebuffer(Framebuffer8Bit_t *f, Palette8Bit_t *p, const Framebuffer_t *fb, const int init_palette) {

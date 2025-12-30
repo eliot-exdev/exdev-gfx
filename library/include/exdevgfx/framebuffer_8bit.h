@@ -27,6 +27,8 @@ struct Tiles8bit {
 };
 typedef struct Tiles8bit Tiles8bit_t;
 
+void tiles_8bit_init(Tiles8bit_t *tiles, int num, int width, int height);
+
 void tiles_8bit_init_from_framebuffer(Tiles8bit_t *dst, const Framebuffer8Bit_t *src, int width, int height);
 
 void tiles_8bit_deinit(Tiles8bit_t *tiles);
@@ -34,6 +36,8 @@ void tiles_8bit_deinit(Tiles8bit_t *tiles);
 void framebuffer_8bit_init(Framebuffer8Bit_t *fb, int width, int height);
 
 Framebuffer8Bit_t *framebuffer_8bit_copy(const Framebuffer8Bit_t *fb);
+
+void framebuffer_8bit_copy_to(const Framebuffer8Bit_t *src, Framebuffer8Bit_t *dst);
 
 int framebuffer_8bit_init_from_framebuffer(Framebuffer8Bit_t *f, Palette8Bit_t *p, const Framebuffer_t *fb, int init_palette);
 
