@@ -32,7 +32,7 @@ void ui_icon_init(UIIcon_t *self, const int x, const int y, Framebuffer8Bit_t *f
     self->base.type = UI_COMPONENT_ICON;
     self->base.functions.destroy_func = (void (*)(void *)) &ui_icon_destroy;
     self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_icon_paint;
-    self->base.functions.update_func = (void (*)(void *, long, const Event_t *, int)) &ui_icon_update;
+    self->base.functions.update_func = (void (*)(void *, long, const Event_t *, int, void *)) &ui_icon_update;
 
     self->properties.clickable = 1;
     self->flags.focused = 0;
@@ -68,14 +68,14 @@ int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb, const int x_offset, con
     return res;
 }
 
-void ui_icon_update(UIIcon_t *self, const long time_elapsed, const Event_t *events, const int num_events) {
+void ui_icon_update(UIIcon_t *self, const long time_elapsed, const Event_t *events, const int num_events, void *usr_ptr) {
     assert(self);
 
     if (!self->base.flags.enabled_flag) {
         return;
     }
 
-    ui_component_update(&self->base, time_elapsed, events, num_events);
+    ui_component_update(&self->base, time_elapsed, events, num_events, usr_ptr);
 
     if (!self->properties.clickable) {
         return;
@@ -89,7 +89,7 @@ void ui_icon_update(UIIcon_t *self, const long time_elapsed, const Event_t *even
                     self->base.properties.border_color = PEN_INDEX_DARK_YELLOW;
                     self->base.flags.dirty_flag = 1;
                     if (self->functions.on_focus) {
-                        self->functions.on_focus(self);
+                        self->functions.on_focus(self, usr_ptr);
                     }
                 }
             } else {
@@ -98,7 +98,7 @@ void ui_icon_update(UIIcon_t *self, const long time_elapsed, const Event_t *even
                     self->base.properties.border_color = PEN_INDEX_BLUE;
                     self->base.flags.dirty_flag = 1;
                     if (self->functions.on_focus) {
-                        self->functions.on_focus(self);
+                        self->functions.on_focus(self, usr_ptr);
                     }
                 }
             }
@@ -108,7 +108,7 @@ void ui_icon_update(UIIcon_t *self, const long time_elapsed, const Event_t *even
                 self->base.properties.border_color = PEN_INDEX_YELLOW;
                 self->base.flags.dirty_flag = 1;
                 if (self->functions.on_clicked) {
-                    self->functions.on_clicked(self);
+                    self->functions.on_clicked(self, usr_ptr);
                 }
             }
         } else if (events[i].type == EVENT_MOUSE && events[i].mouse_event.event == MOUSE_EVENT_BUTTON_RELEASED) {
@@ -117,7 +117,7 @@ void ui_icon_update(UIIcon_t *self, const long time_elapsed, const Event_t *even
                 self->base.properties.border_color = PEN_INDEX_DARK_YELLOW;
                 self->base.flags.dirty_flag = 1;
                 if (self->functions.on_clicked) {
-                    self->functions.on_clicked(self);
+                    self->functions.on_clicked(self, usr_ptr);
                 }
             }
         }

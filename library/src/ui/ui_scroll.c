@@ -44,7 +44,7 @@ void ui_scroll_container_init(UIScrollContainer_t *self, int x, int y, int width
     self->base.functions.destroy_func = (void (*)(void *)) &ui_scroll_container_destroy;
     self->base.functions.prepare_func = (void (*)(void *)) &ui_scroll_container_prepare;
     self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_scroll_container_paint;
-    self->base.functions.update_func = (void (*)(void *, long, const Event_t *, int)) &ui_scroll_container_update;
+    self->base.functions.update_func = (void (*)(void *, long, const Event_t *, int, void *)) &ui_scroll_container_update;
 
     if (scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL || scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
         self->functions.on_x_offset = ui_scroll_container_on_x_offset;
@@ -214,7 +214,7 @@ int ui_scroll_container_paint(UIScrollContainer_t *self, Framebuffer8Bit_t *fb, 
     return res;
 }
 
-void ui_scroll_container_update(UIScrollContainer_t *self, const long time_elapsed, const Event_t *events, const int num_events) {
+void ui_scroll_container_update(UIScrollContainer_t *self, const long time_elapsed, const Event_t *events, const int num_events, void *usr_ptr) {
     assert(self);
     assert(events);
 
@@ -243,16 +243,16 @@ void ui_scroll_container_update(UIScrollContainer_t *self, const long time_elaps
             }
         }
     }
-    ui_component_update(&self->base, time_elapsed, cpy, num_events);
+    ui_component_update(&self->base, time_elapsed, cpy, num_events, usr_ptr);
 
     free(cpy);
     cpy = NULL;
 
     if (self->h_bar) {
-        self->h_bar->base.functions.update_func(self->h_bar, time_elapsed, events, num_events);
+        self->h_bar->base.functions.update_func(self->h_bar, time_elapsed, events, num_events, usr_ptr);
     }
 
     if (self->v_bar) {
-        self->v_bar->base.functions.update_func(self->v_bar, time_elapsed, events, num_events);
+        self->v_bar->base.functions.update_func(self->v_bar, time_elapsed, events, num_events, usr_ptr);
     }
 }

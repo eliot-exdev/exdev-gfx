@@ -63,7 +63,7 @@ typedef void (*destroy_function)(void *self);
 
 typedef int (*paint_function)(void *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
 
-typedef void (*update_function)(void *self, long time_elapsed, const Event_t *events, int num_events);
+typedef void (*update_function)(void *self, long time_elapsed, const Event_t *events, int num_events, void *usr_ptr);
 
 typedef void (*prepare_function)(void *self);
 
@@ -108,7 +108,7 @@ void ui_component_prepare(UIComponent_t *self);
 
 int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
 
-void ui_component_update(UIComponent_t *self, long time_elapsed, const Event_t *events, int num_events);
+void ui_component_update(UIComponent_t *self, long time_elapsed, const Event_t *events, int num_events, void *usr_ptr);
 
 int ui_component_is_inside(const UIComponent_t *self, int x, int y);
 
@@ -121,9 +121,9 @@ void ui_component_get_relative_position(const UIComponent_t *self, int *x, int *
 //--- UIIcon ---//
 struct UIIcon;
 
-typedef void (*on_focus_function)(struct UIIcon *self);
+typedef void (*on_focus_function)(struct UIIcon *self, void *usr_ptr);
 
-typedef void (*on_click_function)(struct UIIcon *self);
+typedef void (*on_click_function)(struct UIIcon *self, void *usr_ptr);
 
 struct UIIcon {
     UIComponent_t base;
@@ -157,7 +157,7 @@ void ui_icon_destroy(UIIcon_t *self);
 
 int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
 
-void ui_icon_update(UIIcon_t *self, long time_elapsed, const Event_t *events, int num_events);
+void ui_icon_update(UIIcon_t *self, long time_elapsed, const Event_t *events, int num_events, void *usr_ptr);
 
 //--- UIScrollContainer ---//
 #define SCROLL_BAR_SIZE 10
@@ -209,7 +209,7 @@ void ui_scroll_container_prepare(UIScrollContainer_t *self);
 
 int ui_scroll_container_paint(UIScrollContainer_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
 
-void ui_scroll_container_update(UIScrollContainer_t *self, long time_elapsed, const Event_t *events, int num_events);
+void ui_scroll_container_update(UIScrollContainer_t *self, long time_elapsed, const Event_t *events, int num_events, void *usr_ptr);
 
 void ui_scroll_container_on_x_offset(UIScrollContainer_t *self, int x_offset);
 
@@ -245,7 +245,7 @@ void ui_horizontal_scroll_bar_destroy(UIHorizontalScrollBar_t *self);
 
 int ui_horizontal_scroll_bar_paint(UIHorizontalScrollBar_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
 
-void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, long time_elapsed, const Event_t *events, int num_events);
+void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, long time_elapsed, const Event_t *events, int num_events, void *usr_ptr);
 
 //--- UIVerticalScrollBar ---//
 struct UIVerticalScrollBar {
@@ -277,7 +277,7 @@ void ui_vertical_scroll_bar_destroy(UIVerticalScrollBar_t *self);
 
 int ui_vertical_scroll_bar_paint(UIVerticalScrollBar_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
 
-void ui_vertical_scroll_bar_update(UIVerticalScrollBar_t *self, long time_elapsed, const Event_t *events, int num_events);
+void ui_vertical_scroll_bar_update(UIVerticalScrollBar_t *self, long time_elapsed, const Event_t *events, int num_events, void *usr_ptr);
 
 //--- UIApplication ---//
 struct UIApplication {
@@ -285,11 +285,12 @@ struct UIApplication {
     UIComponent_t root;
     Palette8Bit_t palette;
     int resume;
+    void *usr_ptr;
 };
 
 typedef struct UIApplication UIApplication_t;
 
-void ui_application_init(UIApplication_t *self, int width, int height);
+void ui_application_init(UIApplication_t *self, int width, int height, void *usr_ptr);
 
 void ui_application_destroy(UIApplication_t *self);
 

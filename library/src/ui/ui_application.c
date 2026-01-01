@@ -10,12 +10,13 @@
 
 #include <assert.h>
 
-void ui_application_init(UIApplication_t *self, const int width, const int height) {
+void ui_application_init(UIApplication_t *self, const int width, const int height, void *usr_ptr) {
     assert(self);
 
     ui_component_init(&self->root, 0, 0, width, height);
     palette_8bit_init(&self->palette, 0);
     self->resume = 1;
+    self->usr_ptr = usr_ptr;
 }
 
 void ui_application_destroy(UIApplication_t *self) {
@@ -95,7 +96,7 @@ int ui_application_run(UIApplication_t *self, const char *title, const exdev_tim
             }
         }
         // update ui
-        self->root.functions.update_func(&self->root, end_ms - begin_ms, events, num_events);
+        self->root.functions.update_func(&self->root, end_ms - begin_ms, events, num_events, self->usr_ptr);
 
         // paint ui
         if (self->root.functions.paint_func(&self->root,
