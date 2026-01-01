@@ -20,7 +20,7 @@ INCLUDES_AOS=-Ilibrary/include -Ilibrary/easing/include
 
 JOIN=Mossys:C/join
 
-all: voxelspace application test_sprite julia
+all: voxelspace_all application_all test_sprite_all julia_all
 
 #--- exdev-gfx ---#
 EXDEV_GFX_SOURCES=library/src/args.c\
@@ -93,7 +93,7 @@ exdev_gfx_easing_aos_060.lib: $(EXDEV_GFX_EASING_SOURCES)
 	$(JOIN) as $(@) library/easing/src/Back.o library/easing/src/Bounce.o library/easing/src/Circ.o library/easing/src/Cubic.o library/easing/src/Elastic.o library/easing/src/Expo.o library/easing/src/Linear.o library/easing/src/Quad.o library/easing/src/Quart.o library/easing/src/Quint.o library/easing/src/Sine.o
 
 #--- application ---#
-application: application_mos_gcc application_060
+application_all: application_mos_gcc application_060
 
 application_mos_gcc: examples/test_application.c exdev_gfx_ui_mos_gcc.a exdev_gfx_mos_gcc.a
 	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
@@ -102,7 +102,7 @@ application_060: examples/test_application.c exdev_gfx_ui_aos_060.lib exdev_gfx_
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060}
 
 #--- voxelspace ---#
-voxelspace: voxelspace_mos_gcc voxelspace_060 voxelspace_060_c2p
+voxelspace_all: voxelspace_mos_gcc voxelspace_060 voxelspace_060_c2p
 
 voxelspace_mos_gcc: examples/voxelspace_main.c exdev_gfx_mos_gcc.a
 	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
@@ -114,7 +114,7 @@ voxelspace_060_c2p: examples/voxelspace_main.c exdev_gfx_aos_060_c2p.lib
 	$(CC) -o ${@} ${INCLUDES_AOS} -IWork:workspace/c2plib/sdk/C $(^) ${C_FLAGS_060} ${LD_FLAGS_060} -LWork:workspace/c2plib/sdk -lc2p -DLOW_RESOLUTION -DUSE_C2P
 
 #--- test sprite ---#
-test_sprite: test_sprite_mos_gcc test_sprite_060
+test_sprite_all: test_sprite_mos_gcc test_sprite_060
 
 test_sprite_mos_gcc: examples/test_sprite.c exdev_gfx_easing_mos_gcc.a exdev_gfx_mos_gcc.a
 	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
@@ -123,13 +123,13 @@ test_sprite_060: examples/test_sprite.c exdev_gfx_easing_aos_060.lib exdev_gfx_a
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060}
 
 #--- julia ---#
-julia: julia_mos_gcc
+julia_all: julia_mos_gcc
 
 julia_mos_gcc: examples/julia_main.c exdev_gfx_mos_gcc.a
 	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
 
 #--- dist voxelspace ---#
-dist_voxelspace: voxelspace
+dist_voxelspace: voxelspace_all
 	rm -rf ram:voxelspace
 	rm -f ram:voxelspace.lha
 	mkdir ram:voxelspace
