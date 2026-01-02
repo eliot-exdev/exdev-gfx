@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+
 void ui_text_init(UIText_t *self, const int x, const int y, const int width, const int height, const char *text, const Font_t *font) {
     assert(self);
     assert(font);
@@ -17,7 +18,8 @@ void ui_text_init(UIText_t *self, const int x, const int y, const int width, con
     self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_text_paint;
 
     if (text) {
-        self->properties.text = strdup(text);
+        self->properties.text = malloc(strlen(text)+1);
+        strcpy(self->properties.text, text);
     } else {
         self->properties.text = NULL;
     }
@@ -80,8 +82,8 @@ void ui_text_update_text(UIText_t *self, const char *text) {
     }
 
     if (text) {
-        free(self->properties.text);
-        self->properties.text = strdup(text);
+        self->properties.text = malloc(strlen(text)+1);
+        strcpy(self->properties.text, text);
     }
 
     self->base.flags.dirty_flag = 1;
