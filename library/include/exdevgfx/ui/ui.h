@@ -37,6 +37,7 @@ extern "C" {
 enum ui_component_type {
     UI_COMPONENT_BASE,
     UI_COMPONENT_ICON,
+    UI_COMPONENT_TEXT,
     UI_COMPONENT_SCROLL_PANE,
     UI_COMPONENT_SCROLL_BAR_HORIZONTAL,
     UI_COMPONENT_SCROLL_BAR_VERTICAL,
@@ -158,6 +159,29 @@ void ui_icon_destroy(UIIcon_t *self);
 int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
 
 void ui_icon_update(UIIcon_t *self, long time_elapsed, const Event_t *events, int num_events, void *usr_ptr);
+
+//--- UIText ---//
+struct UIText {
+    UIComponent_t base;
+
+    struct {
+        char *text;
+        const Font_t *font;
+        Color8Bit_t text_color;
+    } properties;
+};
+
+typedef struct UIText UIText_t;
+
+void ui_text_init(UIText_t *self, int x, int y, int width, int height, const char *text, const Font_t *font);
+
+UIText_t *ui_text_create(int x, int y, int width, int height, const char *text, const Font_t *font);
+
+void ui_text_destroy(UIText_t *self);
+
+int ui_text_paint(UIText_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
+
+void ui_text_update_text(UIText_t *self, const char *text);
 
 //--- UIScrollContainer ---//
 #define SCROLL_BAR_SIZE 10
@@ -296,7 +320,7 @@ void ui_application_destroy(UIApplication_t *self);
 
 void ui_application_prepare(UIApplication_t *self);
 
-int ui_application_run(UIApplication_t *self, const char* title, long wait_ms);
+int ui_application_run(UIApplication_t *self, const char *title, long wait_ms);
 
 #ifdef __cplusplus
 }

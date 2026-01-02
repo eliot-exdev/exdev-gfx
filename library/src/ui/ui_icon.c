@@ -6,6 +6,7 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 UIIcon_t *ui_icon_create(const int x, const int y, Framebuffer8Bit_t *fb) {
     assert(fb);
@@ -46,7 +47,9 @@ void ui_icon_init(UIIcon_t *self, const int x, const int y, Framebuffer8Bit_t *f
 
 void ui_icon_destroy(UIIcon_t *self) {
     assert(self);
+
     ui_component_destroy(&self->base);
+
     framebuffer_8bit_deinit(self->icon);
     free(self->icon);
     self->icon = NULL;
