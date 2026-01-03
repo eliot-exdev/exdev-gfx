@@ -18,7 +18,7 @@ void ui_text_init(UIText_t *self, const int x, const int y, const int width, con
     self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_text_paint;
 
     if (text) {
-        self->properties.text = malloc(strlen(text)+1);
+        self->properties.text = malloc(strlen(text) + 1);
         strcpy(self->properties.text, text);
     } else {
         self->properties.text = NULL;
@@ -67,7 +67,7 @@ int ui_text_paint(UIText_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_off
                                        strlen(self->properties.text),
                                        self->properties.text_color,
                                        x + 2,
-                                       self->base.properties.height / 2);
+                                       y + (self->base.properties.height - self->properties.font->height) / 2);
         }
     }
     return res;
@@ -82,7 +82,7 @@ void ui_text_update_text(UIText_t *self, const char *text) {
     }
 
     if (text) {
-        self->properties.text = malloc(strlen(text)+1);
+        self->properties.text = malloc(strlen(text) + 1);
         strcpy(self->properties.text, text);
     }
 
