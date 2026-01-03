@@ -138,7 +138,7 @@ dist_voxelspace: voxelspace_all
 	mkdir ram:voxelspace/screenshots
 	cp -av screenshots/voxelspace*.png ram:voxelspace/screenshots
 	cp -av examples/voxelspace.readme ram:voxelspace
-	cp -av assets/*palette.dat assets/*height_map.dat assets/*color_map_8bit.dat assets/*sky.dat assets/*sky_lowres.dat ram:voxelspace/assets
+	cp -av assets/*color_map_palette.dat assets/*height_map.dat assets/*color_map_8bit.dat assets/*_sky.dat assets/*_sky_lowres.dat ram:voxelspace/assets
 	cp -av voxelspace_mos_gcc voxelspace_060 voxelspace_060_c2p ram:voxelspace
 	cp examples/voxelspace.info ram:voxelspace.info
 	lha a -r ram:voxelspace.lha ram:voxelspace ram:voxelspace.info
