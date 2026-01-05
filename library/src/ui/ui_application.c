@@ -110,17 +110,14 @@ int ui_application_run(UIApplication_t *self, const char *title, const exdev_tim
             window_blit_chunky_buffer(self->window);
         }
 
-
         // wait some time
         loop_time_ms = now() - begin_ms;
-        if (wait_ms > 0) {
-            sleep_ms = wait_ms - loop_time_ms;
-            if (sleep_ms <= 0) {
-                log_warning("running out of time - will sleep anyway");
-                sleep_ms = 10;
-            }
-            sleep_for_ms(sleep_ms);
+        sleep_ms = wait_ms - loop_time_ms;
+        if (sleep_ms <= 0) {
+            log_debug("running out of time - will sleep anyway");
+            sleep_ms = 10;
         }
+        sleep_for_ms(sleep_ms);
         end_ms = now();
     }
 
