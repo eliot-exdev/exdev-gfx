@@ -30,7 +30,7 @@ void ui_vertical_scroll_bar_init(UIVerticalScrollBar_t *self, UIScrollContainer_
 
     self->functions.on_y_offset = parent->functions.on_y_offset;
 
-    self->f1 = (float) y_height_visible / ((float) y_height_total);
+    self->f1 = (float) y_height_visible / (float) y_height_total;
     self->bar_height = (int) ((float) height * self->f1);
     self->f1 = (float) (y_height_total - y_height_visible) / (float) (height - self->bar_height);
     if (self->bar_height > self->base.properties.height) {
@@ -56,7 +56,7 @@ int ui_vertical_scroll_bar_paint(UIVerticalScrollBar_t *self, Framebuffer8Bit_t 
     assert(self);
     assert(fb);
 
-    int res = self->base.flags.dirty_flag;
+    const int res = self->base.flags.dirty_flag;
     const int x = self->base.properties.x + x_offset;
     const int y = self->base.properties.y + y_offset;
 
@@ -64,7 +64,7 @@ int ui_vertical_scroll_bar_paint(UIVerticalScrollBar_t *self, Framebuffer8Bit_t 
 
     // draw bar
     if (res) {
-        framebuffer_8bit_fill_rect(fb, x, y + self->properties.y_pos, SCROLL_BAR_SIZE, (int) self->bar_height, PEN_INDEX_BLUE);
+        framebuffer_8bit_fill_rect(fb, x, y + self->properties.y_pos, SCROLL_BAR_SIZE, self->bar_height, PEN_INDEX_BLUE);
     }
     return res;
 }

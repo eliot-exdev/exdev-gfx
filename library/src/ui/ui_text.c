@@ -46,10 +46,9 @@ void ui_text_destroy(UIText_t *self) {
         self->properties.text = NULL;
     }
     self->properties.font = NULL;
-    ;
 }
 
-int ui_text_paint(UIText_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, const int width, const int height) {
+int ui_text_paint(UIText_t *self, Framebuffer8Bit_t *fb, const int x_offset, const int y_offset, const int width, const int height) {
     assert(self);
     assert(fb);
 
@@ -64,7 +63,7 @@ int ui_text_paint(UIText_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_off
             framebuffer_8bit_draw_text(fb,
                                        self->properties.font,
                                        self->properties.text,
-                                       strlen(self->properties.text),
+                                       (int) strlen(self->properties.text),
                                        self->properties.text_color,
                                        x + 2,
                                        y + (self->base.properties.height - self->properties.font->height) / 2);

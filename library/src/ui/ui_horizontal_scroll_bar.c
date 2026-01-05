@@ -30,7 +30,7 @@ void ui_horizontal_scroll_bar_init(UIHorizontalScrollBar_t *self, UIScrollContai
 
     self->functions.on_x_offset = parent->functions.on_x_offset;
 
-    self->f1 = (float) x_width_visible / ((float) x_width_total);
+    self->f1 = (float) x_width_visible / (float) x_width_total;
     self->bar_width = (int) ((float) width * self->f1);
     self->f1 = (float) (x_width_total - x_width_visible) / (float) (width - self->bar_width);
     if (self->bar_width > self->base.properties.width) {
@@ -56,7 +56,7 @@ int ui_horizontal_scroll_bar_paint(UIHorizontalScrollBar_t *self, Framebuffer8Bi
     assert(self);
     assert(fb);
 
-    int res = self->base.flags.dirty_flag;
+    const int res = self->base.flags.dirty_flag;
     const int x = self->base.properties.x + x_offset;
     const int y = self->base.properties.y + y_offset;
 

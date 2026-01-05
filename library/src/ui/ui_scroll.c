@@ -31,7 +31,7 @@ void ui_scroll_container_on_y_offset(UIScrollContainer_t *self, const int y_offs
     }
 }
 
-void ui_scroll_container_init(UIScrollContainer_t *self, int x, int y, int width, int height, const UIScrollingSupport_t scrolling_support) {
+void ui_scroll_container_init(UIScrollContainer_t *self, const int x, const int y, const int width, const int height, const UIScrollingSupport_t scrolling_support) {
     assert(self);
 
     ui_component_init(&self->base, x, y, width, height);
