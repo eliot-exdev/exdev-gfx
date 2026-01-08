@@ -87,7 +87,7 @@ int exdev_base_init() {
 #ifdef USE_C2P
     C2PBase = OpenLibrary("c2p.library", 0);
     if (C2PBase == NULL) {
-        log_warning("Could not open c2p.library V1.7!\n"
+        log_warning("Could not open c2p.library V1.9!\n"
                     "Please download it from: https://aminet.net/dev/misc/c2plib.lha");
         return 1;
     }
