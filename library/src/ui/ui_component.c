@@ -130,6 +130,16 @@ int ui_component_is_inside(const UIComponent_t *self, const int x, const int y) 
     return x >= x_ && x < (x_ + self->properties.width) && y >= y_ && y < (y_ + self->properties.height);
 }
 
+void ui_component_set_dirty(UIComponent_t *self) {
+    assert(self);
+
+    self->flags.dirty_flag=1;
+
+    for (int i=0;i<self->children.size;++i) {
+        ui_component_set_dirty(self->children.components[i]);
+    }
+}
+
 void ui_component_connect(void *parent_, void *child_) {
     assert(parent_);
     assert(child_);

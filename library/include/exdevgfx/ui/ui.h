@@ -113,6 +113,8 @@ void ui_component_update(UIComponent_t *self, long time_elapsed, const Event_t *
 
 int ui_component_is_inside(const UIComponent_t *self, int x, int y);
 
+void ui_component_set_dirty(UIComponent_t *self);
+
 void ui_component_connect(void *parent, void *child);
 
 void ui_component_get_absolute_position(const UIComponent_t *self, int *x, int *y);
