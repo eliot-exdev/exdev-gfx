@@ -58,6 +58,13 @@ target_link_libraries(add_pens_to_8bit
         PRIVATE exdevgfx
 )
 
+add_executable(convert_ppm_to_topaz_8
+        convert_ppm_topaz_8.c
+)
+target_link_libraries(convert_ppm_to_topaz_8
+        PRIVATE exdevgfx
+)
+
 install(TARGETS convert_ppm_to_dat convert_dat_to_ppm convert_pgm_to_dat convert_to_8bit convert_palette_to_pgm convert_palette_to_jasc halve_8bit
         RUNTIME DESTINATION bin
 )

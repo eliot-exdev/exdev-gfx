@@ -322,7 +322,7 @@ int main(int argc, char **argv) {
 
     // create font
     Font_t mia1;
-    font_init_mia_1(&mia1);
+    font_init(&mia1, FONT_TYPE_MIA_1);
     const unsigned char font_color = palette_8bit_add_pen(&palette, &PEN_YELLOW);
     char fps_text[10];
     memset(fps_text, 0, 10);

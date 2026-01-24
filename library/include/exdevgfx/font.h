@@ -14,7 +14,13 @@ struct TranslationTable {
     unsigned char pos;
 };
 
+enum font_type {
+    FONT_TYPE_MIA_1,
+    FONT_TYPE_TOPAZ_8
+};
+
 struct Font {
+    enum font_type type;
     int width;
     int height;
     int spacing;
@@ -25,7 +31,7 @@ struct Font {
 
 typedef struct Font Font_t;
 
-void font_init_mia_1(Font_t *f);
+void font_init(Font_t *f, enum font_type t);
 
 void font_deinit(Font_t *f);
 
@@ -35,4 +41,4 @@ const char *font_get_character(const Font_t *f, char c);
 }
 #endif
 
-#endif //EXDEVGFX2_FONT_H
+#endif//EXDEVGFX2_FONT_H

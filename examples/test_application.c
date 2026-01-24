@@ -7,7 +7,7 @@
 
 #define WIDTH 640
 #define HEIGHT 480
-#define UPDATE_INTERVAL 50// ms
+#define UPDATE_INTERVAL 60 // ms
 
 void left_update(UIComponent_t *self, const long ms, const Event_t *events, const int num_events, void *usr_ptr) {
     ui_component_update(self, ms, events, num_events, usr_ptr);// call update of base class
@@ -119,12 +119,25 @@ int main() {
     right->functions.update_func = (void (*)(void *, long, const Event_t *, int, void *)) &right_update;  // custom event handling
     ui_component_connect(&app.root, right);
 
+    // text
+    Font_t font;
+    font_init(&font, FONT_TYPE_TOPAZ_8);
+    UIText_t *text1 = ui_text_create(2, 240, 300, 12, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", &font);
+    ui_component_connect(left, text1);
+
+    UIText_t *text2 = ui_text_create(2, 254, 300, 12, "abcdefghijklmnopqrstuvwxyp", &font);
+    ui_component_connect(left, text2);
+
+    UIText_t *text3 = ui_text_create(2, 266, 300, 12, "0123456789,;.:+-()/!?#*_ %", &font);
+    ui_component_connect(left, text3);
+
     // run
     ui_application_prepare(&app);
     ui_application_run(&app, "test_application", UPDATE_INTERVAL);
 
     // cleanup
     ui_application_destroy(&app);
+    font_deinit(&font);
     exdev_base_deinit();
 
     return 0;

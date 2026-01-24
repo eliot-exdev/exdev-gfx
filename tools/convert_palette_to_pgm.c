@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
 
     // create font
     Font_t mia1;
-    font_init_mia_1(&mia1);
+    font_init(&mia1, FONT_TYPE_MIA_1);
 
     // create image
     Framebuffer8Bit_t fb;

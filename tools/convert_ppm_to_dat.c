@@ -30,6 +30,8 @@ int main(int argc, char **argv) {
         return res;
     }
 
+    framebuffer_deinit(&fb);
+
     log_info("done");
     return 0;
 }
