@@ -105,8 +105,7 @@ int ui_application_run(UIApplication_t *self, const char *title, const exdev_tim
                                             0,
                                             window_get_chunky_buffer(self->window)->width,
                                             window_get_chunky_buffer(self->window)->height,
-                                            self->usr_ptr),
-            self->usr_ptr) {
+                                            self->usr_ptr)) {
             // blit ui to screen
             log_debug("blit to screen required");
             window_blit_chunky_buffer(self->window);
