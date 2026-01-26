@@ -62,11 +62,11 @@ void ui_component_list_add(UIComponentList_t *self, struct UIComponent *componen
 
 typedef void (*destroy_function)(void *self);
 
-typedef int (*paint_function)(void *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
+typedef int (*paint_function)(void *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height, void *usr_ptr);
 
 typedef void (*update_function)(void *self, long time_elapsed, const Event_t *events, int num_events, void *usr_ptr);
 
-typedef void (*prepare_function)(void *self);
+typedef void (*prepare_function)(void *self, void *usr_ptr);
 
 struct UIComponent {
     UIComponentType_t type;
@@ -105,9 +105,9 @@ UIComponent_t *ui_component_create(int x, int y, int width, int height);
 
 void ui_component_destroy(UIComponent_t *self);
 
-void ui_component_prepare(UIComponent_t *self);
+void ui_component_prepare(UIComponent_t *self, void *usr_ptr);
 
-int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
+int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height, void *usr_ptr);
 
 void ui_component_update(UIComponent_t *self, long time_elapsed, const Event_t *events, int num_events, void *usr_ptr);
 
@@ -158,7 +158,7 @@ UIIcon_t *ui_icon_create_with_path(int x, int y, const char *path);
 
 void ui_icon_destroy(UIIcon_t *self);
 
-int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
+int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height, void *usr_ptr);
 
 void ui_icon_update(UIIcon_t *self, long time_elapsed, const Event_t *events, int num_events, void *usr_ptr);
 
@@ -181,7 +181,7 @@ UIText_t *ui_text_create(int x, int y, int width, int height, const char *text, 
 
 void ui_text_destroy(UIText_t *self);
 
-int ui_text_paint(UIText_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
+int ui_text_paint(UIText_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height, void *usr_ptr);
 
 void ui_text_update_text(UIText_t *self, const char *text);
 
@@ -231,9 +231,9 @@ UIScrollContainer_t *ui_scroll_container_create(int x, int y, int width, int hei
 
 void ui_scroll_container_destroy(UIScrollContainer_t *self);
 
-void ui_scroll_container_prepare(UIScrollContainer_t *self);
+void ui_scroll_container_prepare(UIScrollContainer_t *self, void *usr_ptr);
 
-int ui_scroll_container_paint(UIScrollContainer_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
+int ui_scroll_container_paint(UIScrollContainer_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height, void *usr_ptr);
 
 void ui_scroll_container_update(UIScrollContainer_t *self, long time_elapsed, const Event_t *events, int num_events, void *usr_ptr);
 
@@ -269,7 +269,7 @@ UIHorizontalScrollBar_t *ui_horizontal_scroll_bar_create(UIScrollContainer_t *pa
 
 void ui_horizontal_scroll_bar_destroy(UIHorizontalScrollBar_t *self);
 
-int ui_horizontal_scroll_bar_paint(UIHorizontalScrollBar_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
+int ui_horizontal_scroll_bar_paint(UIHorizontalScrollBar_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height, void *usr_ptr);
 
 void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, long time_elapsed, const Event_t *events, int num_events, void *usr_ptr);
 
@@ -301,7 +301,7 @@ UIVerticalScrollBar_t *ui_vertical_scroll_bar_create(UIScrollContainer_t *parent
 
 void ui_vertical_scroll_bar_destroy(UIVerticalScrollBar_t *self);
 
-int ui_vertical_scroll_bar_paint(UIVerticalScrollBar_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height);
+int ui_vertical_scroll_bar_paint(UIVerticalScrollBar_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height, void *usr_ptr);
 
 void ui_vertical_scroll_bar_update(UIVerticalScrollBar_t *self, long time_elapsed, const Event_t *events, int num_events, void *usr_ptr);
 

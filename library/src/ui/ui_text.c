@@ -15,7 +15,7 @@ void ui_text_init(UIText_t *self, const int x, const int y, const int width, con
     ui_component_init(&self->base, x, y, width, height);
     self->base.type = UI_COMPONENT_TEXT;
     self->base.functions.destroy_func = (void (*)(void *)) &ui_text_destroy;
-    self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_text_paint;
+    self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int, void *)) &ui_text_paint;
 
     if (text) {
         self->properties.text = malloc(strlen(text) + 1);
@@ -48,7 +48,7 @@ void ui_text_destroy(UIText_t *self) {
     self->properties.font = NULL;
 }
 
-int ui_text_paint(UIText_t *self, Framebuffer8Bit_t *fb, const int x_offset, const int y_offset, const int width, const int height) {
+int ui_text_paint(UIText_t *self, Framebuffer8Bit_t *fb, const int x_offset, const int y_offset, const int width, const int height, void *usr_ptr) {
     assert(self);
     assert(fb);
 
@@ -57,7 +57,7 @@ int ui_text_paint(UIText_t *self, Framebuffer8Bit_t *fb, const int x_offset, con
     const int y = self->base.properties.y + y_offset;
 
     // draw base
-    ui_component_paint(&self->base, fb, x_offset, y_offset, width, height);
+    ui_component_paint(&self->base, fb, x_offset, y_offset, width, height, usr_ptr);
     if (res) {
         if (self->properties.text) {
             framebuffer_8bit_draw_text(fb,

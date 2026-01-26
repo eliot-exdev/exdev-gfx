@@ -42,8 +42,8 @@ void ui_scroll_container_init(UIScrollContainer_t *self, const int x, const int 
     self->properties.scrolling_support = scrolling_support;
 
     self->base.functions.destroy_func = (void (*)(void *)) &ui_scroll_container_destroy;
-    self->base.functions.prepare_func = (void (*)(void *)) &ui_scroll_container_prepare;
-    self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_scroll_container_paint;
+    self->base.functions.prepare_func = (void (*)(void *, void *)) &ui_scroll_container_prepare;
+    self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int, void *)) &ui_scroll_container_paint;
     self->base.functions.update_func = (void (*)(void *, long, const Event_t *, int, void *)) &ui_scroll_container_update;
 
     if (scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL || scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
@@ -96,10 +96,10 @@ void ui_scroll_container_destroy(UIScrollContainer_t *self) {
     }
 }
 
-void ui_scroll_container_prepare(UIScrollContainer_t *self) {
+void ui_scroll_container_prepare(UIScrollContainer_t *self, void *usr_ptr) {
     assert(self);
 
-    ui_component_prepare(&self->base);
+    ui_component_prepare(&self->base, usr_ptr);
 
     // find biggest x and y
     int width = 1;
@@ -154,7 +154,7 @@ void ui_scroll_container_prepare(UIScrollContainer_t *self) {
     }
 }
 
-int ui_scroll_container_paint(UIScrollContainer_t *self, Framebuffer8Bit_t *fb, const int x_offset, const int y_offset, const int, const int) {
+int ui_scroll_container_paint(UIScrollContainer_t *self, Framebuffer8Bit_t *fb, const int x_offset, const int y_offset, const int width, const int height, void *usr_ptr) {
     assert(self);
     assert(fb);
 
@@ -175,7 +175,7 @@ int ui_scroll_container_paint(UIScrollContainer_t *self, Framebuffer8Bit_t *fb, 
 
     // draw children to back buffer
     for (int i = 0; i < self->base.children.size; ++i) {
-        if (self->base.children.components[i]->functions.paint_func(self->base.children.components[i], self->fb, 0, 0, self->fb->width, self->fb->height)) {
+        if (self->base.children.components[i]->functions.paint_func(self->base.children.components[i], self->fb, 0, 0, self->fb->width, self->fb->height, usr_ptr)) {
             res = 1;
         }
     }
@@ -204,12 +204,12 @@ int ui_scroll_container_paint(UIScrollContainer_t *self, Framebuffer8Bit_t *fb, 
 
     // draw h bar
     if (self->h_bar) {
-        res |= self->h_bar->base.functions.paint_func(self->h_bar, fb, x, y, self->base.properties.width, self->base.properties.height);
+        res |= self->h_bar->base.functions.paint_func(self->h_bar, fb, x, y, self->base.properties.width, self->base.properties.height, usr_ptr);
     }
 
     // draw v bar
     if (self->v_bar) {
-        res |= self->v_bar->base.functions.paint_func(self->v_bar, fb, x, y, self->base.properties.width, self->base.properties.height);
+        res |= self->v_bar->base.functions.paint_func(self->v_bar, fb, x, y, self->base.properties.width, self->base.properties.height, usr_ptr);
     }
     return res;
 }

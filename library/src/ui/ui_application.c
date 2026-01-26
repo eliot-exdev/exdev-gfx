@@ -53,7 +53,7 @@ void ui_application_prepare(UIApplication_t *self) {
     palette_8bit_set_pen(&self->palette, &PEN_GRAY, PEN_INDEX_GRAY);
 
     palette_8bit_set_pen(&self->palette, &PEN_CYAN, PEN_INDEX_CYAN);
-    self->root.functions.prepare_func(&self->root);
+    self->root.functions.prepare_func(&self->root, self->usr_ptr);
 }
 
 #define MAX_EVENTS 4
@@ -104,7 +104,9 @@ int ui_application_run(UIApplication_t *self, const char *title, const exdev_tim
                                             0,
                                             0,
                                             window_get_chunky_buffer(self->window)->width,
-                                            window_get_chunky_buffer(self->window)->height)) {
+                                            window_get_chunky_buffer(self->window)->height,
+                                            self->usr_ptr),
+            self->usr_ptr) {
             // blit ui to screen
             log_debug("blit to screen required");
             window_blit_chunky_buffer(self->window);

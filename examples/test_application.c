@@ -7,7 +7,7 @@
 
 #define WIDTH 640
 #define HEIGHT 480
-#define UPDATE_INTERVAL 60 // ms
+#define UPDATE_INTERVAL 60// ms
 
 void left_update(UIComponent_t *self, const long ms, const Event_t *events, const int num_events, void *usr_ptr) {
     ui_component_update(self, ms, events, num_events, usr_ptr);// call update of base class
@@ -35,13 +35,13 @@ void left_update(UIComponent_t *self, const long ms, const Event_t *events, cons
     }
 }
 
-int right_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, const int x_offset, const int y_offset, int, int) {
+int right_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, const int x_offset, const int y_offset, int, int, void *usr_ptr) {
     const int tmp = self->flags.dirty_flag;
 
     const int x = self->properties.x + x_offset;
     const int y = self->properties.y + y_offset;
 
-    int res = ui_component_paint(self, fb, x_offset, y_offset, self->properties.width, self->properties.height);
+    int res = ui_component_paint(self, fb, x_offset, y_offset, self->properties.width, self->properties.height, usr_ptr);
     if (tmp) {
         framebuffer_8bit_fill_rect(fb, x + 2, y + 2, self->properties.width - 3, 10, PEN_INDEX_BLUE);
         self->flags.dirty_flag = 0;
@@ -115,7 +115,7 @@ int main() {
 
     // right component
     UIComponent_t *right = ui_component_create(542, 2, 96, 476);
-    right->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &right_paint;// custom paint
+    right->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int, void*)) &right_paint;// custom paint
     right->functions.update_func = (void (*)(void *, long, const Event_t *, int, void *)) &right_update;  // custom event handling
     ui_component_connect(&app.root, right);
 

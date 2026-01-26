@@ -32,7 +32,7 @@ void ui_icon_init(UIIcon_t *self, const int x, const int y, Framebuffer8Bit_t *f
     ui_component_init(&self->base, x, y, fb->width + 2, fb->height + 2);
     self->base.type = UI_COMPONENT_ICON;
     self->base.functions.destroy_func = (void (*)(void *)) &ui_icon_destroy;
-    self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_icon_paint;
+    self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int, void *)) &ui_icon_paint;
     self->base.functions.update_func = (void (*)(void *, long, const Event_t *, int, void *)) &ui_icon_update;
 
     self->properties.clickable = 1;
@@ -55,7 +55,7 @@ void ui_icon_destroy(UIIcon_t *self) {
     self->icon = NULL;
 }
 
-int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb, const int x_offset, const int y_offset, const int width, const int height) {
+int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb, const int x_offset, const int y_offset, const int width, const int height, void *usr_ptr) {
     assert(self);
     assert(fb);
 
@@ -64,7 +64,7 @@ int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb, const int x_offset, con
     const int y = self->base.properties.y + y_offset;
 
     // draw base
-    ui_component_paint(&self->base, fb, x_offset, y_offset, width, height);
+    ui_component_paint(&self->base, fb, x_offset, y_offset, width, height, usr_ptr);
     if (res) {
         framebuffer_8bit_draw_framebuffer(fb, x + 1, y + 1, self->icon);
     }

@@ -31,9 +31,9 @@ void ui_component_init(UIComponent_t *self, const int x, const int y, const int 
     self->flags.draw_border = 1;
 
     self->functions.destroy_func = (void (*)(void *)) &ui_component_destroy;
-    self->functions.prepare_func = (void (*)(void *)) &ui_component_prepare;
-    self->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int)) &ui_component_paint;
-    self->functions.update_func = (void (*)(void *, long, const Event_t *, int, void*)) &ui_component_update;
+    self->functions.prepare_func = (void (*)(void *, void *)) &ui_component_prepare;
+    self->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int, void *)) &ui_component_paint;
+    self->functions.update_func = (void (*)(void *, long, const Event_t *, int, void *)) &ui_component_update;
 
     self->parent = NULL;
     ui_component_list_init(&self->children);
@@ -44,15 +44,15 @@ void ui_component_destroy(UIComponent_t *self) {
     ui_component_list_destroy(&self->children);
 }
 
-void ui_component_prepare(UIComponent_t *self) {
+void ui_component_prepare(UIComponent_t *self, void *usr_ptr) {
     assert(self);
 
     for (int i = 0; i < self->children.size; ++i) {
-        self->children.components[i]->functions.prepare_func(self->children.components[i]);
+        self->children.components[i]->functions.prepare_func(self->children.components[i], usr_ptr);
     }
 }
 
-int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, int const x_offset, const int y_offset, const int, const int) {
+int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, int const x_offset, const int y_offset, const int width, const int height, void *usr_ptr) {
     assert(self);
     assert(fb);
 
@@ -73,7 +73,7 @@ int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, int const x_o
     }
 
     for (int i = 0; i < self->children.size; ++i) {
-        if (self->children.components[i]->functions.paint_func(self->children.components[i], fb, x, y, self->properties.width, self->properties.height)) {
+        if (self->children.components[i]->functions.paint_func(self->children.components[i], fb, x, y, self->properties.width, self->properties.height, usr_ptr)) {
             res = 1;
         }
     }
@@ -133,9 +133,9 @@ int ui_component_is_inside(const UIComponent_t *self, const int x, const int y) 
 void ui_component_set_dirty(UIComponent_t *self) {
     assert(self);
 
-    self->flags.dirty_flag=1;
+    self->flags.dirty_flag = 1;
 
-    for (int i=0;i<self->children.size;++i) {
+    for (int i = 0; i < self->children.size; ++i) {
         ui_component_set_dirty(self->children.components[i]);
     }
 }
