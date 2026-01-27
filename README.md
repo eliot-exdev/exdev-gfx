@@ -29,30 +29,36 @@ Usage:
 
 # build
 
-## linux
+## Linux
 
-## morphos
+```shell
+    mkdir build-linux
+    cd build-linux
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/exdevgfx-linux ../
+    cmake --build . --target install --paralllel 4
+```
+## MorphOs
 To set up a cross-compiler for Linux host you can use this script from here: [MorphOs Cross SDK script](https://bigfoot.morphos-team.net/files/setup-cross-sdk.sh)  
 Afterwards you should have a MorphOs cross-compiler and the SDK in path /gg installed.   
 You can now cross compile for MorphOs with CMake:
 
     mkdir build-mos
     cd build-mos
-    cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/morphos-pcc.toolchain -DCMAKE_BUILD_TYPE=Release -CCMAKE_INSTALL_PREFIX=/tmp/exdevgfx-mos ../
+    cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/morphos-pcc.toolchain -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/exdevgfx-mos ../
     cmake --build . --target install --paralllel 4
 
 For native builds please use the Makefile!
 
-## amigaos
+## AmigaOs
 To set up a cross-compiler for Linux host you can use bebbo's gcc compiler: [AmigaOs Cross SDK Git](https://github.com/bebbo/amiga-gcc)  
 Afterwards you should have a AmigaOs cross-compiler and the SDK in path /opt/amiga installed.   
 You can now cross compile for AmigaOs with CMake:
 
     mkdir build-amiga
     cd build-amiga
-    cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/amiga-gcc.toolchain -DCMAKE_BUILD_TYPE=Release -CCMAKE_INSTALL_PREFIX=/tmp/exdevgfx-amiga ../
+    cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/amiga-gcc.toolchain -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/exdevgfx-amiga ../
     cmake --build . --target install --paralllel 4
 
 For native builds please use the Makefile!
 
-## macos
+## MacOs
