@@ -7,15 +7,16 @@ Requires:     dev/misc/c2plib.lha
 Version:      0.9.1
 Architecture: m68k-amigaos >= 3.1.4; ppc-morphos
 Distribution: Aminet
-URL:          https://github.com/eliot-exdev/exdev-gfx.git
+URL:          https://github.com/eliot-exdev/exdev-gfx
 
 # About
 
-This is a little technical demo of a voxelspace renderer written in C99.  
-It was created for testing purposes and private research only.  
+This is a little technical demo of a voxelspace renderer written in C99.
+It was created for testing purposes and private research only.
 Currently I cannot say how it will develop in the future.
 
-This demo provides five different worlds taken from the game Comanche developed by Novalogic.
+This demo provides five different worlds taken from the game Comanche
+developed by Novalogic.
 
 - World 1: pyramid
 - World 2: desert
@@ -29,45 +30,45 @@ Have fun!
 
 # Requirements
 
-* MorphOs: any MorphOs system should work.  
-  Tested it on a Mac Mini G4 Silent Upgrade with MorphOs 3.14.  
+* MorphOs: any MorphOs system should work.
+  Tested it on a Mac Mini G4 Silent Upgrade with MorphOs 3.14.
   You will need a 640x480x8 screen mode.
-* AmigaOs: Tested on Amiga 4000T, 060, Cybervision 64/3D, Aos 3.2.3 and  
-                     Amiga 1200, 060, AGA, Aos 3.2.3.  
-  Requires c2p.library from aminet (https://aminet.net/dev/misc/c2plib.lha).
-* Linux: tested on Ubuntu 20.10 (amd64)  
-  It requires X11 server.
+* AmigaOs:
+  Tested on Amiga 4000T, 060, Cybervision 64/3D, Aos 3.2.3 and
+                  Amiga 1200, 060, AGA, Aos 3.2.3.
+  AGA version requires c2p.library from aminet
+  (see https://aminet.net/dev/misc/c2plib.lha).
 
 # Usage
 
-Please start the binary (voxelspace_mos_gcc, voxelspace_060, voxelspace_060_c2p) from your shell.  
-To get a complete arguments list of the program, please start it with '-h'.  
-You can quit the program by hitting ESC.  
+Please start the binary
+(voxelspace_mos_gcc, voxelspace_060, voxelspace_060_c2p) from your Amiga shell.
+To get a complete arguments list of the program, please start it with '-h'.
+You can quit the program by hitting ESC.
 
-On Amiga with gfx card, you should use voxelspace_060.  
-On Amiga with aga only, you should use voxelspace_060_c2p.  
-This requires c2p.library (>=1.7) from aminet (https://aminet.net/dev/misc/c2plib.lha).
+On Amiga with gfx card, you should use voxelspace_060.
+On Amiga with aga only, you should use voxelspace_060_c2p.
 
 ## Program arguments
 
-voxelspace [ARGUMENTS]...  
-arguments:  
--h, --help              print help message and exit  
--w, --world <number>    select world 1, 2, 3, 4 or 5 (default 1)  
--d, --demo              enable demo mode  
--v, --version           print version  
+voxelspace [ARGUMENTS]...
+arguments:
+-h, --help              print help message and exit
+-w, --world <number>    select world 1, 2, 3, 4 or 5 (default 1)
+-d, --demo              enable demo mode
+-v, --version           print version
 
 ## Controls
 
-w               move up  
-s               move down  
-a               strafe left  
-d               strafe right  
-cursors         navigate forward/backward and turn left/right  
+w               move up
+s               move down
+a               strafe left
+d               strafe right
+cursors         navigate forward/backward and turn left/right
 
 ## Options
 
-ESC                quit  
+ESC                quit
 F1                 enable/disable show fps
 F2                 max detail
 F4                 decrease render distance
