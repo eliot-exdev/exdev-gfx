@@ -80,10 +80,10 @@ struct UIComponent {
         Color8Bit_t border_color;
     } properties;
     struct {
-        int dirty_flag;
-        int enabled_flag;
-        int fill_background;
-        int draw_border;
+        uint8_t dirty_flag;
+        uint8_t enabled_flag;
+        uint8_t fill_background;
+        uint8_t draw_border;
     } flags;
 
     struct {
@@ -115,6 +115,8 @@ int ui_component_is_inside(const UIComponent_t *self, int x, int y);
 
 void ui_component_set_dirty(UIComponent_t *self);
 
+void ui_component_set_enable(UIComponent_t *self, uint8_t b);
+
 void ui_component_connect(void *parent, void *child);
 
 void ui_component_get_absolute_position(const UIComponent_t *self, int *x, int *y);
@@ -132,12 +134,12 @@ struct UIIcon {
     UIComponent_t base;
 
     struct {
-        int clickable;
+        uint8_t clickable;
     } properties;
 
     struct {
-        int focused;
-        int clicked;
+        uint8_t focused;
+        uint8_t clicked;
     } flags;
 
     struct {
@@ -145,16 +147,17 @@ struct UIIcon {
         on_click_function on_clicked;
     } functions;
 
-    Framebuffer8Bit_t *icon;
+    Framebuffer8Bit_t *icon_enabled;
+    Framebuffer8Bit_t *icon_disabled;
 };
 
 typedef struct UIIcon UIIcon_t;
 
-void ui_icon_init(UIIcon_t *self, int x, int y, Framebuffer8Bit_t *fb);
+void ui_icon_init(UIIcon_t *self, int x, int y, Framebuffer8Bit_t *icon_enabled, Framebuffer8Bit_t *icon_disabled);
 
-UIIcon_t *ui_icon_create(int x, int y, Framebuffer8Bit_t *fb);
+UIIcon_t *ui_icon_create(int x, int y, Framebuffer8Bit_t *icon_enabled, Framebuffer8Bit_t *icon_disabled);
 
-UIIcon_t *ui_icon_create_with_path(int x, int y, const char *path);
+UIIcon_t *ui_icon_create_with_path(int x, int y, const char *path_icon_enabled, const char *path_icon_disabled);
 
 void ui_icon_destroy(UIIcon_t *self);
 

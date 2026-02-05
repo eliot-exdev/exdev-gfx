@@ -8,28 +8,34 @@
 #include <stdlib.h>
 #include <string.h>
 
-UIIcon_t *ui_icon_create(const int x, const int y, Framebuffer8Bit_t *fb) {
-    assert(fb);
+UIIcon_t *ui_icon_create(const int x, const int y, Framebuffer8Bit_t *icon_enabled, Framebuffer8Bit_t *icon_disabled) {
+    assert(icon_enabled);
 
     UIIcon_t *self = malloc(sizeof(UIIcon_t));
-    ui_icon_init(self, x, y, fb);
+    ui_icon_init(self, x, y, icon_enabled, icon_disabled);
 
     return self;
 }
 
-UIIcon_t *ui_icon_create_with_path(const int x, const int y, const char *path) {
-    assert(path);
+UIIcon_t *ui_icon_create_with_path(const int x, const int y, const char *path_icon_enabled, const char *path_icon_disabled) {
+    assert(path_icon_enabled);
 
-    Framebuffer8Bit_t *icon_fb = malloc(sizeof(Framebuffer8Bit_t));
-    framebuffer_8bit_read_from_dat(icon_fb, path);
-    return ui_icon_create(x, y, icon_fb);
+    Framebuffer8Bit_t *icon_enabled = malloc(sizeof(Framebuffer8Bit_t));
+    framebuffer_8bit_read_from_dat(icon_enabled, path_icon_enabled);
+
+    Framebuffer8Bit_t *icon_disabled = NULL;
+    if (path_icon_disabled) {
+        icon_disabled = malloc(sizeof(Framebuffer8Bit_t));
+        framebuffer_8bit_read_from_dat(icon_enabled, path_icon_disabled);
+    }
+    return ui_icon_create(x, y, icon_enabled, icon_disabled);
 }
 
-void ui_icon_init(UIIcon_t *self, const int x, const int y, Framebuffer8Bit_t *fb) {
+void ui_icon_init(UIIcon_t *self, const int x, const int y, Framebuffer8Bit_t *icon_enabled, Framebuffer8Bit_t *icon_disabled) {
     assert(self);
-    assert(fb);
+    assert(icon_enabled);
 
-    ui_component_init(&self->base, x, y, fb->width + 2, fb->height + 2);
+    ui_component_init(&self->base, x, y, icon_enabled->width + 2, icon_enabled->height + 2);
     self->base.type = UI_COMPONENT_ICON;
     self->base.functions.destroy_func = (void (*)(void *)) &ui_icon_destroy;
     self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int, void *)) &ui_icon_paint;
@@ -42,7 +48,8 @@ void ui_icon_init(UIIcon_t *self, const int x, const int y, Framebuffer8Bit_t *f
     self->functions.on_clicked = NULL;
     self->functions.on_focus = NULL;
 
-    self->icon = fb;
+    self->icon_enabled = icon_enabled;
+    self->icon_disabled = icon_disabled;
 }
 
 void ui_icon_destroy(UIIcon_t *self) {
@@ -50,9 +57,14 @@ void ui_icon_destroy(UIIcon_t *self) {
 
     ui_component_destroy(&self->base);
 
-    framebuffer_8bit_deinit(self->icon);
-    free(self->icon);
-    self->icon = NULL;
+    framebuffer_8bit_deinit(self->icon_enabled);
+    free(self->icon_enabled);
+    self->icon_enabled = NULL;
+    if (self->icon_disabled) {
+        framebuffer_8bit_deinit(self->icon_disabled);
+        free(self->icon_disabled);
+        self->icon_disabled = NULL;
+    }
 }
 
 int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb, const int x_offset, const int y_offset, const int width, const int height, void *usr_ptr) {
@@ -66,7 +78,11 @@ int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb, const int x_offset, con
     // draw base
     ui_component_paint(&self->base, fb, x_offset, y_offset, width, height, usr_ptr);
     if (res) {
-        framebuffer_8bit_draw_framebuffer(fb, x + 1, y + 1, self->icon);
+        if (!self->base.flags.enabled_flag && self->icon_disabled) {
+            framebuffer_8bit_draw_framebuffer(fb, x + 1, y + 1, self->icon_disabled);
+        } else {
+            framebuffer_8bit_draw_framebuffer(fb, x + 1, y + 1, self->icon_enabled);
+        }
     }
     return res;
 }

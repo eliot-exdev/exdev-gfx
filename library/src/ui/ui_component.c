@@ -140,6 +140,19 @@ void ui_component_set_dirty(UIComponent_t *self) {
     }
 }
 
+void ui_component_set_enable(UIComponent_t *self, const uint8_t b) {
+    assert(self);
+
+    if (self->flags.enabled_flag != b) {
+        self->flags.enabled_flag = b;
+        ui_component_set_dirty(self);
+
+        for (int i = 0; i < self->children.size; ++i) {
+            ui_component_set_enable(self->children.components[i], b);
+        }
+    }
+}
+
 void ui_component_connect(void *parent_, void *child_) {
     assert(parent_);
     assert(child_);
