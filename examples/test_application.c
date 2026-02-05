@@ -102,15 +102,15 @@ int main() {
     ui_component_connect(&app.root, left);
 
     // icon
-    UIIcon_t *icon = ui_icon_create_with_path(2, 2, "assets/amiga_logo_8bit.dat");
+    UIIcon_t *icon = ui_icon_create_with_path(2, 2, "assets/amiga_logo_8bit.dat", NULL);
     icon->functions.on_clicked = &icon_clicked;
     icon->functions.on_focus = &icon_focus;
     ui_component_connect(left, icon);
 
     // scroll component
     UIScrollContainer_t *scroll = ui_scroll_container_create(100, 100, 100, 100, UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL);
-    ui_component_connect(scroll, ui_icon_create_with_path(2, 2, "assets/amiga_logo_8bit.dat"));
-    ui_component_connect(scroll, ui_icon_create_with_path(68, 68, "assets/amiga_logo_8bit.dat"));
+    ui_component_connect(scroll, ui_icon_create_with_path(2, 2, "assets/amiga_logo_8bit.dat", NULL));
+    ui_component_connect(scroll, ui_icon_create_with_path(68, 68, "assets/amiga_logo_8bit.dat", NULL));
     ui_component_connect(&app.root, scroll);
 
     // right component
