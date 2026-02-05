@@ -252,7 +252,7 @@ struct UIHorizontalScrollBar {
     } properties;
 
     struct {
-        int dragged;
+        uint8_t dragged;
     } flags;
 
     struct {
@@ -284,7 +284,7 @@ struct UIVerticalScrollBar {
     } properties;
 
     struct {
-        int dragged;
+        uint8_t dragged;
     } flags;
 
     struct {
