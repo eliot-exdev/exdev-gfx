@@ -129,6 +129,6 @@ void sleep_for_ms(const exdev_timestamp_t ms) {
     if (ms <= 0) {
         return;
     }
-    usleep(ms * 1000);
+    usleep((unsigned int) ms * 1000);
 }
 #endif
