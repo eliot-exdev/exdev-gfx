@@ -68,6 +68,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
     x11_w->display = XOpenDisplay(NULL);
     if (x11_w->display == NULL) {
         log_warning("[ERROR] XOpenDisplay failed!");
+        free(x11_w);
         return NULL;
     }
     x11_w->screen = DefaultScreen(x11_w->display);
