@@ -2,6 +2,8 @@
  * Copyright 2025 Andre Geisler (andre@exdev.de)
  */
 
+#define EXDEVGFX2_LOG_LEVEL 2
+#include "exdevgfx/logger.h"
 #include "exdevgfx/ui/ui.h"
 
 #include <assert.h>
@@ -75,15 +77,20 @@ int ui_text_paint(UIText_t *self, Framebuffer8Bit_t *fb, const int x_offset, con
 void ui_text_update_text(UIText_t *self, const char *text) {
     assert(self);
 
-    if (self->properties.text) {
+    if (!text) {
         free(self->properties.text);
         self->properties.text = NULL;
+        ui_component_set_dirty(&self->base);
+        return;
     }
 
-    if (text) {
+    if (!self->properties.text) {
         self->properties.text = malloc(strlen(text) + 1);
-        strcpy(self->properties.text, text);
+    } else if (strlen(text) != strlen(self->properties.text)) {
+        free(self->properties.text);
+        self->properties.text = malloc(strlen(text) + 1);
     }
 
-    self->base.flags.dirty_flag = 1;
+    strcpy(self->properties.text, text);
+    ui_component_set_dirty(self->base.parent);
 }
