@@ -22,7 +22,7 @@ void ui_vertical_scroll_bar_init(UIVerticalScrollBar_t *self, UIScrollContainer_
 
     self->base.functions.destroy_func = (void (*)(void *)) &ui_vertical_scroll_bar_destroy;
     self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int, void *)) &ui_vertical_scroll_bar_paint;
-    self->base.functions.update_func = (void (*)(void *, long, const Event_t *, int, void *)) &ui_vertical_scroll_bar_update;
+    self->base.functions.update_func = (void (*)(void *, long, const Event_t *, int, UIApplication_t *, void *)) &ui_vertical_scroll_bar_update;
 
     self->properties.y_pos = 0;
 
@@ -69,7 +69,7 @@ int ui_vertical_scroll_bar_paint(UIVerticalScrollBar_t *self, Framebuffer8Bit_t 
     return res;
 }
 
-void ui_vertical_scroll_bar_update(UIVerticalScrollBar_t *self, const long ms, const Event_t *events, const int num_events, void *usr_ptr) {
+void ui_vertical_scroll_bar_update(UIVerticalScrollBar_t *self, const long ms, const Event_t *events, const int num_events, UIApplication_t *app, void *usr_ptr) {
     assert(self);
     assert(events);
 

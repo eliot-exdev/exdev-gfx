@@ -96,7 +96,7 @@ int ui_application_run(UIApplication_t *self, const char *title, const exdev_tim
             }
         }
         // update ui
-        self->root.functions.update_func(&self->root, end_ms - begin_ms, events, num_events, self->usr_ptr);
+        self->root.functions.update_func(&self->root, end_ms - begin_ms, events, num_events, self, self->usr_ptr);
 
         // paint ui
         if (self->root.functions.paint_func(&self->root,
@@ -123,4 +123,10 @@ int ui_application_run(UIApplication_t *self, const char *title, const exdev_tim
     }
 
     return 0;
+}
+
+void ui_application_quit(UIApplication_t *self) {
+    assert(self);
+
+    self->resume = 0;
 }

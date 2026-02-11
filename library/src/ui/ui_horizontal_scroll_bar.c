@@ -23,7 +23,7 @@ void ui_horizontal_scroll_bar_init(UIHorizontalScrollBar_t *self, UIScrollContai
 
     self->base.functions.destroy_func = (void (*)(void *)) &ui_horizontal_scroll_bar_destroy;
     self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int, void *)) &ui_horizontal_scroll_bar_paint;
-    self->base.functions.update_func = (void (*)(void *, long, const Event_t *, int, void *)) &ui_horizontal_scroll_bar_update;
+    self->base.functions.update_func = (void (*)(void *, long, const Event_t *, int, UIApplication_t *, void *)) &ui_horizontal_scroll_bar_update;
 
     self->properties.x_pos = 0;
     self->flags.dragged = 0;
@@ -69,7 +69,7 @@ int ui_horizontal_scroll_bar_paint(UIHorizontalScrollBar_t *self, Framebuffer8Bi
     return res;
 }
 
-void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, const long ms, const Event_t *events, const int num_events, void *usr_ptr) {
+void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, const long ms, const Event_t *events, const int num_events, UIApplication_t *app, void *usr_ptr) {
     assert(self);
     assert(events);
 

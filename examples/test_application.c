@@ -9,8 +9,8 @@
 #define HEIGHT 480
 #define UPDATE_INTERVAL 60// ms
 
-void left_update(UIComponent_t *self, const long ms, const Event_t *events, const int num_events, void *usr_ptr) {
-    ui_component_update(self, ms, events, num_events, usr_ptr);// call update of base class
+void left_update(UIComponent_t *self, const long ms, const Event_t *events, const int num_events, UIApplication_t *app, void *usr_ptr) {
+    ui_component_update(self, ms, events, num_events, app, usr_ptr);// call update of base class
 
     // handle mouse event
     for (int it_events = 0; it_events < num_events; ++it_events) {
@@ -50,8 +50,8 @@ int right_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, const int x_offset, 
     return res;
 }
 
-void right_update(UIComponent_t *self, const long ms, const Event_t *events, const int num_events, void *usr_ptr) {
-    ui_component_update(self, ms, events, num_events, usr_ptr);// call update of base class
+void right_update(UIComponent_t *self, const long ms, const Event_t *events, const int num_events, UIApplication_t *app, void *usr_ptr) {
+    ui_component_update(self, ms, events, num_events, app, usr_ptr);// call update of base class
 
     // handle mouse event
     for (int it_events = 0; it_events < num_events; ++it_events) {
@@ -76,11 +76,11 @@ void right_update(UIComponent_t *self, const long ms, const Event_t *events, con
     }
 }
 
-static void icon_clicked(UIIcon_t *self, void *usr_ptr) {
+static void icon_clicked(UIIcon_t *self, UIApplication_t *app, void *usr_ptr) {
     log_info_fmt("icon clicked: %d", self->flags.clicked);
 }
 
-static void icon_focus(UIIcon_t *self, void *usr_ptr) {
+static void icon_focus(UIIcon_t *self, UIApplication_t *app, void *usr_ptr) {
     log_info_fmt("icon focus: %d", self->flags.focused);
 }
 
@@ -98,7 +98,7 @@ int main() {
 
     // left component
     UIComponent_t *left = ui_component_create(2, 2, 538, 476);
-    left->functions.update_func = (void (*)(void *, long, const Event_t *, int, void *)) &left_update;// custom event handling
+    left->functions.update_func = (void (*)(void *, long, const Event_t *, int, UIApplication_t *, void *)) &left_update;// custom event handling
     ui_component_connect(&app.root, left);
 
     // icon
@@ -115,8 +115,8 @@ int main() {
 
     // right component
     UIComponent_t *right = ui_component_create(542, 2, 96, 476);
-    right->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int, void*)) &right_paint;// custom paint
-    right->functions.update_func = (void (*)(void *, long, const Event_t *, int, void *)) &right_update;  // custom event handling
+    right->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int, void *)) &right_paint;         // custom paint
+    right->functions.update_func = (void (*)(void *, long, const Event_t *, int, UIApplication_t *, void *)) &right_update;// custom event handling
     ui_component_connect(&app.root, right);
 
     // text

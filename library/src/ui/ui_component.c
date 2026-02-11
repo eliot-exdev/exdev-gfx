@@ -33,7 +33,7 @@ void ui_component_init(UIComponent_t *self, const int x, const int y, const int 
     self->functions.destroy_func = (void (*)(void *)) &ui_component_destroy;
     self->functions.prepare_func = (void (*)(void *, void *)) &ui_component_prepare;
     self->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int, void *)) &ui_component_paint;
-    self->functions.update_func = (void (*)(void *, long, const Event_t *, int, void *)) &ui_component_update;
+    self->functions.update_func = (void (*)(void *, long, const Event_t *, int, UIApplication_t *, void *)) &ui_component_update;
 
     self->parent = NULL;
     ui_component_list_init(&self->children);
@@ -81,7 +81,7 @@ int ui_component_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, int const x_o
     return res;
 }
 
-void ui_component_update(UIComponent_t *self, const long time_elapsed, const Event_t *events, const int num_events, void *usr_ptr) {
+void ui_component_update(UIComponent_t *self, const long time_elapsed, const Event_t *events, const int num_events, UIApplication_t *app, void *usr_ptr) {
     assert(self);
 
     if (!self->flags.enabled_flag) {
@@ -89,7 +89,7 @@ void ui_component_update(UIComponent_t *self, const long time_elapsed, const Eve
     }
 
     for (int i = 0; i < self->children.size; ++i) {
-        self->children.components[i]->functions.update_func(self->children.components[i], time_elapsed, events, num_events, usr_ptr);
+        self->children.components[i]->functions.update_func(self->children.components[i], time_elapsed, events, num_events, app, usr_ptr);
     }
 }
 
