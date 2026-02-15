@@ -546,6 +546,26 @@ void framebuffer_8bit_draw_framebuffer(Framebuffer8Bit_t *fb, const int x, const
     }
 }
 
+void framebuffer_8bit_draw_framebuffer_with_alpha(Framebuffer8Bit_t *fb, int x, int y, const Framebuffer8Bit_t *src, const Color8Bit_t alpha) {
+    assert(fb);
+    assert(src);
+
+    if (x >= fb->width) {
+        return;
+    }
+    if (y >= fb->height) {
+        return;
+    }
+
+    for (int i = 0; i + x < fb->width && i < src->width; ++i) {
+        for (int j = 0; j + y < fb->height && j < src->height; ++j) {
+            if (src->buffer[j * src->width + i] != alpha) {
+                fb->buffer[((j + y) * fb->width) + i + x] = src->buffer[j * src->width + i];
+            }
+        }
+    }
+}
+
 void framebuffer_8bit_blit_8bit(Framebuffer8Bit_t *fb, const Framebuffer8Bit_t *src, int x, int y, int width, int height, int to_x, int to_y) {
     assert(fb);
     assert(src);
