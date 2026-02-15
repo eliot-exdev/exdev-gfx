@@ -42,6 +42,7 @@ void ui_icon_init(UIIcon_t *self, const int x, const int y, Framebuffer8Bit_t *i
     self->base.functions.update_func = (void (*)(void *, long, const Event_t *, int, UIApplication_t *, void *)) &ui_icon_update;
 
     self->properties.clickable = 1;
+    self->properties.alpha = 0;
     self->flags.focused = 0;
     self->flags.clicked = 0;
 
@@ -79,9 +80,9 @@ int ui_icon_paint(UIIcon_t *self, Framebuffer8Bit_t *fb, const int x_offset, con
     ui_component_paint(&self->base, fb, x_offset, y_offset, width, height, usr_ptr);
     if (res) {
         if (!self->base.flags.enabled_flag && self->icon_disabled) {
-            framebuffer_8bit_draw_framebuffer(fb, x + 1, y + 1, self->icon_disabled);
+            framebuffer_8bit_draw_framebuffer_with_alpha(fb, x + 1, y + 1, self->icon_disabled, self->properties.alpha);
         } else {
-            framebuffer_8bit_draw_framebuffer(fb, x + 1, y + 1, self->icon_enabled);
+            framebuffer_8bit_draw_framebuffer_with_alpha(fb, x + 1, y + 1, self->icon_enabled, self->properties.alpha);
         }
     }
     return res;

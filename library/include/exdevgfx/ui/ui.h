@@ -136,6 +136,7 @@ struct UIIcon {
 
     struct {
         uint8_t clickable;
+        Color8Bit_t alpha;
     } properties;
 
     struct {
