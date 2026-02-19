@@ -27,6 +27,13 @@ __entry
 unsigned char versiontag[] = "\0$VER: " VERSION;
 #endif
 
+#if defined(__MORPHOS__) || defined(__AMIGAOS__)
+#ifdef __VBCC__
+__entry
+#endif
+size_t __stack = 65536;// 64 kb
+#endif
+
 #ifdef LOW_RESOLUTION
 #define WIDTH 320
 #ifdef USE_C2P
@@ -260,10 +267,6 @@ static void move(Vertex3d_t p, const char move_flag, const char strafe_flag, con
         p[2] -= MOVEMENT_STEP_SIZE;
     }
 }
-
-#if defined(__MORPHOS__) || defined(__AMIGAOS__)
-unsigned long __stack = (16384); // 16 kb
-#endif
 
 int main(int argc, char **argv) {
     parse_args(argc, argv);

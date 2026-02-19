@@ -12,11 +12,11 @@ INCLUDES_MOS=-Ilibrary/include -Ilibrary/easing/include
 
 #--- AmigaOs 060 ---#
 C_FLAGS_060=+aos68k -c99 -fpu=68060 -cpu=68060 -speed -final -DNDEBUG -D__AMIGA__
-LD_FLAGS_060=-lm060
+LD_FLAGS_060=-lm060 -lamiga
 
-#--- AmigaOs 030 fpu ---#
-C_FLAGS_030_FPU=+aos68k -c99 -fpu=68881 -cpu=68030 -speed -final -DNDEBUG -D__AMIGA__
-LD_FLAGS_030_FPU=-lm881
+#--- AmigaOs 030 ---#
+C_FLAGS_030=+aos68k -c99 -cpu=68030 -speed -final -DNDEBUG -D__AMIGA__
+LD_FLAGS_030=-lmieee -lamiga
 
 INCLUDES_AOS=-Ilibrary/include -Ilibrary/easing/include
 
@@ -58,8 +58,8 @@ exdev_gfx_aos_060_c2p.lib: $(EXDEV_GFX_SOURCES)
 	$(CC) -c ${INCLUDES_AOS} -IWork:workspace/c2plib/sdk/C ${C_FLAGS_060} $(^) -DUSE_C2P
 	$(JOIN) as $(@) library/src/args.o library/src/color.o library/src/events.o library/src/font.o library/src/framebuffer.o library/src/framebuffer_8bit.o library/src/framebuffer_rgba.o library/src/heightmap.o library/src/helper.o library/src/julia.o library/src/matrix.o library/src/palette.o library/src/vertex2d.o library/src/vertex3d.o library/src/voxelspace.o library/src_amiga/exdev_base_amiga.o library/src_amiga/helper_amiga.o library/src_amiga/window_amiga.o
 
-exdev_gfx_aos_030_fpu_c2p.lib: $(EXDEV_GFX_SOURCES)
-	$(CC) -c ${INCLUDES_AOS} -IWork:workspace/c2plib/sdk/C ${C_FLAGS_030_FPU} $(^) -DUSE_C2P
+exdev_gfx_aos_030_c2p.lib: $(EXDEV_GFX_SOURCES)
+	$(CC) -c ${INCLUDES_AOS} -IWork:workspace/c2plib/sdk/C ${C_FLAGS_030} $(^) -DUSE_C2P
 	$(JOIN) as $(@) library/src/args.o library/src/color.o library/src/events.o library/src/font.o library/src/framebuffer.o library/src/framebuffer_8bit.o library/src/framebuffer_rgba.o library/src/heightmap.o library/src/helper.o library/src/julia.o library/src/matrix.o library/src/palette.o library/src/vertex2d.o library/src/vertex3d.o library/src/voxelspace.o library/src_amiga/exdev_base_amiga.o library/src_amiga/helper_amiga.o library/src_amiga/window_amiga.o
 
 
@@ -81,8 +81,8 @@ exdev_gfx_ui_aos_060.lib: $(EXDEV_GFX_UI_SOURCES)
 	$(CC) -c ${INCLUDES_AOS} ${C_FLAGS_060} $(^)
 	$(JOIN) as $(@) library/src/ui/ui_application.o library/src/ui/ui_component.o library/src/ui/ui_component_list.o library/src/ui/ui_scroll.o library/src/ui/ui_horizontal_scroll_bar.o library/src/ui/ui_vertical_scroll_bar.o library/src/ui/ui_icon.o library/src/ui/ui_text.o
 
-exdev_gfx_ui_aos_030_fpu.lib: $(EXDEV_GFX_UI_SOURCES)
-	$(CC) -c ${INCLUDES_AOS} ${C_FLAGS_030_FPU} $(^)
+exdev_gfx_ui_aos_030.lib: $(EXDEV_GFX_UI_SOURCES)
+	$(CC) -c ${INCLUDES_AOS} ${C_FLAGS_030} $(^)
 	$(JOIN) as $(@) library/src/ui/ui_application.o library/src/ui/ui_component.o library/src/ui/ui_component_list.o library/src/ui/ui_scroll.o library/src/ui/ui_horizontal_scroll_bar.o library/src/ui/ui_vertical_scroll_bar.o library/src/ui/ui_icon.o library/src/ui/ui_text.o
 
 
@@ -117,7 +117,7 @@ application_060: examples/test_application.c exdev_gfx_ui_aos_060.lib exdev_gfx_
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060}
 
 #--- voxelspace ---#
-voxelspace_all: voxelspace_mos_gcc voxelspace_060 voxelspace_060_c2p voxelspace_030_fpu_c2p
+voxelspace_all: voxelspace_mos_gcc voxelspace_060 voxelspace_060_c2p voxelspace_030_c2p
 
 voxelspace_mos_gcc: examples/voxelspace_main.c exdev_gfx_mos_gcc.a
 	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
@@ -128,8 +128,8 @@ voxelspace_060: examples/voxelspace_main.c exdev_gfx_aos_060.lib
 voxelspace_060_c2p: examples/voxelspace_main.c exdev_gfx_aos_060_c2p.lib
 	$(CC) -o ${@} ${INCLUDES_AOS} -IWork:workspace/c2plib/sdk/C $(^) ${C_FLAGS_060} ${LD_FLAGS_060} -LWork:workspace/c2plib/sdk -lc2p -DLOW_RESOLUTION -DUSE_C2P
 
-voxelspace_030_fpu_c2p: examples/voxelspace_main.c exdev_gfx_aos_030_fpu_c2p.lib
-	$(CC) -o ${@} ${INCLUDES_AOS} -IWork:workspace/c2plib/sdk/C $(^) ${C_FLAGS_030_FPU} ${LD_FLAGS_060} -LWork:workspace/c2plib/sdk -lc2p -DLOW_RESOLUTION -DUSE_C2P
+voxelspace_030_c2p: examples/voxelspace_main.c exdev_gfx_aos_030_c2p.lib
+	$(CC) -o ${@} ${INCLUDES_AOS} -IWork:workspace/c2plib/sdk/C $(^) ${C_FLAGS_030} ${LD_FLAGS_030} -LWork:workspace/c2plib/sdk -lc2p -DLOW_RESOLUTION -DUSE_C2P
 
 
 #--- test sprite ---#
@@ -157,7 +157,7 @@ dist_voxelspace: voxelspace_all
 	cp -av screenshots/voxelspace*.png ram:voxelspace/screenshots
 	cp -av examples/voxelspace.readme ram:voxelspace
 	cp -av assets/*color_map_palette.dat assets/*height_map.dat assets/*color_map_8bit.dat assets/*_sky.dat assets/*_sky_lowres.dat ram:voxelspace/assets
-	cp -av voxelspace_mos_gcc voxelspace_060 voxelspace_060_c2p voxelspace_030_fpu_c2p ram:voxelspace
+	cp -av voxelspace_mos_gcc voxelspace_060 voxelspace_060_c2p voxelspace_030_c2p ram:voxelspace
 	cp examples/voxelspace.info ram:voxelspace.info
 	lha a -r ram:voxelspace.lha ram:voxelspace ram:voxelspace.info
 
