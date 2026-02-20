@@ -31,15 +31,6 @@ float rad_to_deg(float rad);
 
 int read_line(FILE *fp, char *line, size_t size);
 
-#ifdef __AMIGAOS__
-#define ALLOC_FAST_MEM(s) AllocMem(s, MEMF_FAST)
-//#define ALLOC_FAST_MEM_AND_CLEAR(s) AllocMem(s, MEMF_FAST| MEMF_CLEAR)
-#define FREE_MEM(p, s) FreeMem(p, s)
-#else
-#define ALLOC_FAST_MEM(s) malloc(s)
-#define FREE_MEM(p, s) free(p)
-#endif
-
 //float fast_sin(float f);
 //
 //float fast_cos(float f);

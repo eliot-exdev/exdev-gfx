@@ -66,7 +66,7 @@ void voxelspace_init(Voxelspace_t *v,
     v->fb = fb;
     v->scale_height = scale_height;
     v->sky_color = sky_color;
-    v->ybuffer = ALLOC_FAST_MEM(sizeof(int) * fb->width);
+    v->ybuffer = malloc(sizeof(int) * fb->width);
     v->sky_texture = sky_texture;
     v->zones = zones;
 }
@@ -75,7 +75,7 @@ void voxelspace_deinit(Voxelspace_t *v) {
     assert(v);
 
     heightmap_deinit(&v->heightmap);
-    FREE_MEM(v->ybuffer, sizeof(int) * v->fb->width);
+    free(v->ybuffer);
     v->ybuffer = NULL;
     v->fb = NULL;
     v->sky_texture = NULL;

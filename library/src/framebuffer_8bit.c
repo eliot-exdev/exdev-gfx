@@ -67,7 +67,7 @@ void framebuffer_8bit_init(Framebuffer8Bit_t *fb, const int width, const int hei
 
     fb->width = width;
     fb->height = height;
-    fb->buffer = (Color8Bit_t *) ALLOC_FAST_MEM(width * height);
+    fb->buffer = malloc(width * height);
 }
 
 Framebuffer8Bit_t *framebuffer_8bit_copy(const Framebuffer8Bit_t *fb) {
@@ -124,7 +124,7 @@ int framebuffer_8bit_init_from_framebuffer(Framebuffer8Bit_t *f, Palette8Bit_t *
 void framebuffer_8bit_deinit(Framebuffer8Bit_t *fb) {
     assert(fb);
 
-    FREE_MEM(fb->buffer, fb->width * fb->height);
+    free(fb->buffer);
     fb->buffer = NULL;
 }
 
@@ -260,7 +260,6 @@ int framebuffer_8bit_read(Framebuffer8Bit_t *fb, const char *path) {
 
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
-
             int tmp = 0;
             // parse gray value
             line_length = read_line(fp, line, LINE_LENGTH);

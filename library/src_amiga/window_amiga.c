@@ -41,17 +41,19 @@ struct NativeWindow {
     APTR C2P_context;
 #endif
 };
+
 typedef struct NativeWindow NativeWindow_t;
 
 #define NATIVE_WINDOW_CAST(w) ((NativeWindow_t *)w)
 #define NATIVE_WINDOW_CAST_CONST(w) ((const  NativeWindow_t *)w)
 
 Window_t *window_create(const int width, const int height, const char *title, const enum FULLSCREEN fs) {
-    NativeWindow_t *w = ALLOC_FAST_MEM(sizeof(NativeWindow_t));
+    NativeWindow_t *w = malloc(sizeof(NativeWindow_t));
 
     const int depth = (int) fs;
 
-    char TITLE_TEXT[256];
+    char TITLE_TEXT[128];
+    memset(TITLE_TEXT, 0, 128);
     sprintf(TITLE_TEXT, "Select screen mode (%dx%dx%d)", width, height, depth);
 
     struct TagItem smrtags[10];
@@ -200,7 +202,7 @@ void window_destroy(Window_t *win) {
     NATIVE_WINDOW_CAST(win)->window = NULL;
     NATIVE_WINDOW_CAST(win)->screen = NULL;
 
-    FREE_MEM(NATIVE_WINDOW_CAST(win), sizeof(NativeWindow_t));
+    free(NATIVE_WINDOW_CAST(win));
 }
 
 int window_get_width(const Window_t *win) {
@@ -221,15 +223,15 @@ int window_get_inner_height(const Window_t *win) {
 
 
 void window_fill(Window_t *win, const Framebuffer_t *gb) {
-//#ifdef __MORPHOS__
-//    WritePixelArray(gb->buffer, 0, 0, gb->width * 3, &NATIVE_WINDOW_CAST(win)->screen->RastPort, 0, 0, gb->width, gb->height, RECTFMT_RGB);
-//#else
+    //#ifdef __MORPHOS__
+    //    WritePixelArray(gb->buffer, 0, 0, gb->width * 3, &NATIVE_WINDOW_CAST(win)->screen->RastPort, 0, 0, gb->width, gb->height, RECTFMT_RGB);
+    //#else
     WriteChunkyPixels(&NATIVE_WINDOW_CAST(win)->screen->RastPort, 0, 0,
                       gb->width,
                       gb->height,
                       (unsigned char *) gb->buffer,
                       gb->width * 3);
-//#endif
+    //#endif
 }
 
 Framebuffer8Bit_t *window_get_chunky_buffer(Window_t *win) {
@@ -237,9 +239,9 @@ Framebuffer8Bit_t *window_get_chunky_buffer(Window_t *win) {
 }
 
 void window_blit_chunky_buffer(Window_t *win) {
-//#ifdef LOW_RESOLUTION
-//    WaitTOF();
-//#endif
+    //#ifdef LOW_RESOLUTION
+    //    WaitTOF();
+    //#endif
 
 #ifdef USE_C2P
     C2P_Chunky2Planar(NATIVE_WINDOW_CAST(win)->C2P_context);
