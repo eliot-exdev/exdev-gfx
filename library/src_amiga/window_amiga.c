@@ -54,16 +54,28 @@ Window_t *window_create(const int width, const int height, const char *title, co
     char TITLE_TEXT[256];
     sprintf(TITLE_TEXT, "Select screen mode (%dx%dx%d)", width, height, depth);
 
-    struct TagItem smrtags[5];
+    struct TagItem smrtags[9];
     smrtags[0].ti_Tag = ASLSM_TitleText;
     smrtags[0].ti_Data = (ULONG) TITLE_TEXT;
     smrtags[1].ti_Tag = ASLSM_MinWidth;
     smrtags[1].ti_Data = width;
     smrtags[2].ti_Tag = ASLSM_MinHeight;
     smrtags[2].ti_Data = height;
-    smrtags[3].ti_Tag = ASLSM_MinDepth;
-    smrtags[3].ti_Data = depth;
-    smrtags[4].ti_Tag = TAG_END;
+    smrtags[3].ti_Tag = ASLSM_MaxWidth;
+    smrtags[3].ti_Data = width;
+    smrtags[4].ti_Tag = ASLSM_MaxHeight;
+    smrtags[4].ti_Data = height;
+    smrtags[5].ti_Tag = ASLSM_MinDepth;
+    smrtags[5].ti_Data = depth;
+    smrtags[6].ti_Tag = ASLSM_MaxDepth;
+    smrtags[6].ti_Data = depth;
+    smrtags[7].ti_Tag = ASLSM_InitialDisplayWidth;
+    smrtags[7].ti_Data = width;
+    smrtags[8].ti_Tag = ASLSM_InitialDisplayHeight;
+    smrtags[8].ti_Data = height;
+    smrtags[8].ti_Tag = ASLSM_InitialDisplayDepth;
+    smrtags[8].ti_Data = depth;
+    smrtags[9].ti_Tag = TAG_END;
 
     struct ScreenModeRequester *smr = 0;
     unsigned long screen_id = (unsigned long) INVALID_ID;
