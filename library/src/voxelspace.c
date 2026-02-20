@@ -48,8 +48,8 @@ void voxelspace_init(Voxelspace_t *v,
                      Framebuffer8Bit_t *height_map,
                      Framebuffer8Bit_t *color_map,
                      Framebuffer8Bit_t *fb,
-                     float scale_height,
-                     Color8Bit_t sky_color,
+                     const float scale_height,
+                     const Color8Bit_t sky_color,
                      Framebuffer8Bit_t *sky_texture,
                      zones_t *zones) {
     assert(v);
@@ -129,7 +129,7 @@ void voxelspace_render(const Vertex3d_t p,
     int *ybuffer = v->ybuffer;
     const Heightmap_t *heightmap = &v->heightmap;
 
-    zone_t *current_zone = v->zones->zones;
+    const zone_t *current_zone = v->zones->zones;
 
     while (z < distance) {
         log_debug_fmt("z=%f", z);

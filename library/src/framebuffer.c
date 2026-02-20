@@ -82,7 +82,7 @@ void framebuffer_draw_line(Framebuffer_t *fb, const Vertex2d_t a, const Vertex2d
     }
 }
 
-void framebuffer_draw_vertical_line(Framebuffer_t *fb, int x, const int y, int dy, const ColorRGBA_t *c) {
+void framebuffer_draw_vertical_line(Framebuffer_t *fb, const int x, const int y, int dy, const ColorRGBA_t *c) {
     assert(fb);
 
     if (x >= fb->width) {
@@ -109,7 +109,7 @@ void framebuffer_draw_vertical_line(Framebuffer_t *fb, int x, const int y, int d
     }
 }
 
-void framebuffer_draw_horizontal_line(Framebuffer_t *fb, int x, int y, int dx, const ColorRGB_t *c) {
+void framebuffer_draw_horizontal_line(Framebuffer_t *fb, int x, const int y, int dx, const ColorRGB_t *c) {
     assert(fb);
 
     if (x >= fb->width) {
@@ -239,7 +239,7 @@ void framebuffer_copy(Framebuffer_t *dst, const Framebuffer_t *src) {
 }
 
 
-void framebuffer_fill_rect_rgb(Framebuffer_t *fb, int x, int y, int width, int height, const ColorRGB_t *c) {
+void framebuffer_fill_rect_rgb(Framebuffer_t *fb, const int x, const int y, const int width, const int height, const ColorRGB_t *c) {
     int x_;
     int y_;
 
@@ -672,8 +672,8 @@ framebuffer_draw_text(Framebuffer_t *fb, const Font_t *f, const char *text, cons
     }
 }
 
-void framebuffer_draw_text_rgb(Framebuffer_t *fb, const Font_t *f, const char *text, unsigned int text_length, const ColorRGB_t *c, int x,
-                               int y) {
+void framebuffer_draw_text_rgb(Framebuffer_t *fb, const Font_t *f, const char *text, const unsigned int text_length, const ColorRGB_t *c, const int x,
+                               const int y) {
     assert(fb);
     assert(f);
     assert(text);

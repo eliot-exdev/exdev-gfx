@@ -16,7 +16,6 @@
 
 #include <proto/graphics.h>
 #include <devices/inputevent.h>
-#include <devices/keymap.h>
 #include <proto/console.h>
 #include <proto/gadtools.h>
 #include <libraries/asl.h>

@@ -4,7 +4,6 @@
 #define EXDEVGFX2_LOG_LEVEL 1
 
 #include <exdevgfx/logger.h>
-#include <string.h>
 
 int main(int argc, char **argv) {
     // parse args

@@ -128,7 +128,7 @@ void framebuffer_8bit_deinit(Framebuffer8Bit_t *fb) {
     fb->buffer = NULL;
 }
 
-void framebuffer_8bit_fill(Framebuffer8Bit_t *fb, Color8Bit_t c) {
+void framebuffer_8bit_fill(Framebuffer8Bit_t *fb, const Color8Bit_t c) {
     assert(fb);
 
     memset(fb->buffer, c, framebuffer_8bit_num_bytes(fb));
@@ -190,7 +190,7 @@ void framebuffer_8bit_draw_pixel(Framebuffer8Bit_t *fb, const int x, const int y
     *framebuffer_8bit_pixel_at(fb, x, y) = c;
 }
 
-void framebuffer_8bit_fill_rect(Framebuffer8Bit_t *fb, int x, const int y, const int width, const int height, const Color8Bit_t c) {
+void framebuffer_8bit_fill_rect(Framebuffer8Bit_t *fb, const int x, const int y, const int width, const int height, const Color8Bit_t c) {
     assert(fb);
 
     for (int i = 0; i < height; ++i) {
@@ -545,7 +545,7 @@ void framebuffer_8bit_draw_framebuffer(Framebuffer8Bit_t *fb, const int x, const
     }
 }
 
-void framebuffer_8bit_draw_framebuffer_with_alpha(Framebuffer8Bit_t *fb, int x, int y, const Framebuffer8Bit_t *src, const Color8Bit_t alpha) {
+void framebuffer_8bit_draw_framebuffer_with_alpha(Framebuffer8Bit_t *fb, const int x, const int y, const Framebuffer8Bit_t *src, const Color8Bit_t alpha) {
     assert(fb);
     assert(src);
 
@@ -565,7 +565,7 @@ void framebuffer_8bit_draw_framebuffer_with_alpha(Framebuffer8Bit_t *fb, int x, 
     }
 }
 
-void framebuffer_8bit_blit_8bit(Framebuffer8Bit_t *fb, const Framebuffer8Bit_t *src, int x, int y, int width, int height, int to_x, int to_y) {
+void framebuffer_8bit_blit_8bit(Framebuffer8Bit_t *fb, const Framebuffer8Bit_t *src, const int x, const int y, int width, int height, const int to_x, const int to_y) {
     assert(fb);
     assert(src);
 
@@ -596,7 +596,7 @@ void framebuffer_8bit_blit_8bit(Framebuffer8Bit_t *fb, const Framebuffer8Bit_t *
     }
 }
 
-void framebuffer_8bit_draw_framebuffer_flip_vertical(Framebuffer8Bit_t *fb, int x, int y, const Framebuffer8Bit_t *src) {
+void framebuffer_8bit_draw_framebuffer_flip_vertical(Framebuffer8Bit_t *fb, const int x, const int y, const Framebuffer8Bit_t *src) {
     assert(fb);
     assert(src);
 
@@ -691,7 +691,7 @@ void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, const int c
     }
 }
 
-void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, const int center_x, const int center_y, const Framebuffer8Bit_t *src, float angle,
+void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, const int center_x, const int center_y, const Framebuffer8Bit_t *src, const float angle,
                                                const int alpha) {
     assert(fb);
     assert(src);
