@@ -29,9 +29,10 @@ unsigned char versiontag[] = "\0$VER: " VERSION;
 
 #if defined(__MORPHOS__) || defined(__AMIGA__)
 #ifdef __VBCC__
-__entry
+__entry size_t __stack = 65536;// 64 kb
+#else
+size_t __stack = 65536;// 64 kb
 #endif
-size_t __stack = 65536;// 642 kb
 #endif
 
 #ifdef LOW_RESOLUTION
