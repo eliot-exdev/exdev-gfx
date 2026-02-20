@@ -117,7 +117,7 @@ application_060: examples/test_application.c exdev_gfx_ui_aos_060.lib exdev_gfx_
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060}
 
 #--- voxelspace ---#
-voxelspace_all: voxelspace_mos_gcc voxelspace_060 voxelspace_060_c2p voxelspace_030_c2p
+voxelspace_all: voxelspace_mos_gcc voxelspace_060 voxelspace_060_c2p
 
 voxelspace_mos_gcc: examples/voxelspace_main.c exdev_gfx_mos_gcc.a
 	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
@@ -128,8 +128,8 @@ voxelspace_060: examples/voxelspace_main.c exdev_gfx_aos_060.lib
 voxelspace_060_c2p: examples/voxelspace_main.c exdev_gfx_aos_060_c2p.lib
 	$(CC) -o ${@} ${INCLUDES_AOS} -IWork:workspace/c2plib/sdk/C $(^) ${C_FLAGS_060} ${LD_FLAGS_060} -LWork:workspace/c2plib/sdk -lc2p -DLOW_RESOLUTION -DUSE_C2P
 
-voxelspace_030_c2p: examples/voxelspace_main.c exdev_gfx_aos_030_c2p.lib
-	$(CC) -o ${@} ${INCLUDES_AOS} -IWork:workspace/c2plib/sdk/C $(^) ${C_FLAGS_030} ${LD_FLAGS_030} -LWork:workspace/c2plib/sdk -lc2p -DLOW_RESOLUTION -DUSE_C2P
+#voxelspace_030_c2p: examples/voxelspace_main.c exdev_gfx_aos_030_c2p.lib
+#	$(CC) -o ${@} ${INCLUDES_AOS} -IWork:workspace/c2plib/sdk/C $(^) ${C_FLAGS_030} ${LD_FLAGS_030} -LWork:workspace/c2plib/sdk -lc2p -DLOW_RESOLUTION -DUSE_C2P
 
 
 #--- test sprite ---#
