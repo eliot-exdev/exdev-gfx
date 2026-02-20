@@ -87,14 +87,13 @@ Window_t *window_create(const int width, const int height, const char *title, co
     smrtags[9].ti_Tag = ASLSM_InitialDisplayDepth;
     smrtags[9].ti_Data = depth;
 
-    smrtags[10].ti_Tag = TAG_END;
+    smrtags[10].ti_Tag = TAG_DONE;
 
-    struct ScreenModeRequester *smr = 0;
     unsigned long screen_id = (unsigned long) INVALID_ID;
     int screen_width = 0;
     int screen_height = 0;
     int screen_depth = 0;
-    smr = (struct ScreenModeRequester *) AllocAslRequest(ASL_ScreenModeRequest, smrtags);
+    struct ScreenModeRequester *smr = (struct ScreenModeRequester *) AllocAslRequest(ASL_ScreenModeRequest, smrtags);
     if (AslRequest(smr, 0L)) {
         screen_id = smr->sm_DisplayID;
         screen_width = smr->sm_DisplayWidth;
