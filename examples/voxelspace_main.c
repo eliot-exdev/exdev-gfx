@@ -18,7 +18,7 @@
 #define ASSETS_PREFIX ""
 #endif
 
-#define VERSION "voxelspace 0.9.2 (20.02.2026)"
+#define VERSION "voxelspace 0.9.2 (21.02.2026)"
 
 #ifndef __linux__
 #ifdef __VBCC__
@@ -29,9 +29,9 @@ unsigned char versiontag[] = "\0$VER: " VERSION;
 
 #if defined(__MORPHOS__) || defined(__AMIGA__)
 #ifdef __VBCC__
-__entry size_t __stack = 65536;// 64 kb
+__entry size_t __stack = 32768; // 32 kb
 #else
-size_t __stack = 65536;// 64 kb
+size_t __stack = 32768; // 32 kb
 #endif
 #endif
 
