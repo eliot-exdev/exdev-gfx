@@ -153,7 +153,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
                                SA_Draggable, FALSE,
                                TAG_DONE);
 #else
-    framebuffer_8bit_init(&w->chunky_buffer, screen_width, screen_height);
+    framebuffer_8bit_init(&w->chunky_buffer, width, height);
     w->screen = OpenScreenTags(NULL,
                                SA_Left, 0,
                                SA_Top, 0,
