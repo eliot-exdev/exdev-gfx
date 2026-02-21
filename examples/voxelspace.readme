@@ -34,8 +34,8 @@ Have fun!
   Tested it on a Mac Mini G4 Silent Upgrade with MorphOs 3.19.
   You will need a 640x480x8 screen mode.
 * AmigaOs:
-  Tested on Amiga 4000T, 060, Cybervision 64/3D, Aos 3.2.3 and
-                  Amiga 1200, 060, AGA, Aos 3.2.3.
+  Tested on Amiga 4000T, 060, Cybervision 64/3D, AmigaOs 3.2.3 and
+                  Amiga 1200, 060, AGA, AmigaOs 3.2.3.
   AGA version requires c2p.library from aminet
   (see https://aminet.net/dev/misc/c2plib.lha).
 
@@ -47,7 +47,10 @@ To get a complete arguments list of the program, please start it with '-h'.
 You can quit the program by hitting ESC.
 
 On Amiga with gfx card, you should use voxelspace_060.
-On Amiga with aga only, you should use voxelspace_060_c2p.
+Screen resolution: 320x240x8.
+
+On Amiga with AGA only, you should use voxelspace_060_c2p.
+Screen resolution: 320x256x8
 
 ## Program arguments
 
@@ -75,9 +78,11 @@ F4                 decrease render distance
 F5                 increase render distance
 
 # History
-- 0.9.2 2026-02-20
+
+- 0.9.2 2026-02-21
   - fixed screenmode requester
   - fixed stack issue
+  - slightly speed improvements
 
 - 0.9.1 2025-10-31
   - changed AGA/C2P resolution to 320x256
@@ -87,7 +92,7 @@ F5                 increase render distance
   - replaced voxelspace_mos with voxelspace_mos_gcc (this is the faster binary)
 
 - 0.8 2025-06-05
-  - add aga support
+  - add AGA support
   - optimizations
 
 - 0.6 2020-12-05 before XMas release
