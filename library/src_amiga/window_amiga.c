@@ -55,7 +55,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
     memset(TITLE_TEXT, 0, 128);
     sprintf(TITLE_TEXT, "Select screen mode (%dx%dx%d)", width, height, depth);
 
-    struct TagItem smrtags[11];
+    struct TagItem smrtags[8];
     smrtags[0].ti_Tag = ASLSM_TitleText;
     smrtags[0].ti_Data = (ULONG) TITLE_TEXT;
 
@@ -65,28 +65,19 @@ Window_t *window_create(const int width, const int height, const char *title, co
     smrtags[2].ti_Tag = ASLSM_MinHeight;
     smrtags[2].ti_Data = height;
 
-    smrtags[3].ti_Tag = ASLSM_MaxWidth;
-    smrtags[3].ti_Data = width;
+    smrtags[3].ti_Tag = ASLSM_MinDepth;
+    smrtags[3].ti_Data = depth;
 
-    smrtags[4].ti_Tag = ASLSM_MaxHeight;
-    smrtags[4].ti_Data = height;
+    smrtags[4].ti_Tag = ASLSM_InitialDisplayWidth;
+    smrtags[4].ti_Data = width;
 
-    smrtags[5].ti_Tag = ASLSM_MinDepth;
-    smrtags[5].ti_Data = depth;
+    smrtags[5].ti_Tag = ASLSM_InitialDisplayHeight;
+    smrtags[5].ti_Data = height;
 
-    smrtags[6].ti_Tag = ASLSM_MaxDepth;
+    smrtags[6].ti_Tag = ASLSM_InitialDisplayDepth;
     smrtags[6].ti_Data = depth;
 
-    smrtags[7].ti_Tag = ASLSM_InitialDisplayWidth;
-    smrtags[7].ti_Data = width;
-
-    smrtags[8].ti_Tag = ASLSM_InitialDisplayHeight;
-    smrtags[8].ti_Data = height;
-
-    smrtags[9].ti_Tag = ASLSM_InitialDisplayDepth;
-    smrtags[9].ti_Data = depth;
-
-    smrtags[10].ti_Tag = TAG_DONE;
+    smrtags[7].ti_Tag = TAG_DONE;
 
     unsigned long screen_id = (unsigned long) INVALID_ID;
     int screen_width = 0;
