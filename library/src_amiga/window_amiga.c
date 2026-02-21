@@ -43,8 +43,8 @@ struct NativeWindow {
 
 typedef struct NativeWindow NativeWindow_t;
 
-#define NATIVE_WINDOW_CAST(w) ((NativeWindow_t *)w)
-#define NATIVE_WINDOW_CAST_CONST(w) ((const  NativeWindow_t *)w)
+#define NATIVE_WINDOW_CAST(w) ((NativeWindow_t *) w)
+#define NATIVE_WINDOW_CAST_CONST(w) ((const NativeWindow_t *) w)
 
 Window_t *window_create(const int width, const int height, const char *title, const enum FULLSCREEN fs) {
     NativeWindow_t *w = malloc(sizeof(NativeWindow_t));
@@ -194,23 +194,26 @@ Window_t *window_create(const int width, const int height, const char *title, co
 }
 
 void window_destroy(Window_t *win) {
+    NativeWindow_t *nwin = NATIVE_WINDOW_CAST(win);
+
+    if (nwin->window) {
+        CloseWindow(nwin->window);
+    }
+    if (nwin->screen) {
+        CloseScreen(nwin->screen);
+    }
+
 #ifdef USE_C2P
-    C2P_DestroyContext(NATIVE_WINDOW_CAST(win)->C2P_context);
-    NATIVE_WINDOW_CAST(win)->chunky_buffer.buffer = NULL;
+    C2P_DestroyContext(nwin->C2P_context);
+    nwin->chunky_buffer.buffer = NULL;
 #else
-    framebuffer_8bit_deinit(&NATIVE_WINDOW_CAST(win)->chunky_buffer);
+    framebuffer_8bit_deinit(&nwin->chunky_buffer);
 #endif
 
-    if (NATIVE_WINDOW_CAST(win)->window) {
-        CloseWindow(NATIVE_WINDOW_CAST(win)->window);
-    }
-    if (NATIVE_WINDOW_CAST(win)->screen) {
-        CloseScreen(NATIVE_WINDOW_CAST(win)->screen);
-    }
-    NATIVE_WINDOW_CAST(win)->window = NULL;
-    NATIVE_WINDOW_CAST(win)->screen = NULL;
+    nwin->window = NULL;
+    nwin->screen = NULL;
 
-    free(NATIVE_WINDOW_CAST(win));
+    free(nwin);
 }
 
 int window_get_width(const Window_t *win) {
@@ -292,7 +295,7 @@ static LONG deadKeyConvert(const struct IntuiMessage *msg, char *kbuffer, struct
 }
 
 int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const int maxEvents) {
-    struct IntuiMessage *msg = NULL; // since V39 it should be struct ExtIntuiMessage *
+    struct IntuiMessage *msg = NULL;// since V39 it should be struct ExtIntuiMessage *
     struct InputEvent ievent;
     char buffer[KEY_BUFFER_SIZE];
 

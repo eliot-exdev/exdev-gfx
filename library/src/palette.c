@@ -76,7 +76,7 @@ void palette_8bit_init(Palette8Bit_t *p, const int numPens) {
     }
 }
 
-void palette_8bit_set_pen(Palette8Bit_t *palette, const Pen_t *pen, unsigned char pos) {
+void palette_8bit_set_pen(Palette8Bit_t *palette, const Pen_t *pen, const unsigned char pos) {
     assert(palette);
     assert(pen);
     assert(pos < palette->numPens);
@@ -94,7 +94,7 @@ unsigned char palette_8bit_add_pen(Palette8Bit_t *palette, const Pen_t *pen) {
     return palette->numPens - 1;
 }
 
-Pen_t *palette_8bit_get_pen(Palette8Bit_t *palette, unsigned char pos) {
+Pen_t *palette_8bit_get_pen(Palette8Bit_t *palette, const unsigned char pos) {
     assert(palette);
     assert(pos < palette->numPens);
     return &palette->pens[pos];

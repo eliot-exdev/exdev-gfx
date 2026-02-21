@@ -12,7 +12,7 @@ void vertex3d_init(Vertex3d_t v) {
     v[2] = 0;
 }
 
-void vertex3d_set(Vertex3d_t v, float x, float y, float z) {
+void vertex3d_set(Vertex3d_t v, const float x, const float y, const float z) {
     v[0] = x;
     v[1] = y;
     v[2] = z;

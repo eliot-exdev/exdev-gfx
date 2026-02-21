@@ -6,7 +6,6 @@
 
 #include <assert.h>
 #include <stdlib.h>
-#include <string.h>
 
 UIIcon_t *ui_icon_create(const int x, const int y, Framebuffer8Bit_t *icon_enabled, Framebuffer8Bit_t *icon_disabled) {
     assert(icon_enabled);
