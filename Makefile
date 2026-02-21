@@ -12,11 +12,11 @@ INCLUDES_MOS=-Ilibrary/include -Ilibrary/easing/include
 
 #--- AmigaOs 060 ---#
 C_FLAGS_060=+aos68k -c99 -fpu=68060 -cpu=68060 -speed -final -DNDEBUG -D__AMIGA__
-LD_FLAGS_060=-lm060 -lamiga
+LD_FLAGS_060=-lm060
 
 #--- AmigaOs 030 ---#
 C_FLAGS_030=+aos68k -c99 -cpu=68030 -speed -final -DNDEBUG -D__AMIGA__
-LD_FLAGS_030=-lmieee -lamiga
+LD_FLAGS_030=-lmieee
 
 INCLUDES_AOS=-Ilibrary/include -Ilibrary/easing/include
 
@@ -51,15 +51,15 @@ exdev_gfx_mos_gcc.a: $(EXDEV_GFX_SOURCES)
 	$(AR) -r $(@) args.o color.o events.o font.o framebuffer.o framebuffer_8bit.o framebuffer_rgba.o heightmap.o helper.o julia.o matrix.o palette.o vertex2d.o vertex3d.o voxelspace.o exdev_base_amiga.o helper_amiga.o window_amiga.o
 
 exdev_gfx_aos_060.lib: $(EXDEV_GFX_SOURCES)
-	$(CC) -c ${INCLUDES_AOS} ${C_FLAGS_060} $(^)
+	$(CC) -c ${INCLUDES_AOS} ${C_FLAGS_060} $(^) -DLOW_RESOLUTION
 	$(JOIN) as $(@) library/src/args.o library/src/color.o library/src/events.o library/src/font.o library/src/framebuffer.o library/src/framebuffer_8bit.o library/src/framebuffer_rgba.o library/src/heightmap.o library/src/helper.o library/src/julia.o library/src/matrix.o library/src/palette.o library/src/vertex2d.o library/src/vertex3d.o library/src/voxelspace.o library/src_amiga/exdev_base_amiga.o library/src_amiga/helper_amiga.o library/src_amiga/window_amiga.o
 
 exdev_gfx_aos_060_c2p.lib: $(EXDEV_GFX_SOURCES)
-	$(CC) -c ${INCLUDES_AOS} -IWork:workspace/c2plib/sdk/C ${C_FLAGS_060} $(^) -DUSE_C2P
+	$(CC) -c ${INCLUDES_AOS} -IWork:workspace/c2plib/sdk/C ${C_FLAGS_060} $(^) -DUSE_C2P -DLOW_RESOLUTION
 	$(JOIN) as $(@) library/src/args.o library/src/color.o library/src/events.o library/src/font.o library/src/framebuffer.o library/src/framebuffer_8bit.o library/src/framebuffer_rgba.o library/src/heightmap.o library/src/helper.o library/src/julia.o library/src/matrix.o library/src/palette.o library/src/vertex2d.o library/src/vertex3d.o library/src/voxelspace.o library/src_amiga/exdev_base_amiga.o library/src_amiga/helper_amiga.o library/src_amiga/window_amiga.o
 
 exdev_gfx_aos_030_c2p.lib: $(EXDEV_GFX_SOURCES)
-	$(CC) -c ${INCLUDES_AOS} -IWork:workspace/c2plib/sdk/C ${C_FLAGS_030} $(^) -DUSE_C2P
+	$(CC) -c ${INCLUDES_AOS} -IWork:workspace/c2plib/sdk/C ${C_FLAGS_030} $(^) -DUSE_C2P -DLOW_RESOLUTION
 	$(JOIN) as $(@) library/src/args.o library/src/color.o library/src/events.o library/src/font.o library/src/framebuffer.o library/src/framebuffer_8bit.o library/src/framebuffer_rgba.o library/src/heightmap.o library/src/helper.o library/src/julia.o library/src/matrix.o library/src/palette.o library/src/vertex2d.o library/src/vertex3d.o library/src/voxelspace.o library/src_amiga/exdev_base_amiga.o library/src_amiga/helper_amiga.o library/src_amiga/window_amiga.o
 
 
