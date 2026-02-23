@@ -52,7 +52,7 @@ On Amiga with gfx card, you should use voxelspace_060.
 Screen resolution: 320x240x8.
 
 On Amiga with AGA only, you should use voxelspace_060_c2p
-(or voxelspace_060_c2p).
+(or voxelspace_030_c2p).
 Screen resolution: 320x256x8
 
 ## Program arguments
