@@ -8,6 +8,7 @@ Version:      0.9.2
 Architecture: m68k-amigaos >= 3.1.4; ppc-morphos
 Distribution: Aminet
 URL:          https://github.com/eliot-exdev/exdev-gfx
+Replaces:     misc/misc/voxelspace.lha
 
 # About
 
@@ -42,14 +43,16 @@ Have fun!
 # Usage
 
 Please start the binary
-(voxelspace_mos_gcc, voxelspace_060, voxelspace_060_c2p) from your Amiga shell.
+(voxelspace_mos_gcc, voxelspace_060, voxelspace_060_c2p, voxelspace_030_c2p)
+from your Amiga shell.
 To get a complete arguments list of the program, please start it with '-h'.
 You can quit the program by hitting ESC.
 
 On Amiga with gfx card, you should use voxelspace_060.
 Screen resolution: 320x240x8.
 
-On Amiga with AGA only, you should use voxelspace_060_c2p.
+On Amiga with AGA only, you should use voxelspace_060_c2p
+(or voxelspace_060_c2p).
 Screen resolution: 320x256x8
 
 ## Program arguments
@@ -83,13 +86,15 @@ F5                 increase render distance
   - fixed screenmode requester
   - fixed stack issue
   - slightly speed improvements
+  - add 68030 executable (no fpu, AGA)
 
 - 0.9.1 2025-10-31
   - changed AGA/C2P resolution to 320x256
 
 - 0.9 2025-06-05
   - optimized sky rendering
-  - replaced voxelspace_mos with voxelspace_mos_gcc (this is the faster binary)
+  - replaced voxelspace_mos with voxelspace_mos_gcc
+    (this is the faster binary)
 
 - 0.8 2025-06-05
   - add AGA support
@@ -100,7 +105,8 @@ F5                 increase render distance
   - implemented set render quality at runtime (+dither x option)
   - optimized a little bit more
   - implemented strafing left/right
-  - add simple font rendering and add first font "mia1" (thanks to my daughter)
+  - add simple font rendering and add first font "mia1"
+    (thanks to my daughter)
   - implemented showing frames per second
 
 - 0.5 2020-11-22 8bit release
