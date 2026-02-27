@@ -76,11 +76,11 @@ static const char PALETTE_FOUR[] = ASSETS_PREFIX "assets/fourth_color_map_palett
 static const char PALETTE_FIVE[] = ASSETS_PREFIX "assets/fifth_color_map_palette.dat";
 
 #ifdef LOW_RESOLUTION
-static const char SKY_TEXTURE_ONE[] = ASSETS_PREFIX "assets/first_sky_lowres.dat";
-static const char SKY_TEXTURE_TWO[] = ASSETS_PREFIX "assets/second_sky_lowres.dat";
-static const char SKY_TEXTURE_THREE[] = ASSETS_PREFIX "assets/third_sky_lowres.dat";
-static const char SKY_TEXTURE_FOUR[] = ASSETS_PREFIX "assets/fourth_sky_lowres.dat";
-static const char SKY_TEXTURE_FIVE[] = ASSETS_PREFIX "assets/fifth_sky_lowres.dat";
+static const char SKY_TEXTURE_ONE[] = ASSETS_PREFIX"assets/first_sky_lowres.dat";
+static const char SKY_TEXTURE_TWO[] = ASSETS_PREFIX"assets/second_sky_lowres.dat";
+static const char SKY_TEXTURE_THREE[] = ASSETS_PREFIX"assets/third_sky_lowres.dat";
+static const char SKY_TEXTURE_FOUR[] = ASSETS_PREFIX"assets/fourth_sky_lowres.dat";
+static const char SKY_TEXTURE_FIVE[] = ASSETS_PREFIX"assets/fifth_sky_lowres.dat";
 #else
 static const char SKY_TEXTURE_ONE[] = ASSETS_PREFIX "assets/first_sky.dat";
 static const char SKY_TEXTURE_TWO[] = ASSETS_PREFIX "assets/second_sky.dat";
@@ -114,25 +114,25 @@ static exdev_timestamp_t tp;
 
 static void print_help() {
     printf("voxelspace [ARGUMENTS]...\n"
-           "arguments:\n"
-           " -h, --help              print help message and exit\n"
-           " -w, --world <number>    select world 1, 2, 3, 4 or 5 (default 1)\n"
-           " -d, --demo              enable demo mode\n"
-           " -v, --version           print version\n"
-           "\n"
-           "controls:\n"
-           "     w                   move up\n"
-           "     s                   move down\n"
-           "     a                   strafe left\n"
-           "     d                   strafe right\n"
-           "     cursors             navigate forward/backward and turn left/right\n"
-           "\n"
-           "options:\n"
-           "     ESC or q            quit\n"
-           "     F1                  enable/disable show fps\n"
-           "     F2                  enable/disable max detail\n"
-           "     F4                  decrease distance\n"
-           "     F5                  increase distance\n");
+        "arguments:\n"
+        " -h, --help              print help message and exit\n"
+        " -w, --world <number>    select world 1, 2, 3, 4 or 5 (default 1)\n"
+        " -d, --demo              enable demo mode\n"
+        " -v, --version           print version\n"
+        "\n"
+        "controls:\n"
+        "     w                   move up\n"
+        "     s                   move down\n"
+        "     a                   strafe left\n"
+        "     d                   strafe right\n"
+        "     cursors             navigate forward/backward and turn left/right\n"
+        "\n"
+        "options:\n"
+        "     ESC or q            quit\n"
+        "     F1                  enable/disable show fps\n"
+        "     F2                  enable/disable max detail\n"
+        "     F4                  decrease distance\n"
+        "     F5                  increase distance\n");
 }
 
 static void print_version() {
@@ -327,7 +327,7 @@ int main(int argc, char **argv) {
     // create font
     Font_t mia1;
     font_init(&mia1, FONT_TYPE_MIA_1);
-    const unsigned char font_color = palette_8bit_add_pen(&palette, &PEN_YELLOW);
+    // const unsigned char font_color = palette_8bit_add_pen(&palette, &PEN_YELLOW);
     char fps_text[10];
     memset(fps_text, 0, 10);
 
@@ -343,9 +343,9 @@ int main(int argc, char **argv) {
     Vertex3d_t position;
     vertex3d_set(position, 512, 512, 80);
 
-    char ctrl_move = 0;   // 0=no, 1=forward, 2=backward
+    char ctrl_move = 0; // 0=no, 1=forward, 2=backward
     char ctrl_rotate = 0; // 0=no, 1=right, 2=left
-    char ctrl_up_down = 0;// 0=no, 1=up, 2=down
+    char ctrl_up_down = 0; // 0=no, 1=up, 2=down
     char ctrl_strafe = 0; // 0=no, 1=left, 2=right
 
     // show window
@@ -355,6 +355,10 @@ int main(int argc, char **argv) {
         exit(0);
     }
     window_update_palette(window, &palette);
+    HW_Framebuffer_t hw_buffer;
+    hw_buffer.width = WIDTH;
+    hw_buffer.height = HEIGHT;
+    window_init_hw_framebuffer(window, &hw_buffer);
 
     // create voxelspace
     Framebuffer8Bit_t *fb = window_get_chunky_buffer(window);
@@ -453,7 +457,7 @@ int main(int argc, char **argv) {
             ctrl_rotate = 0;
             ctrl_up_down = 0;
             ctrl_strafe = 0;
-            position[2] = -1.0f;// use auto height
+            position[2] = -1.0f; // use auto height
         }
 
         switch (ctrl_rotate) {
@@ -475,10 +479,10 @@ int main(int argc, char **argv) {
         position[0] = normalize_float(position[0], (float) v.heightmap.height);
         position[1] = normalize_float(position[1], (float) v.heightmap.width);
         update_profile("update world");
-//#if defined(__AMIGA__) || defined(__MORPHOS__)
-//        Forbid();
-//#endif
-        voxelspace_render(position, rotation, HORIZON, distance, &v);
+        //#if defined(__AMIGA__) || defined(__MORPHOS__)
+        //        Forbid();
+        //#endif
+        voxelspace_render(position, rotation, HORIZON, distance, &v, &hw_buffer);
 
         // draw text
         if (show_fps) {
@@ -487,21 +491,23 @@ int main(int argc, char **argv) {
             if (before == 0) {
                 ++before;
             }
-            framebuffer_8bit_draw_text(fb, &mia1, fps_text, sprintf(fps_text, "%li", 1000 / before), font_color, 20, HEIGHT - 20);
+            // framebuffer_8bit_draw_text(fb, &mia1, fps_text, sprintf(fps_text, "%li", 1000 / before), font_color, 20, HEIGHT - 20);
             before = after;
         }
         update_profile("render world");
 
-        window_blit_chunky_buffer(window);
-//#if defined(__AMIGA__) || defined(__MORPHOS__)
-//        Permit();
-//#endif
+        window_hw_framebuffer_blit(window, &hw_buffer);
+        // window_blit_chunky_buffer(window);
+        //#if defined(__AMIGA__) || defined(__MORPHOS__)
+        //        Permit();
+        //#endif
         update_profile("blit image");
         log_debug("<-- render");
     }
 
     // cleanup
     log_info("--> cleanup ...");
+    window_destroy_hw_framebuffer(&hw_buffer);
     window_destroy(window);
     voxelspace_deinit(&v);
     zones_deinit(&zones);

@@ -86,7 +86,8 @@ void voxelspace_render(const Vertex3d_t p,
                        const float rot,
                        const float horizon,
                        const float distance,
-                       const Voxelspace_t *v) {
+                       const Voxelspace_t *v,
+                       HW_Framebuffer_t *hw_buffer) {
     // precalculate viewing angle parameters
     const float phi = deg_to_rad(rot);
     const float sinphi = sin(phi);
@@ -107,14 +108,14 @@ void voxelspace_render(const Vertex3d_t p,
     wmemset((wchar_t *) v->ybuffer, v->fb->height, v->fb->width);
 #endif
     // render sky
-    int x_shifted = 0;
-    if (rot < 0) {
-        x_shifted = (int) ((float) -rot / 360.0f * (float) v->sky_texture->width);
-    } else {
-        x_shifted = v->sky_texture->width - (int) ((float) rot / 360.0f * (float) v->sky_texture->width);
-    }
-
-    framebuffer_8bit_draw_framebuffer_shifted(v->fb, x_shifted, SKY_TEXTURE_HEIGHT, v->sky_texture);
+    // int x_shifted = 0;
+    // if (rot < 0) {
+    //     x_shifted = (int) ((float) -rot / 360.0f * (float) v->sky_texture->width);
+    // } else {
+    //     x_shifted = v->sky_texture->width - (int) ((float) rot / 360.0f * (float) v->sky_texture->width);
+    // }
+    //
+    // framebuffer_8bit_draw_framebuffer_shifted(v->fb, x_shifted, SKY_TEXTURE_HEIGHT, v->sky_texture);
 
     // auto height
     float height = p[2];
@@ -169,7 +170,7 @@ void voxelspace_render(const Vertex3d_t p,
 
             // render
             if (height_on_screen < ybuffer[i]) {
-                framebuffer_8bit_fill_rect(v->fb, i, height_on_screen, current_zone->x_step_size, ybuffer[i] - height_on_screen, value->color);
+                window_hw_framebuffer_fill_rect(hw_buffer, i, height_on_screen, current_zone->x_step_size, ybuffer[i] - height_on_screen, value->color);
                 for (si = 0; si < current_zone->x_step_size; ++si) {
                     ybuffer[i + si] = height_on_screen;
                 }

@@ -7,6 +7,7 @@
 
 #include <exdevgfx/heightmap.h>
 #include <exdevgfx/vertex3d.h>
+#include <exdevgfx/window.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,7 +51,7 @@ void voxelspace_init(Voxelspace_t *v,
 
 void voxelspace_deinit(Voxelspace_t *v);
 
-void voxelspace_render(const Vertex3d_t p, float rot, float horizon, float distance, const Voxelspace_t *v);
+void voxelspace_render(const Vertex3d_t p, float rot, float horizon, float distance, const Voxelspace_t *v, HW_Framebuffer_t *hw_buffer);
 
 #ifdef __cplusplus
 }

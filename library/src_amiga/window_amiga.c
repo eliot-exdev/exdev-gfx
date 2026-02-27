@@ -286,7 +286,7 @@ static LONG deadKeyConvert(const struct IntuiMessage *msg, char *kbuffer, struct
 }
 
 int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const int maxEvents) {
-    struct IntuiMessage *msg = NULL;// since V39 it should be struct ExtIntuiMessage *
+    struct IntuiMessage *msg = NULL; // since V39 it should be struct ExtIntuiMessage *
     struct InputEvent ievent;
     char buffer[KEY_BUFFER_SIZE];
 
@@ -447,4 +447,53 @@ int window_get_mouse_position(Window_t *w, Event_t *event) {
         return 1;
     }
     return 0;
+}
+
+
+struct Native_Hardware_Framebuffer {
+    struct BitMap *bitmap;
+    struct RastPort renderPort;
+};
+
+typedef struct Native_Hardware_Framebuffer Native_Hardware_Framebuffer_t;
+
+void window_init_hw_framebuffer(Window_t *w, HW_Framebuffer_t *fb) {
+    assert(w);
+    assert(fb);
+
+    Native_Hardware_Framebuffer_t *n = malloc(sizeof(Native_Hardware_Framebuffer_t));
+    n->bitmap = AllocBitMap(fb->width, fb->height, 8, 0, NATIVE_WINDOW_CAST(w)->screen->RastPort.BitMap);
+    InitRastPort(&n->renderPort);
+    n->renderPort.BitMap = n->bitmap;
+
+    // clear
+    SetRast(&n->renderPort, 0);
+
+    fb->hw = n;
+}
+
+void window_destroy_hw_framebuffer(HW_Framebuffer_t *fb) {
+    assert(fb);
+
+    Native_Hardware_Framebuffer_t *n = fb->hw;
+    FreeBitMap(n->bitmap);
+    free(n);
+    fb->hw = NULL;
+}
+
+void window_hw_framebuffer_fill_rect(HW_Framebuffer_t *fb, const int x, int y, const int width, const int height, const Color8Bit_t c) {
+    assert(fb);
+
+    Native_Hardware_Framebuffer_t *n = fb->hw;
+    SetAPen(&n->renderPort, c);
+    RectFill(&n->renderPort, x, y, x+width, y+height);
+}
+
+void window_hw_framebuffer_blit(Window_t *w, HW_Framebuffer_t *fb) {
+    assert(w);
+    assert(fb);
+
+    Native_Hardware_Framebuffer_t *n = fb->hw;
+    BltBitMapRastPort(n->bitmap, 0, 0, &NATIVE_WINDOW_CAST(w)->screen->RastPort, 0, 0, fb->width, fb->height, (ABNC | ABC));
+    SetRast(&n->renderPort, 0);
 }
