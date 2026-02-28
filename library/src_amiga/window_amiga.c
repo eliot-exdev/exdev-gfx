@@ -465,6 +465,7 @@ void window_init_hw_framebuffer(Window_t *w, HW_Framebuffer_t *fb) {
     n->bitmap = AllocBitMap(fb->width, fb->height, 8, 0, NATIVE_WINDOW_CAST(w)->screen->RastPort.BitMap);
     InitRastPort(&n->renderPort);
     n->renderPort.BitMap = n->bitmap;
+	SetDrMd(&n->renderPort, JAM1);
 
     // clear
     SetRast(&n->renderPort, 0);
@@ -494,6 +495,11 @@ void window_hw_framebuffer_blit(Window_t *w, HW_Framebuffer_t *fb) {
     assert(fb);
 
     Native_Hardware_Framebuffer_t *n = fb->hw;
+	OwnBlitter();
+	WaitBlit();
     BltBitMapRastPort(n->bitmap, 0, 0, &NATIVE_WINDOW_CAST(w)->screen->RastPort, 0, 0, fb->width, fb->height, (ABNC | ABC));
-    SetRast(&n->renderPort, 0);
+	WaitBlit();
+	SetRast(&n->renderPort, 0);
+	WaitBlit();
+	DisownBlitter();
 }

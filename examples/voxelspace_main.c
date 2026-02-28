@@ -374,6 +374,9 @@ int main(int argc, char **argv) {
     char close_event = 0;
     Event_t event;
     // game loop
+	
+	int num_frames=0;
+	before=now();
     while (!close_event) {
         begin_profile();
         // read inputs
@@ -478,32 +481,23 @@ int main(int argc, char **argv) {
         log_debug("--> render");
         position[0] = normalize_float(position[0], (float) v.heightmap.height);
         position[1] = normalize_float(position[1], (float) v.heightmap.width);
-        update_profile("update world");
         //#if defined(__AMIGA__) || defined(__MORPHOS__)
         //        Forbid();
         //#endif
         voxelspace_render(position, rotation, HORIZON, distance, &v, &hw_buffer);
 
-        // draw text
-        if (show_fps) {
-            after = now();
-            before = after - before;
-            if (before == 0) {
-                ++before;
-            }
-            // framebuffer_8bit_draw_text(fb, &mia1, fps_text, sprintf(fps_text, "%li", 1000 / before), font_color, 20, HEIGHT - 20);
-            before = after;
-        }
-        update_profile("render world");
-
         window_hw_framebuffer_blit(window, &hw_buffer);
+		++num_frames;
         // window_blit_chunky_buffer(window);
         //#if defined(__AMIGA__) || defined(__MORPHOS__)
         //        Permit();
         //#endif
-        update_profile("blit image");
+
         log_debug("<-- render");
     }
+	after=now();
+	
+	log_info_fmt("num frames: %i, fps: %i", num_frames, num_frames/((after-before)/1000));
 
     // cleanup
     log_info("--> cleanup ...");
