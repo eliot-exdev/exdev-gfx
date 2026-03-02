@@ -23,9 +23,7 @@
 #include <proto/asl.h>
 
 #ifdef USE_C2P
-
 #include <c2p.h>
-
 #endif
 
 #include <stdlib.h>
@@ -86,8 +84,8 @@ Window_t *window_create(const int width, const int height, const char *title, co
     struct ScreenModeRequester *smr = (struct ScreenModeRequester *) AllocAslRequest(ASL_ScreenModeRequest, smrtags);
     if (AslRequest(smr, 0L)) {
         screen_id = smr->sm_DisplayID;
-        screen_width = smr->sm_DisplayWidth;
-        screen_height = smr->sm_DisplayHeight;
+        screen_width = (int) smr->sm_DisplayWidth;
+        screen_height = (int) smr->sm_DisplayHeight;
         screen_depth = smr->sm_DisplayDepth;
     } else {
         log_warning("no screen mode selected by user");
@@ -103,6 +101,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
         log_warning("invalid screen id");
         return NULL;
     }
+
     log_info_fmt("screen_id=0x%08lx", screen_id);
     log_info_fmt("screen_width=%d", screen_width);
     log_info_fmt("screen_height=%d", screen_height);
@@ -176,7 +175,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
                                WA_Width, width,
                                WA_Height, height,
                                WA_CustomScreen, w->screen,
-                               WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
+                               WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_REFRESHWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
                                WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_REPORTMOUSE | WFLG_RMBTRAP | WFLG_BACKDROP,
                                WA_Title, title,
                                TAG_DONE);
@@ -286,7 +285,7 @@ static LONG deadKeyConvert(const struct IntuiMessage *msg, char *kbuffer, struct
 }
 
 int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const int maxEvents) {
-    struct IntuiMessage *msg = NULL;// since V39 it should be struct ExtIntuiMessage *
+    struct IntuiMessage *msg = NULL; // since V39 it should be struct ExtIntuiMessage *
     struct InputEvent ievent;
     char buffer[KEY_BUFFER_SIZE];
 
@@ -303,6 +302,10 @@ int window_poll_events(Window_t *win, char *closeEvent, Event_t *events, const i
             case IDCMP_CLOSEWINDOW:
                 *closeEvent = TRUE;
                 log_debug("window close event");
+                break;
+            case IDCMP_REFRESHWINDOW:
+                BeginRefresh((NATIVE_WINDOW_CAST(win)->window));
+                EndRefresh((NATIVE_WINDOW_CAST(win)->window), TRUE);
                 break;
             case IDCMP_RAWKEY:
                 log_debug("key event");
