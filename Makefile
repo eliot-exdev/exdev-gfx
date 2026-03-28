@@ -76,15 +76,15 @@ EXDEV_GFX_UI_SOURCES=library/src/ui/ui_application.c\
 
 exdev_gfx_ui_mos_gcc.a: $(EXDEV_GFX_UI_SOURCES)
 	$(CC_GCC) -c ${INCLUDES_MOS} ${C_FLAGS_MOS_GCC} $(^)
-	$(AR) -r $(@) ui_application.o ui_component.o ui_component_list.o ui_scroll.o ui_horizontal_scroll_bar.o ui_vertical_scroll_bar.o ui_icon.o ui_text.o
+	$(AR) -r $(@) ui_application.o ui_component.o ui_component_list.o ui_scroll.o ui_horizontal_scroll_bar.o ui_vertical_scroll_bar.o ui_icon.o ui_text.o ui_layered_container.o
 
 exdev_gfx_ui_aos_060.lib: $(EXDEV_GFX_UI_SOURCES)
 	$(CC) -c ${INCLUDES_AOS} ${C_FLAGS_060} $(^)
-	$(JOIN) as $(@) library/src/ui/ui_application.o library/src/ui/ui_component.o library/src/ui/ui_component_list.o library/src/ui/ui_scroll.o library/src/ui/ui_horizontal_scroll_bar.o library/src/ui/ui_vertical_scroll_bar.o library/src/ui/ui_icon.o library/src/ui/ui_text.o
+	$(JOIN) as $(@) library/src/ui/ui_application.o library/src/ui/ui_component.o library/src/ui/ui_component_list.o library/src/ui/ui_scroll.o library/src/ui/ui_horizontal_scroll_bar.o library/src/ui/ui_vertical_scroll_bar.o library/src/ui/ui_icon.o library/src/ui/ui_text.o library/src/ui/ui_layered_container.o
 
 exdev_gfx_ui_aos_030.lib: $(EXDEV_GFX_UI_SOURCES)
 	$(CC) -c ${INCLUDES_AOS} ${C_FLAGS_030} $(^)
-	$(JOIN) as $(@) library/src/ui/ui_application.o library/src/ui/ui_component.o library/src/ui/ui_component_list.o library/src/ui/ui_scroll.o library/src/ui/ui_horizontal_scroll_bar.o library/src/ui/ui_vertical_scroll_bar.o library/src/ui/ui_icon.o library/src/ui/ui_text.o
+	$(JOIN) as $(@) library/src/ui/ui_application.o library/src/ui/ui_component.o library/src/ui/ui_component_list.o library/src/ui/ui_scroll.o library/src/ui/ui_horizontal_scroll_bar.o library/src/ui/ui_vertical_scroll_bar.o library/src/ui/ui_icon.o library/src/ui/ui_text.o library/src/ui/ui_layered_container.o
 
 
 #--- exdev-gfx-easing ---#
