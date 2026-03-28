@@ -33,9 +33,14 @@ extern "C" {
 
 #define PEN_INDEX_CYAN 12
 
+#define is_inside(x, y, w, h, x_, y_) (x_ >= x && x_ < (x + w) && y_ >= y && y_ < (y + h))
+
+#define SCROLL_BAR_SIZE 10
+
 //--- UIComponent ---//
 enum ui_component_type {
     UI_COMPONENT_BASE,
+    UI_COMPONENT_LAYERED_CONTAINER,
     UI_COMPONENT_ICON,
     UI_COMPONENT_TEXT,
     UI_COMPONENT_SCROLL_PANE,
@@ -69,6 +74,8 @@ typedef void (*update_function)(void *self, long time_elapsed, const Event_t *ev
 
 typedef void (*prepare_function)(void *self, void *usr_ptr);
 
+typedef void (*dirty_function)(void *self);
+
 struct UIComponent {
     UIComponentType_t type;
     int subtype;
@@ -92,6 +99,7 @@ struct UIComponent {
         prepare_function prepare_func;
         paint_function paint_func;
         update_function update_func;
+        dirty_function dirty_function;
     } functions;
 
     struct UIComponent *parent;
@@ -123,6 +131,30 @@ void ui_component_connect(void *parent, void *child);
 void ui_component_get_absolute_position(const UIComponent_t *self, int *x, int *y);
 
 void ui_component_get_relative_position(const UIComponent_t *self, int *x, int *y);
+
+//--- UILayeredContainer ---//
+struct UILayeredContainer {
+    UIComponent_t base;
+
+    struct {
+        uint8_t active_child;
+        int bar_height;
+    } properties;
+};
+
+typedef struct UILayeredContainer UILayeredContainer_t;
+
+void ui_layered_container_init(UILayeredContainer_t *self, int x, int y, int width, int height);
+
+UILayeredContainer_t *ui_layered_container_create(int x, int y, int width, int height);
+
+int ui_layered_container_paint(UILayeredContainer_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height, void *usr_ptr);
+
+void ui_layered_container_update(UILayeredContainer_t *self, long time_elapsed, const Event_t *events, int num_events, struct UIApplication *app, void *usr_ptr);
+
+void ui_layered_container_set_active_child(UILayeredContainer_t *self, uint8_t child);
+
+void ui_layered_container_set_dirty(UILayeredContainer_t *self);
 
 //--- UIIcon ---//
 struct UIIcon;
@@ -191,8 +223,6 @@ int ui_text_paint(UIText_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_off
 void ui_text_update_text(UIText_t *self, const char *text);
 
 //--- UIScrollContainer ---//
-#define SCROLL_BAR_SIZE 10
-
 struct UIScrollContainer;
 struct UIHorizontalScrollBar;
 struct UIVerticalScrollBar;
@@ -245,6 +275,8 @@ void ui_scroll_container_update(UIScrollContainer_t *self, long time_elapsed, co
 void ui_scroll_container_on_x_offset(UIScrollContainer_t *self, int x_offset);
 
 void ui_scroll_container_on_y_offset(UIScrollContainer_t *self, int y_offset);
+
+void ui_scroll_container_set_dirty(UIScrollContainer_t *self);
 
 //--- UIHorizontalSrollBar ---//
 struct UIHorizontalScrollBar {

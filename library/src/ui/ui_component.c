@@ -34,6 +34,7 @@ void ui_component_init(UIComponent_t *self, const int x, const int y, const int 
     self->functions.prepare_func = (void (*)(void *, void *)) &ui_component_prepare;
     self->functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int, void *)) &ui_component_paint;
     self->functions.update_func = (void (*)(void *, long, const Event_t *, int, UIApplication_t *, void *)) &ui_component_update;
+    self->functions.dirty_function = (void (*)(void *)) ui_component_set_dirty;
 
     self->parent = NULL;
     ui_component_list_init(&self->children);
@@ -136,7 +137,7 @@ void ui_component_set_dirty(UIComponent_t *self) {
     self->flags.dirty_flag = 1;
 
     for (int i = 0; i < self->children.size; ++i) {
-        ui_component_set_dirty(self->children.components[i]);
+        self->children.components[i]->functions.dirty_function(self->children.components[i]);
     }
 }
 
@@ -145,7 +146,7 @@ void ui_component_set_enable(UIComponent_t *self, const uint8_t b) {
 
     if (self->flags.enabled_flag != b) {
         self->flags.enabled_flag = b;
-        ui_component_set_dirty(self);
+        self->functions.dirty_function(self);
 
         for (int i = 0; i < self->children.size; ++i) {
             ui_component_set_enable(self->children.components[i], b);

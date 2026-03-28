@@ -80,7 +80,7 @@ void ui_text_update_text(UIText_t *self, const char *text) {
     if (!text) {
         free(self->properties.text);
         self->properties.text = NULL;
-        ui_component_set_dirty(&self->base);
+        self->base.functions.dirty_function(self);
         return;
     }
 
@@ -92,5 +92,5 @@ void ui_text_update_text(UIText_t *self, const char *text) {
     }
 
     strcpy(self->properties.text, text);
-    ui_component_set_dirty(self->base.parent);
+    self->base.functions.dirty_function(self);
 }

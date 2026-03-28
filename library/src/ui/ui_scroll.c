@@ -45,6 +45,7 @@ void ui_scroll_container_init(UIScrollContainer_t *self, const int x, const int 
     self->base.functions.prepare_func = (void (*)(void *, void *)) &ui_scroll_container_prepare;
     self->base.functions.paint_func = (int (*)(void *, Framebuffer8Bit_t *, int, int, int, int, void *)) &ui_scroll_container_paint;
     self->base.functions.update_func = (void (*)(void *, long, const Event_t *, int, UIApplication_t *, void *)) &ui_scroll_container_update;
+    self->base.functions.dirty_function = (void (*)(void *)) ui_scroll_container_set_dirty;
 
     if (scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL || scrolling_support == UI_SCROLLING_SUPPORT_HORIZONTAL_AND_VERTICAL) {
         self->functions.on_x_offset = ui_scroll_container_on_x_offset;
@@ -243,7 +244,7 @@ void ui_scroll_container_update(UIScrollContainer_t *self, const long time_elaps
             }
         }
     }
-    ui_component_update(&self->base, time_elapsed, cpy, num_events, app,usr_ptr);
+    ui_component_update(&self->base, time_elapsed, cpy, num_events, app, usr_ptr);
 
     free(cpy);
     cpy = NULL;
@@ -254,5 +255,17 @@ void ui_scroll_container_update(UIScrollContainer_t *self, const long time_elaps
 
     if (self->v_bar) {
         self->v_bar->base.functions.update_func(self->v_bar, time_elapsed, events, num_events, app, usr_ptr);
+    }
+}
+
+void ui_scroll_container_set_dirty(UIScrollContainer_t *self) {
+    assert(self);
+
+    ui_component_set_dirty(&self->base);
+    if (self->h_bar) {
+        self->h_bar->base.functions.dirty_function(self->h_bar);
+    }
+    if (self->v_bar) {
+        self->v_bar->base.functions.dirty_function(self->v_bar);
     }
 }

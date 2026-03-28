@@ -35,6 +35,7 @@ if (MORPHOS OR AMIGAOS)
             src/ui/ui_vertical_scroll_bar.c
             src/ui/ui_application.c
             src/ui/ui_text.c
+            src/ui/ui_layered_container.c
     )
     target_include_directories(${PROJECT_NAME}
             PUBLIC include
@@ -83,6 +84,7 @@ else ()
             src/ui/ui_vertical_scroll_bar.c
             src/ui/ui_application.c
             src/ui/ui_text.c
+            src/ui/ui_layered_container.c
     )
     target_include_directories(${PROJECT_NAME}
             PUBLIC include
