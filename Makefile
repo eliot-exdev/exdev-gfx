@@ -71,7 +71,8 @@ EXDEV_GFX_UI_SOURCES=library/src/ui/ui_application.c\
                      library/src/ui/ui_horizontal_scroll_bar.c\
                      library/src/ui/ui_vertical_scroll_bar.c\
                      library/src/ui/ui_icon.c\
-                     library/src/ui/ui_text.c
+                     library/src/ui/ui_text.c\
+                     library/src/ui/ui_layered_container.c
 
 exdev_gfx_ui_mos_gcc.a: $(EXDEV_GFX_UI_SOURCES)
 	$(CC_GCC) -c ${INCLUDES_MOS} ${C_FLAGS_MOS_GCC} $(^)
