@@ -35,6 +35,7 @@ int main(int argc, char **argv) {
         log_warning_fmt("could not read pal file, res: %d", res);
         return res;
     }
+    log_info_fmt("num existing pens: %d", pal_src.numPens);
 
     // add pens
     for (int y = 0; y < fb_src.height; ++y) {
@@ -62,6 +63,7 @@ int main(int argc, char **argv) {
         log_warning_fmt("could not write pal file, res: %d", res);
         return res;
     }
+    log_info_fmt("num total pens: %d", pal_new.numPens);
 
     framebuffer_8bit_deinit(&fb_src);
 
