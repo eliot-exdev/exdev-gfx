@@ -17,11 +17,14 @@
 
 void tiles_8bit_init(Tiles8bit_t *tiles, const int num, const int width, const int height) {
     assert(tiles);
-    assert(num > 0);
 
-    tiles->tiles = malloc(sizeof(Framebuffer8Bit_t) * num);
-    for (int i = 0; i < num; ++i) {
-        framebuffer_8bit_init(tiles->tiles + i, width, height);
+    if (num > 0) {
+        tiles->tiles = malloc(sizeof(Framebuffer8Bit_t) * num);
+        for (int i = 0; i < num; ++i) {
+            framebuffer_8bit_init(tiles->tiles + i, width, height);
+        }
+    } else {
+        tiles->tiles = NULL;
     }
     tiles->num = num;
 }
