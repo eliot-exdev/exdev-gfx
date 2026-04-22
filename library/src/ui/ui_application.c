@@ -17,6 +17,7 @@ void ui_application_init(UIApplication_t *self, const int width, const int heigh
     palette_8bit_init(&self->palette, 0);
     self->resume = 1;
     self->usr_ptr = usr_ptr;
+    self->modal = NULL;
 }
 
 void ui_application_destroy(UIApplication_t *self) {
@@ -26,7 +27,13 @@ void ui_application_destroy(UIApplication_t *self) {
         window_destroy(self->window);
         self->window = NULL;
     }
-    ui_component_destroy(&self->root);
+
+    self->root.functions.destroy_func(&self->root);
+    if (self->modal) {
+        self->modal->functions.destroy_func(self->modal);
+        free(self->modal);
+        self->modal = NULL;
+    }
     self->resume = 0;
 }
 
@@ -82,6 +89,17 @@ int ui_application_run(UIApplication_t *self, const char *title, const exdev_tim
     // loop
     while (self->resume) {
         begin_ms = now();
+
+        if (self->resume == 2) {
+            ui_component_set_enable(&self->root, 0);
+            self->resume = 1;
+        } else if (self->resume == 3) {
+            self->modal->functions.destroy_func(self->modal);
+            free(self->modal);
+            self->modal = NULL;
+            self->resume = 1;
+        }
+
         // ui events
         num_events = window_poll_events(self->window, &close_event, events, MAX_EVENTS);
         for (int it_events = 0; it_events < num_events; ++it_events) {
@@ -95,20 +113,37 @@ int ui_application_run(UIApplication_t *self, const char *title, const exdev_tim
                 }
             }
         }
-        // update ui
-        self->root.functions.update_func(&self->root, end_ms - begin_ms, events, num_events, self, self->usr_ptr);
 
-        // paint ui
-        if (self->root.functions.paint_func(&self->root,
-                                            window_get_chunky_buffer(self->window),
-                                            0,
-                                            0,
-                                            window_get_chunky_buffer(self->window)->width,
-                                            window_get_chunky_buffer(self->window)->height,
-                                            self->usr_ptr)) {
-            // blit ui to screen
-            log_debug("blit to screen required");
-            window_blit_chunky_buffer(self->window);
+        if (self->modal) {
+            // update ui
+            self->modal->functions.update_func(self->modal, end_ms - begin_ms, events, num_events, self, self->usr_ptr);
+            // paint ui
+            if (self->modal->functions.paint_func(self->modal,
+                                                  window_get_chunky_buffer(self->window),
+                                                  0,
+                                                  0,
+                                                  window_get_chunky_buffer(self->window)->width,
+                                                  window_get_chunky_buffer(self->window)->height,
+                                                  self->usr_ptr)) {
+                // blit ui to screen
+                log_debug("blit to screen required");
+                window_blit_chunky_buffer(self->window);
+            }
+        } else {
+            // update ui
+            self->root.functions.update_func(&self->root, end_ms - begin_ms, events, num_events, self, self->usr_ptr);
+            // paint ui
+            if (self->root.functions.paint_func(&self->root,
+                                                window_get_chunky_buffer(self->window),
+                                                0,
+                                                0,
+                                                window_get_chunky_buffer(self->window)->width,
+                                                window_get_chunky_buffer(self->window)->height,
+                                                self->usr_ptr)) {
+                // blit ui to screen
+                log_debug("blit to screen required");
+                window_blit_chunky_buffer(self->window);
+            }
         }
 
         // wait some time
@@ -129,4 +164,27 @@ void ui_application_quit(UIApplication_t *self) {
     assert(self);
 
     self->resume = 0;
+}
+
+void ui_application_start_modal_dialog(UIApplication_t *self, UIComponent_t *modal) {
+    assert(self);
+    assert(modal);
+
+    if (self->modal) {
+        return;
+    }
+
+    self->modal = modal;
+    self->resume = 2;
+}
+
+void ui_application_stop_modal_dialog(UIApplication_t *self) {
+    assert(self);
+
+    if (!self->modal) {
+        return;
+    }
+
+    self->resume = 3;
+    ui_component_set_enable(&self->root, 1);
 }

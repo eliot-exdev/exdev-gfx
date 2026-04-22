@@ -346,6 +346,7 @@ void ui_vertical_scroll_bar_update(UIVerticalScrollBar_t *self, long time_elapse
 struct UIApplication {
     Window_t *window;
     UIComponent_t root;
+    UIComponent_t *modal;
     Palette8Bit_t palette;
     int resume;
     void *usr_ptr;
@@ -362,6 +363,10 @@ void ui_application_prepare(UIApplication_t *self);
 int ui_application_run(UIApplication_t *self, const char *title, long wait_ms);
 
 void ui_application_quit(UIApplication_t *self);
+
+void ui_application_start_modal_dialog(UIApplication_t *self, UIComponent_t *modal);
+
+void ui_application_stop_modal_dialog(UIApplication_t *self);
 
 #ifdef __cplusplus
 }
