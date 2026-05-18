@@ -121,7 +121,6 @@ void voxelspace_render(const Vertex3d_t p,
     if ((int) height < 0) {
         height = (float) heightmap_value_at_const(&v->heightmap, (int) p[0], (int) p[1])->height + AUTO_HEIGHT_OVER_GROUND;
     }
-    // log_info_fmt("height=%f", height);
 
     log_debug("--> starting render round");
     const HeightmapValue_t *value = NULL;
@@ -130,9 +129,11 @@ void voxelspace_render(const Vertex3d_t p,
     const Heightmap_t *heightmap = &v->heightmap;
 
     const zone_t *current_zone = v->zones->zones;
+    const float fb_width = (float) v->fb->width;
 
     while (z < distance) {
         log_debug_fmt("z=%f", z);
+
         // Find line on map. This calculation corresponds to a field of view of 90°
         pleft[0] = (-cosphi * z - sinphi * z) + p[0];
         pleft[1] = (sinphi * z - cosphi * z) + p[1];
@@ -141,8 +142,8 @@ void voxelspace_render(const Vertex3d_t p,
         pright[1] = (-sinphi * z - cosphi * z) + p[1];
 
         // segment the line
-        dx = (pright[0] - pleft[0]) / (float) v->fb->width;
-        dy = (pright[1] - pleft[1]) / (float) v->fb->width;
+        dx = (pright[0] - pleft[0]) / fb_width;
+        dy = (pright[1] - pleft[1]) / fb_width;
 
         // find current zone
         i = 1;
@@ -154,11 +155,9 @@ void voxelspace_render(const Vertex3d_t p,
             ++i;
         }
 
-        //        log_info_fmt("using zone: %f %d, %f", current_zone->dz, current_zone->x_step_size, current_zone->max_distance);
         i = 0;
         while (i < v->fb->width) {
             // calc height on screen
-            // log_info_fmt("%d %d", pleft_n[0], pleft_n[1]);
             pleft_n[0] = normalize_int((int) pleft[0], heightmap->width);
             pleft_n[1] = normalize_int((int) pleft[1], heightmap->height);
             value = heightmap_value_at_const_inline(heightmap, pleft_n[0], pleft_n[1]);
