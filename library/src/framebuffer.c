@@ -192,10 +192,9 @@ void framebuffer_draw_triangle(Framebuffer_t *fb, Vertex2d_t *triangle, const Co
 void framebuffer_fill(Framebuffer_t *fb, const ColorRGBA_t *c) {
     const int num_pixels = framebuffer_num_pixels(fb);
     ColorRGB_t *c_ptr = fb->buffer;
-    int i = 0;
     struct ColorRGB c_rgb;
     color_rgba_rgb_copy(c, &c_rgb);
-    for (; i < num_pixels; ++i) {
+    for (int i = 0; i < num_pixels; ++i) {
         *c_ptr = c_rgb;
         ++c_ptr;
     }
@@ -204,8 +203,7 @@ void framebuffer_fill(Framebuffer_t *fb, const ColorRGBA_t *c) {
 void framebuffer_fill_rgb(Framebuffer_t *fb, const ColorRGB_t *c) {
     const int num_pixels = framebuffer_num_pixels(fb);
     ColorRGB_t *c_ptr = fb->buffer;
-    int i = 0;
-    for (; i < num_pixels; ++i) {
+    for (int i = 0; i < num_pixels; ++i) {
         *c_ptr = *c;
         ++c_ptr;
     }
@@ -261,16 +259,17 @@ struct FloatColorRGBA {
     float b;
     float a;
 };
+
 typedef struct FloatColorRGBA FloatColorRGBA_t;
 
-static inline void color_rgba_to_float_color_rgba(const ColorRGBA_t *src, FloatColorRGBA_t *dst) {
+inline void color_rgba_to_float_color_rgba(const ColorRGBA_t *src, FloatColorRGBA_t *dst) {
     dst->r = (float) src->r / 255.f;
     dst->g = (float) src->g / 255.f;
     dst->b = (float) src->b / 255.f;
     dst->a = (float) src->a / 255.f;
 }
 
-static inline void float_color_rgba_to_color_rgba(const FloatColorRGBA_t *src, ColorRGBA_t *dst) {
+inline void float_color_rgba_to_color_rgba(const FloatColorRGBA_t *src, ColorRGBA_t *dst) {
     dst->r = (unsigned char) (src->r * 255);
     dst->g = (unsigned char) (src->g * 255);
     dst->b = (unsigned char) (src->b * 255);
@@ -358,7 +357,7 @@ void framebuffer_fill_triangle_rgb(Framebuffer_t *fb, const Vertex2d_t *triangle
 }
 
 // https://www-users.mat.uni.torun.pl//~wrona/3d_tutor/tri_fillers.html
-static inline void vertex2d_swap(const float **a, const float **b) {
+inline void vertex2d_swap(const float **a, const float **b) {
     const float *tmp = *a;
     *a = *b;
     *b = tmp;
@@ -533,16 +532,14 @@ int framebuffer_read(Framebuffer_t *fb, const char *path) {
     if (line_length <= 0) {
         log_warning("could not read max value");
         return 2;
-    } else {
-        log_info_fmt("read max value=%s", line);
     }
+    log_info_fmt("read max value=%s", line);
 
     framebuffer_init(fb, width, height);
 
     ColorRGB_t pixel;
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
-
             int tmp = 0;
             // parse red
             line_length = read_line(fp, line, LINE_LENGTH);

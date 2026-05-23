@@ -121,8 +121,7 @@ int palette_8bit_save_as_dat(const Palette8Bit_t *p, const char *path) {
     assert(p);
     assert(path);
 
-    FILE *fp;
-    fp = fopen(path, "w");
+    FILE *fp = fopen(path, "w");
     if (!fp) {
         log_warning_fmt("could not open file=%s", path);
         return 1;
@@ -175,8 +174,7 @@ int palette_8bit_save_as_jasc(const Palette8Bit_t *p, const char *path) {
     assert(p);
     assert(path);
 
-    FILE *fp;
-    fp = fopen(path, "w");
+    FILE *fp = fopen(path, "w");
     if (!fp) {
         log_warning_fmt("could not open file=%s", path);
         return 1;
@@ -217,9 +215,7 @@ int palette_8bit_read_from_dat(Palette8Bit_t *p, const char *path) {
     assert(p);
     assert(path);
 
-    FILE *fp;
-
-    fp = fopen(path, "r");
+    FILE *fp = fopen(path, "r");
     if (!fp) {
         log_warning_fmt("could not open file=%s", path);
         return 1;

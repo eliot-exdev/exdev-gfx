@@ -109,7 +109,7 @@ int framebuffer_8bit_init_from_framebuffer(Framebuffer8Bit_t *f, Palette8Bit_t *
             const ColorRGB_t *color = framebuffer_pixel_at(fb, x, y);
             Pen_t pen;
             pen_set(&pen, color);
-            int pos = palette_8bit_find_pen(p, &pen);
+            const int pos = palette_8bit_find_pen(p, &pen);
             if (pos >= 0) {
                 *framebuffer_8bit_pixel_at(f, x, y) = pos;
             } else if (p->numPens < 256) {
@@ -255,9 +255,8 @@ int framebuffer_8bit_read(Framebuffer8Bit_t *fb, const char *path) {
     if (line_length <= 0) {
         log_warning("could not read max value");
         return 2;
-    } else {
-        log_info_fmt("read max value=%s", line);
     }
+    log_info_fmt("read max value=%s", line);
 
     framebuffer_8bit_init(fb, width, height);
 
@@ -421,7 +420,7 @@ void framebuffer_8bit_fill_triangle(Framebuffer8Bit_t *fb, const Vertex2d_t *tri
 #define Cx v3[0]
 #define Cy v3[1]
 
-static inline void vertex2d_swap(const float **a, const float **b) {
+static void vertex2d_swap(const float **a, const float **b) {
     const float *tmp = *a;
     *a = *b;
     *b = tmp;
@@ -594,7 +593,7 @@ void framebuffer_8bit_blit_8bit(Framebuffer8Bit_t *fb, const Framebuffer8Bit_t *
 
     for (int j = 0; j < height; ++j) {
         void *dst = framebuffer_8bit_pixel_at(fb, to_x, j + to_y);
-        void *s = framebuffer_8bit_pixel_at(src, x, j + y);
+        const void *s = framebuffer_8bit_pixel_at(src, x, j + y);
         memcpy(dst, s, width);
     }
 }
