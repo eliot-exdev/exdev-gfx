@@ -262,14 +262,14 @@ struct FloatColorRGBA {
 
 typedef struct FloatColorRGBA FloatColorRGBA_t;
 
-inline void color_rgba_to_float_color_rgba(const ColorRGBA_t *src, FloatColorRGBA_t *dst) {
+static inline void color_rgba_to_float_color_rgba(const ColorRGBA_t *src, FloatColorRGBA_t *dst) {
     dst->r = (float) src->r / 255.f;
     dst->g = (float) src->g / 255.f;
     dst->b = (float) src->b / 255.f;
     dst->a = (float) src->a / 255.f;
 }
 
-inline void float_color_rgba_to_color_rgba(const FloatColorRGBA_t *src, ColorRGBA_t *dst) {
+static inline void float_color_rgba_to_color_rgba(const FloatColorRGBA_t *src, ColorRGBA_t *dst) {
     dst->r = (unsigned char) (src->r * 255);
     dst->g = (unsigned char) (src->g * 255);
     dst->b = (unsigned char) (src->b * 255);
@@ -357,7 +357,7 @@ void framebuffer_fill_triangle_rgb(Framebuffer_t *fb, const Vertex2d_t *triangle
 }
 
 // https://www-users.mat.uni.torun.pl//~wrona/3d_tutor/tri_fillers.html
-inline void vertex2d_swap(const float **a, const float **b) {
+static inline void vertex2d_swap(const float **a, const float **b) {
     const float *tmp = *a;
     *a = *b;
     *b = tmp;
