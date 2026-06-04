@@ -4,7 +4,7 @@ C_FLAGS_MOS=-speed -final -DNDEBUG -D__MORPHOS__
 LD_FLAGS_MOS=-lm
 
 #--- MorphOs gcc ---#
-CC_GCC=ppc-morphos-gcc-11
+CC_GCC=ppc-morphos-gcc-15
 C_FLAGS_MOS_GCC=-Ofast -noixemul -mcpu=G4 -maltivec -mabi=altivec -DNDEBUG -D__MORPHOS__
 LD_FLAGS_MOS_GCC=-lm
 

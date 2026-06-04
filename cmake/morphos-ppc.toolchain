@@ -18,12 +18,12 @@ set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 
 # find programs
 find_program(MOS_GCC
-        ppc-morphos-gcc
+        ppc-morphos-gcc-15
         PATH "${MOS_SDK_ROOT}/bin"
         NO_SYSTEM_ENVIRONMENT_PATH)
 
 find_program(MOS_CPP
-        ppc-morphos-g++
+        ppc-morphos-g++-15
         PATH "${MOS_SDK_ROOT}/bin"
         NO_SYSTEM_ENVIRONMENT_PATH)
 
