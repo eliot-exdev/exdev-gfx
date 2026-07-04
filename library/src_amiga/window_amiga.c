@@ -227,7 +227,7 @@ void window_fill(Window_t *win, const Framebuffer_t *gb) {
     //#ifdef __MORPHOS__
     //    WritePixelArray(gb->buffer, 0, 0, gb->width * 3, &NATIVE_WINDOW_CAST(win)->screen->RastPort, 0, 0, gb->width, gb->height, RECTFMT_RGB);
     //#else
-    WriteChunkyPixels(&NATIVE_WINDOW_CAST(win)->screen->RastPort, 0, 0,
+    WriteChunkyPixels(NATIVE_WINDOW_CAST(win)->window->RPort, 0, 0,
                       gb->width,
                       gb->height,
                       (unsigned char *) gb->buffer,
@@ -247,7 +247,7 @@ void window_blit_chunky_buffer(Window_t *win) {
 #ifdef USE_C2P
     C2P_Chunky2Planar(NATIVE_WINDOW_CAST(win)->C2P_context);
 #else
-    WriteChunkyPixels(&NATIVE_WINDOW_CAST(win)->screen->RastPort, 0, 0,
+    WriteChunkyPixels(NATIVE_WINDOW_CAST(win)->window->RPort, 0, 0,
                       NATIVE_WINDOW_CAST(win)->chunky_buffer.width,
                       NATIVE_WINDOW_CAST(win)->chunky_buffer.height,
                       NATIVE_WINDOW_CAST(win)->chunky_buffer.buffer,
@@ -256,7 +256,7 @@ void window_blit_chunky_buffer(Window_t *win) {
 }
 
 void window_fill_8bit(Window_t *win, const Framebuffer8Bit_t *gb) {
-    WriteChunkyPixels(&NATIVE_WINDOW_CAST(win)->screen->RastPort, 0, 0,
+    WriteChunkyPixels(NATIVE_WINDOW_CAST(win)->window->RPort, 0, 0,
                       gb->width,
                       gb->height,
                       gb->buffer,
