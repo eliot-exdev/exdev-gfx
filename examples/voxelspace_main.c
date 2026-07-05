@@ -97,6 +97,7 @@ static const char *sky_path = SKY_TEXTURE_ONE;
 static float distance = DEFAULT_DISTANCE;
 static char demo_mode = 0;
 static char max_detail = 0;
+static char window_mode = 0;
 
 #ifdef PROFILE_APPLICATION
 static exdev_timestamp_t tp;
@@ -116,8 +117,9 @@ static void print_help() {
     printf("voxelspace [ARGUMENTS]...\n"
            "arguments:\n"
            " -h, --help              print help message and exit\n"
-           " -w, --world <number>    select world 1, 2, 3, 4 or 5 (default 1)\n"
+           " -m, --map <number>      select map 1, 2, 3, 4 or 5 (default 1)\n"
            " -d, --demo              enable demo mode\n"
+           " -w, --window            enable window mode\n"
            " -v, --version           print version\n"
            "\n"
            "controls:\n"
@@ -151,8 +153,11 @@ static void parse_args(int argc, char **argv) {
     if (args_find_option(argc, argv, 'd', "demo")) {
         demo_mode = 1;
     }
+    if (args_find_option(argc, argv, 'w', "window")) {
+        window_mode = 1;
+    }
     const char *ptr = NULL;
-    if ((ptr = args_get_option_parameter(argc, argv, 'w', "world")) != NULL) {
+    if ((ptr = args_get_option_parameter(argc, argv, 'm', "map")) != NULL) {
         const char world = atoi(ptr);
         switch (world) {
             case 1:
@@ -349,7 +354,7 @@ int main(int argc, char **argv) {
     char ctrl_strafe = 0; // 0=no, 1=left, 2=right
 
     // show window
-    Window_t *window = window_create(WIDTH, HEIGHT, "voxel", FS_8_BIT);
+    Window_t *window = window_create(WIDTH, HEIGHT, "voxel", window_mode ? FS_DISABLED : FS_8_BIT);
     if (!window) {
         log_warning("could not create window or screen");
         exit(0);

@@ -17,6 +17,7 @@ extern "C" {
 typedef void *Window_t;
 
 enum FULLSCREEN {
+    FS_DISABLED,
     FS_8_BIT = 8,
     FS_24_BIT = 24
 };
