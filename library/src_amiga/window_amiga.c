@@ -173,127 +173,127 @@ Window_t *window_create(const int width, const int height, const char *title, co
 
     const int depth = (int) fs;
 
-    if(fs != FS_DISABLED) {
-    char TITLE_TEXT[128];
-    memset(TITLE_TEXT, 0, 128);
-    sprintf(TITLE_TEXT, "Select screen mode (%dx%dx%d)", width, height, depth);
+    if (fs != FS_DISABLED) {
+        char TITLE_TEXT[128];
+        memset(TITLE_TEXT, 0, 128);
+        sprintf(TITLE_TEXT, "Select screen mode (%dx%dx%d)", width, height, depth);
 
-    struct TagItem smrtags[8];
-    smrtags[0].ti_Tag = ASLSM_TitleText;
-    smrtags[0].ti_Data = (ULONG) TITLE_TEXT;
+        struct TagItem smrtags[8];
+        smrtags[0].ti_Tag = ASLSM_TitleText;
+        smrtags[0].ti_Data = (ULONG) TITLE_TEXT;
 
-    smrtags[1].ti_Tag = ASLSM_MinWidth;
-    smrtags[1].ti_Data = width;
+        smrtags[1].ti_Tag = ASLSM_MinWidth;
+        smrtags[1].ti_Data = width;
 
-    smrtags[2].ti_Tag = ASLSM_MinHeight;
-    smrtags[2].ti_Data = height;
+        smrtags[2].ti_Tag = ASLSM_MinHeight;
+        smrtags[2].ti_Data = height;
 
-    smrtags[3].ti_Tag = ASLSM_MinDepth;
-    smrtags[3].ti_Data = depth;
+        smrtags[3].ti_Tag = ASLSM_MinDepth;
+        smrtags[3].ti_Data = depth;
 
-    smrtags[4].ti_Tag = ASLSM_InitialDisplayWidth;
-    smrtags[4].ti_Data = width;
+        smrtags[4].ti_Tag = ASLSM_InitialDisplayWidth;
+        smrtags[4].ti_Data = width;
 
-    smrtags[5].ti_Tag = ASLSM_InitialDisplayHeight;
-    smrtags[5].ti_Data = height;
+        smrtags[5].ti_Tag = ASLSM_InitialDisplayHeight;
+        smrtags[5].ti_Data = height;
 
-    smrtags[6].ti_Tag = ASLSM_InitialDisplayDepth;
-    smrtags[6].ti_Data = depth;
+        smrtags[6].ti_Tag = ASLSM_InitialDisplayDepth;
+        smrtags[6].ti_Data = depth;
 
-    smrtags[7].ti_Tag = TAG_DONE;
+        smrtags[7].ti_Tag = TAG_DONE;
 
-    unsigned long screen_id = (unsigned long) INVALID_ID;
-    int screen_width = 0;
-    int screen_height = 0;
-    int screen_depth = 0;
-    struct ScreenModeRequester *smr = (struct ScreenModeRequester *) AllocAslRequest(ASL_ScreenModeRequest, smrtags);
-    if (AslRequest(smr, 0L)) {
-        screen_id = smr->sm_DisplayID;
-        screen_width = (int) smr->sm_DisplayWidth;
-        screen_height = (int) smr->sm_DisplayHeight;
-        screen_depth = smr->sm_DisplayDepth;
-    } else {
-        log_warning("no screen mode selected by user");
+        unsigned long screen_id = (unsigned long) INVALID_ID;
+        int screen_width = 0;
+        int screen_height = 0;
+        int screen_depth = 0;
+        struct ScreenModeRequester *smr = (struct ScreenModeRequester *) AllocAslRequest(ASL_ScreenModeRequest, smrtags);
+        if (AslRequest(smr, 0L)) {
+            screen_id = smr->sm_DisplayID;
+            screen_width = (int) smr->sm_DisplayWidth;
+            screen_height = (int) smr->sm_DisplayHeight;
+            screen_depth = smr->sm_DisplayDepth;
+        } else {
+            log_warning("no screen mode selected by user");
+            FreeAslRequest(smr);
+            free(w);
+            return NULL;
+        }
+
         FreeAslRequest(smr);
-        free(w);
-        return NULL;
-    }
 
-    FreeAslRequest(smr);
+        if (screen_id == (unsigned long) INVALID_ID) {
+            free(w);
+            log_warning("invalid screen id");
+            return NULL;
+        }
 
-    if (screen_id == (unsigned long) INVALID_ID) {
-        free(w);
-        log_warning("invalid screen id");
-        return NULL;
-    }
+        log_info_fmt("screen_id=0x%08lx", screen_id);
+        log_info_fmt("screen_width=%d", screen_width);
+        log_info_fmt("screen_height=%d", screen_height);
+        log_info_fmt("screen_depth=%d", screen_depth);
 
-    log_info_fmt("screen_id=0x%08lx", screen_id);
-    log_info_fmt("screen_width=%d", screen_width);
-    log_info_fmt("screen_height=%d", screen_height);
-    log_info_fmt("screen_depth=%d", screen_depth);
+        if (screen_width < width) {
+            free(w);
+            log_warning("screen width is to small");
+            return NULL;
+        }
+        if (screen_height < height) {
+            free(w);
+            log_warning("screen height is to small");
+            return NULL;
+        }
+        if (screen_depth < depth) {
+            free(w);
+            log_warning("screen depth is to small");
+            return NULL;
+        }
 
-    if (screen_width < width) {
-        free(w);
-        log_warning("screen width is to small");
-        return NULL;
-    }
-    if (screen_height < height) {
-        free(w);
-        log_warning("screen height is to small");
-        return NULL;
-    }
-    if (screen_depth < depth) {
-        free(w);
-        log_warning("screen depth is to small");
-        return NULL;
-    }
+        w->screen = OpenScreenTags(NULL,
+                                   SA_Left, 0,
+                                   SA_Top, 0,
+                                   SA_Width, screen_width,
+                                   SA_Height, screen_height,
+                                   SA_Depth, screen_depth,
+                                   SA_Type, CUSTOMSCREEN,
+                                   SA_DisplayID, screen_id,
+                                   SA_Title, title,
+                                   SA_Exclusive, TRUE,
+                                   SA_SharePens, TRUE,
+                                   SA_ShowTitle, FALSE,
+                                   SA_AutoScroll, FALSE,
+                                   SA_Draggable, FALSE,
+                                   TAG_DONE);
 
-    w->screen = OpenScreenTags(NULL,
-                               SA_Left, 0,
-                               SA_Top, 0,
-                               SA_Width, screen_width,
-                               SA_Height, screen_height,
-                               SA_Depth, screen_depth,
-                               SA_Type, CUSTOMSCREEN,
-                               SA_DisplayID, screen_id,
-                               SA_Title, title,
-                               SA_Exclusive, TRUE,
-                               SA_SharePens, TRUE,
-                               SA_ShowTitle, FALSE,
-                               SA_AutoScroll, FALSE,
-                               SA_Draggable, FALSE,
-                               TAG_DONE);
-    
-    w->window = OpenWindowTags(NULL,
-                               WA_Left, 0,
-                               WA_Top, 0,
-                               WA_Width, width,
-                               WA_Height, height,
-                               WA_ScreenTitle, title,
-                               WA_CustomScreen, w->screen,
-                               WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_REFRESHWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
-                               WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_REPORTMOUSE | WFLG_RMBTRAP | WFLG_BACKDROP,
-                               WA_Title, title,
-                               TAG_DONE);
-    }else {
+        w->window = OpenWindowTags(NULL,
+                                   WA_Left, 0,
+                                   WA_Top, 0,
+                                   WA_Width, width,
+                                   WA_Height, height,
+                                   WA_ScreenTitle, title,
+                                   WA_CustomScreen, w->screen,
+                                   WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_REFRESHWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
+                                   WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_REPORTMOUSE | WFLG_RMBTRAP | WFLG_BACKDROP,
+                                   WA_Title, title,
+                                   TAG_DONE);
+    } else {
         log_info("window mode");
-      w->screen = NULL;
-            w->window = OpenWindowTags(NULL,
-                               WA_Left, 30,
-                               WA_Top,30,
-                               WA_Width, width,
-                               WA_Height, height,
-                               WA_PubScreen, NULL,
-                               WA_ScreenTitle, title,
-                               WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_REFRESHWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
-                               WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_REPORTMOUSE | WFLG_RMBTRAP,
-                               WA_Title, title,
-                               TAG_DONE);
+        w->screen = NULL;
+        w->window = OpenWindowTags(NULL,
+                                   WA_Left, 30,
+                                   WA_Top, 30,
+                                   WA_Width, width,
+                                   WA_Height, height,
+                                   WA_PubScreen, NULL,
+                                   WA_ScreenTitle, title,
+                                   WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_REFRESHWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
+                                   WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_REPORTMOUSE | WFLG_RMBTRAP,
+                                   WA_Title, title,
+                                   TAG_DONE);
         WindowToFront(w->window);
     }
-    
+
     framebuffer_8bit_init(&w->chunky_buffer, width, height);
-    
+
     return (Window_t *) w;
 }
 #endif
@@ -556,7 +556,7 @@ int window_get_mouse_position(Window_t *w, Event_t *event) {
     const int w_y = NATIVE_WINDOW_CAST(w)->window->TopEdge;
     const int w_width = NATIVE_WINDOW_CAST(w)->window->Width;
     const int w_height = NATIVE_WINDOW_CAST(w)->window->Height;
-    
+
     if (x >= w_x && y >= w_y && x < w_width && y < w_height) {
         event->type = EVENT_MOUSE;
         event->mouse_event.event = MOUSE_EVENT_MOVED;
