@@ -160,7 +160,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
                                WA_Height, height,
                                WA_ScreenTitle, title,
                                WA_CustomScreen, w->screen,
-                               WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_REFRESHWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
+                               WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
                                WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_REPORTMOUSE | WFLG_RMBTRAP | WFLG_BACKDROP,
                                WA_Title, title,
                                TAG_DONE);
@@ -271,7 +271,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
                                    WA_Height, height,
                                    WA_ScreenTitle, title,
                                    WA_CustomScreen, w->screen,
-                                   WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_REFRESHWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
+                                   WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
                                    WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_REPORTMOUSE | WFLG_RMBTRAP | WFLG_BACKDROP,
                                    WA_Title, title,
                                    TAG_DONE);
@@ -285,8 +285,9 @@ Window_t *window_create(const int width, const int height, const char *title, co
                                    WA_Height, height,
                                    WA_PubScreen, NULL,
                                    WA_ScreenTitle, title,
-                                   WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_REFRESHWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
-                                   WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_BORDERLESS | WFLG_REPORTMOUSE | WFLG_RMBTRAP,
+                                   WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
+                                   WA_Flags, WFLG_ACTIVATE | WFLG_SIMPLE_REFRESH | WFLG_REPORTMOUSE | WFLG_RMBTRAP,
+                                   WA_DragBar, TRUE,
                                    WA_Title, title,
                                    TAG_DONE);
         WindowToFront(w->window);
