@@ -286,12 +286,13 @@ int main(int argc, char **argv) {
     }
 
     log_info_fmt("resolution=%dx%d", WIDTH, HEIGHT);
+    log_info_fmt("demo mode=%d", (int) demo_mode);
+    log_info_fmt("window mode=%d", (int) window_mode);
     log_info_fmt("heightmap path=%s", heightmap_path);
     log_info_fmt("colormap path=%s", colormap_path);
     log_info_fmt("palette path=%s", palette_path);
     log_info_fmt("sky texture path=%s", sky_path);
     log_info_fmt("distance=%f", distance);
-    log_info_fmt("demo mode=%d", (int) demo_mode);
 
     // read height map
     log_info("--> reading height map ...");
