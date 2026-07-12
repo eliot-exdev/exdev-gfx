@@ -106,14 +106,12 @@ void voxelspace_render(const Vertex3d_t p,
 #else
     wmemset((wchar_t *) v->ybuffer, v->fb->height, v->fb->width);
 #endif
-    // render sky
-    int x_shifted = 0;
-    if (rot < 0) {
-        x_shifted = (int) ((float) -rot / 360.0f * (float) v->sky_texture->width);
-    } else {
-        x_shifted = v->sky_texture->width - (int) ((float) rot / 360.0f * (float) v->sky_texture->width);
-    }
 
+    // render sky
+    int x_shifted = -(int) (rot / 360.0f * (float) v->sky_texture->width);
+    if (rot < 0) {
+        x_shifted = v->sky_texture->width + x_shifted;
+    }
     framebuffer_8bit_draw_framebuffer_shifted(v->fb, x_shifted, SKY_TEXTURE_HEIGHT, v->sky_texture);
 
     // auto height
