@@ -10,87 +10,102 @@
 
 #ifdef __cplusplus
 extern "C" {
+
 #endif
 
 typedef unsigned char Color8Bit_t;
 
-struct Framebuffer8Bit {
+struct Framebuffer8Bit
+{
     int width;
     int height;
-    Color8Bit_t *buffer;
+    Color8Bit_t* buffer;
 };
+
 typedef struct Framebuffer8Bit Framebuffer8Bit_t;
 
-struct Tiles8bit {
-    Framebuffer8Bit_t *tiles;
+struct Tiles8bit
+{
+    Framebuffer8Bit_t* tiles;
     int num;
 };
+
 typedef struct Tiles8bit Tiles8bit_t;
 
-void tiles_8bit_init(Tiles8bit_t *tiles, int num, int width, int height);
+void tiles_8bit_init(Tiles8bit_t* tiles, int num, int width, int height);
 
-void tiles_8bit_init_from_framebuffer(Tiles8bit_t *dst, const Framebuffer8Bit_t *src, int width, int height);
+void tiles_8bit_init_from_framebuffer(Tiles8bit_t* dst, const Framebuffer8Bit_t* src, int width, int height);
 
-void tiles_8bit_deinit(Tiles8bit_t *tiles);
+void tiles_8bit_deinit(Tiles8bit_t* tiles);
 
-void framebuffer_8bit_init(Framebuffer8Bit_t *fb, int width, int height);
+void framebuffer_8bit_init(Framebuffer8Bit_t* fb, int width, int height);
 
-Framebuffer8Bit_t *framebuffer_8bit_copy(const Framebuffer8Bit_t *fb);
+Framebuffer8Bit_t* framebuffer_8bit_copy(const Framebuffer8Bit_t* fb);
 
-void framebuffer_8bit_copy_to(const Framebuffer8Bit_t *src, Framebuffer8Bit_t *dst);
+void framebuffer_8bit_copy_to(const Framebuffer8Bit_t* src, Framebuffer8Bit_t* dst);
 
-int framebuffer_8bit_init_from_framebuffer(Framebuffer8Bit_t *f, Palette8Bit_t *p, const Framebuffer_t *fb, int init_palette);
+int framebuffer_8bit_init_from_framebuffer(Framebuffer8Bit_t* f, Palette8Bit_t* p, const Framebuffer_t* fb,
+                                           int init_palette);
 
-Color8Bit_t *framebuffer_8bit_pixel_at(const Framebuffer8Bit_t *fb, int x, int y);
+Color8Bit_t* framebuffer_8bit_pixel_at(const Framebuffer8Bit_t* fb, int x, int y);
 
-void framebuffer_8bit_draw_vertical_line(Framebuffer8Bit_t *fb, int x, int y, int to_y, Color8Bit_t c);
+void framebuffer_8bit_draw_vertical_line(Framebuffer8Bit_t* fb, int x, int y, int to_y, Color8Bit_t c);
 
 #define framebuffer_8bit_draw_vertical_line_inline(fb, x, y, to_y, c) \
     for (int yy = y; yy < to_y; ++yy) { fb->buffer[yy * fb->width + x] = c; }
 
-void framebuffer_8bit_draw_horizontal_line(Framebuffer8Bit_t *fb, int x, int y, int to_x, Color8Bit_t c);
+void framebuffer_8bit_draw_horizontal_line(Framebuffer8Bit_t* fb, int x, int y, int to_x, Color8Bit_t c);
 
-void framebuffer_8bit_draw_pixel(Framebuffer8Bit_t *fb, int x, int y, Color8Bit_t c);
+void framebuffer_8bit_draw_pixel(Framebuffer8Bit_t* fb, int x, int y, Color8Bit_t c);
 
-void framebuffer_8bit_fill_rect(Framebuffer8Bit_t *fb, int x, int y, int width, int height, Color8Bit_t c);
+void framebuffer_8bit_fill_rect(Framebuffer8Bit_t* fb, int x, int y, int width, int height, Color8Bit_t c);
 
-void framebuffer_8bit_draw_rect(Framebuffer8Bit_t *fb, int x, int y, int width, int height, Color8Bit_t c);
+#define framebuffer_8bit_fill_rect_inline(f_, x_, y_, w_, h_, c_) \
+    for (int i_ = 0; i_ < h_; ++i_) { memset(framebuffer_8bit_pixel_at(f_, x_, y_ + i_), c_, w_); }
 
-int framebuffer_8bit_num_bytes(const Framebuffer8Bit_t *fb);
+void framebuffer_8bit_draw_rect(Framebuffer8Bit_t* fb, int x, int y, int width, int height, Color8Bit_t c);
 
-int framebuffer_8bit_read(Framebuffer8Bit_t *fb, const char *path);
+int framebuffer_8bit_num_bytes(const Framebuffer8Bit_t* fb);
 
-int framebuffer_8bit_save_as_dat(const Framebuffer8Bit_t *fb, const char *path);
+int framebuffer_8bit_read(Framebuffer8Bit_t* fb, const char* path);
 
-int framebuffer_8bit_read_from_dat(Framebuffer8Bit_t *fb, const char *path);
+int framebuffer_8bit_save_as_dat(const Framebuffer8Bit_t* fb, const char* path);
 
-void framebuffer_8bit_fill(Framebuffer8Bit_t *fb, Color8Bit_t c);
+int framebuffer_8bit_read_from_dat(Framebuffer8Bit_t* fb, const char* path);
 
-void framebuffer_8bit_deinit(Framebuffer8Bit_t *fb);
+void framebuffer_8bit_fill(Framebuffer8Bit_t* fb, Color8Bit_t c);
 
-void framebuffer_8bit_draw_text(Framebuffer8Bit_t *fb, const Font_t *f, const char *text, int text_length, Color8Bit_t c, int x, int y);
+void framebuffer_8bit_deinit(Framebuffer8Bit_t* fb);
 
-void framebuffer_8bit_fill_triangle(Framebuffer8Bit_t *fb, const Vertex2d_t *triangle, Color8Bit_t c);
+void framebuffer_8bit_draw_text(Framebuffer8Bit_t* fb, const Font_t* f, const char* text, int text_length,
+                                Color8Bit_t c, int x, int y);
 
-void framebuffer_8bit_fill_triangle_fast(Framebuffer8Bit_t *fb, const Vertex2d_t *triangle, Color8Bit_t c);
+void framebuffer_8bit_fill_triangle(Framebuffer8Bit_t* fb, const Vertex2d_t* triangle, Color8Bit_t c);
+
+void framebuffer_8bit_fill_triangle_fast(Framebuffer8Bit_t* fb, const Vertex2d_t* triangle, Color8Bit_t c);
 
 //void framebuffer_8bit_fill_triangle_texture(Framebuffer8Bit_t *fb, const Vertex2d_t *triangle, const Framebuffer8Bit_t *texture);
 
-void framebuffer_8bit_draw_framebuffer(Framebuffer8Bit_t *fb, int x, int y, const Framebuffer8Bit_t *src);
+void framebuffer_8bit_draw_framebuffer(Framebuffer8Bit_t* fb, int x, int y, const Framebuffer8Bit_t* src);
 
-void framebuffer_8bit_draw_framebuffer_with_alpha(Framebuffer8Bit_t *fb, int x, int y, const Framebuffer8Bit_t *src, Color8Bit_t alpha);
+void framebuffer_8bit_draw_framebuffer_with_alpha(Framebuffer8Bit_t* fb, int x, int y, const Framebuffer8Bit_t* src,
+                                                  Color8Bit_t alpha);
 
-void framebuffer_8bit_blit_8bit(Framebuffer8Bit_t *fb, const Framebuffer8Bit_t *src, int x, int y, int width, int height, int to_x, int to_y);
+void framebuffer_8bit_blit_8bit(Framebuffer8Bit_t* fb, const Framebuffer8Bit_t* src, int x, int y, int width,
+                                int height, int to_x, int to_y);
 
-void framebuffer_8bit_draw_framebuffer_flip_vertical(Framebuffer8Bit_t *fb, int x, int y, const Framebuffer8Bit_t *src);
+void framebuffer_8bit_draw_framebuffer_flip_vertical(Framebuffer8Bit_t* fb, int x, int y, const Framebuffer8Bit_t* src);
 
-void framebuffer_8bit_draw_framebuffer_shifted(Framebuffer8Bit_t *fb, int x_shifted, int to_y, const Framebuffer8Bit_t *src);
+void framebuffer_8bit_draw_framebuffer_shifted(Framebuffer8Bit_t* fb, int x_shifted, int to_y,
+                                               const Framebuffer8Bit_t* src);
 
-void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t *fb, int center_x, int center_y, const Framebuffer8Bit_t *src, float scale, int alpha);
+void framebuffer_8bit_draw_framebuffer_scaled(Framebuffer8Bit_t* fb, int center_x, int center_y,
+                                              const Framebuffer8Bit_t* src, float scale, int alpha);
 
-void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t *fb, int center_x, int center_y, const Framebuffer8Bit_t *src, float angle, int alpha);
+void framebuffer_8bit_draw_framebuffer_rotated(Framebuffer8Bit_t* fb, int center_x, int center_y,
+                                               const Framebuffer8Bit_t* src, float angle, int alpha);
 
-void framebuffer_fill_8bit(Framebuffer_t *fb, const Framebuffer8Bit_t *src, const Palette8Bit_t *p);
+void framebuffer_fill_8bit(Framebuffer_t* fb, const Framebuffer8Bit_t* src, const Palette8Bit_t* p);
 
 #ifdef __cplusplus
 }

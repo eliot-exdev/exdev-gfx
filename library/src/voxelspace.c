@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <math.h>
+#include <string.h>
 
 #ifndef __VBCC__
 
@@ -110,7 +111,7 @@ void voxelspace_render(const Vertex3d_t p,
     // render sky
     int x_shifted = -(int) (rot / 360.0f * (float) v->sky_texture->width);
     if (rot < 0) {
-        x_shifted = v->sky_texture->width + x_shifted;
+        x_shifted += v->sky_texture->width;
     }
     framebuffer_8bit_draw_framebuffer_shifted(v->fb, x_shifted, SKY_TEXTURE_HEIGHT, v->sky_texture);
 
@@ -158,7 +159,7 @@ void voxelspace_render(const Vertex3d_t p,
             // calc height on screen
             pleft_n[0] = normalize_int((int) pleft[0], heightmap->width);
             pleft_n[1] = normalize_int((int) pleft[1], heightmap->height);
-            value = heightmap_value_at_const_inline(heightmap, pleft_n[0], pleft_n[1]);
+            value = heightmap_value_at_inline(heightmap, pleft_n[0], pleft_n[1]);
             height_on_screen = (int) ((height - (float) value->height) / z * v->scale_height + horizon);
             if (height_on_screen < 0) {
                 height_on_screen = 0;
@@ -166,7 +167,7 @@ void voxelspace_render(const Vertex3d_t p,
 
             // render
             if (height_on_screen < ybuffer[i]) {
-                framebuffer_8bit_fill_rect(v->fb, i, height_on_screen, current_zone->x_step_size, ybuffer[i] - height_on_screen, value->color);
+                framebuffer_8bit_fill_rect_inline(v->fb, i, height_on_screen, current_zone->x_step_size, ybuffer[i] - height_on_screen, value->color);
                 for (si = 0; si < current_zone->x_step_size; ++si) {
                     ybuffer[i + si] = height_on_screen;
                 }
@@ -175,7 +176,7 @@ void voxelspace_render(const Vertex3d_t p,
             // next step
             pleft[0] += dx * (float) current_zone->x_step_size;
             pleft[1] += dy * (float) current_zone->x_step_size;
-            i = i + current_zone->x_step_size;
+            i += current_zone->x_step_size;
         }
         z += current_zone->dz;
     }
