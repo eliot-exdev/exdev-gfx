@@ -1,10 +1,10 @@
 Short:        Technical demo of a voxelspace renderer
-Kurz:         Technische Demo eines Voxelrenderers
+Kurz:         Technische Demo eines Voxel Renderers
 Uploader:     eliot@exdev.de (Andre Geisler)
 Author:       eliot@exdev.de (Andre Geisler)
 Type:         misc/misc
 Requires:     dev/misc/c2plib.lha
-Version:      0.9.2
+Version:      1.0
 Architecture: m68k-amigaos >= 3.1.4; ppc-morphos
 Distribution: Aminet
 URL:          https://github.com/eliot-exdev/exdev-gfx
@@ -39,6 +39,7 @@ Have fun!
                   Amiga 1200, 060, AGA, AmigaOs 3.2.3.
   AGA version requires c2p.library from aminet
   (see https://aminet.net/dev/misc/c2plib.lha).
+* Window mode required MorphOs or graphics card (P96)
 
 # Usage
 
@@ -59,10 +60,11 @@ Screen resolution: 320x256x8
 
 voxelspace [ARGUMENTS]...
 arguments:
--h, --help              print help message and exit
--w, --world <number>    select world 1, 2, 3, 4 or 5 (default 1)
--d, --demo              enable demo mode
--v, --version           print version
+ -h, --help              print help message and exit
+ -m, --map <number>      select map 1, 2, 3, 4 or 5 (default 1)
+ -d, --demo              enable demo mode
+ -w, --window            enable window mode
+ -v, --version           print version
 
 ## Controls
 
@@ -81,6 +83,9 @@ F4                 decrease render distance
 F5                 increase render distance
 
 # History
+- 1.0 2026-07-18
+  - introduced window mode
+  - more speed improvements
 
 - 0.9.2 2026-02-21
   - fixed screenmode requester
