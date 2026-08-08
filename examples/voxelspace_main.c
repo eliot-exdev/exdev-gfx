@@ -334,13 +334,11 @@ int main(int argc, char **argv) {
     Font_t mia1;
     font_init(&mia1, FONT_TYPE_MIA_1);
     const unsigned char font_color = palette_8bit_add_pen(&palette, &PEN_YELLOW);
-    char fps_text[10];
-    memset(fps_text, 0, 10);
+    char fps_text[10] = {0};
 
     // init zones
     zones_init(&zones, 3);
     set_zones();
-
 
     // local variables
     int rotation = 0;
