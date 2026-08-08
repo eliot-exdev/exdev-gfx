@@ -174,8 +174,7 @@ Window_t *window_create(const int width, const int height, const char *title, co
     const int depth = (int) fs;
 
     if (fs != FS_DISABLED) {
-        char TITLE_TEXT[128];
-        memset(TITLE_TEXT, 0, 128);
+        char TITLE_TEXT[128] = {0};
         sprintf(TITLE_TEXT, "Select screen mode (%dx%dx%d)", width, height, depth);
 
         struct TagItem smrtags[8];
