@@ -54,7 +54,7 @@ size_t __stack = 32768; // 32 kb
 #define HORIZON 240.0f
 #endif
 
-#define ROTATION_STEP_SIZE 4.0f
+#define ROTATION_STEP_SIZE 4
 #define MOVEMENT_STEP_SIZE 3.0f
 
 static const char COLORMAP_ONE[] = ASSETS_PREFIX "assets/first_color_map_8bit.dat";
