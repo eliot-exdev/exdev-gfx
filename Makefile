@@ -5,7 +5,7 @@ LD_FLAGS_MOS=-lm
 
 #--- MorphOs gcc ---#
 CC_GCC=ppc-morphos-gcc-15
-C_FLAGS_MOS_GCC=-Ofast -noixemul -DNDEBUG -D__MORPHOS__
+C_FLAGS_MOS_GCC=-Ofast -mcpu=G4 -mno-altivec -noixemul -DNDEBUG -D__MORPHOS__
 LD_FLAGS_MOS_GCC=-lm
 
 INCLUDES_MOS=-Ilibrary/include -Ilibrary/easing/include
