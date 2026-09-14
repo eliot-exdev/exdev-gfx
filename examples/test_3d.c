@@ -32,17 +32,17 @@ unsigned char versiontag[] = "\0$VER: " VERSION;
 #endif
 
 static void print_help() {
-    printf("voxelspace [ARGUMENTS]...\n"
-           "arguments:\n"
-           " -h, --help              print help message and exit\n"
-           " -v, --version           print version\n"
-           "commands:\n"
-           " cursor keys              translate up, dow, left, right\n"
-           " +/-                      translate Z axis/zoom in/out\n"
-           " x/X                      rotate X axis\n"
-           " y/Y                      rotate Y axis\n"
-           " z/Z                      rotate Z axis\n"
-           " p/P                      change projection constant\n");
+    printf("test_3d [ARGUMENTS]...\n"
+        "arguments:\n"
+        " -h, --help              print help message and exit\n"
+        " -v, --version           print version\n"
+        "commands:\n"
+        " cursor keys              translate up, dow, left, right\n"
+        " +/-                      translate Z axis/zoom in/out\n"
+        " x/X                      rotate X axis\n"
+        " y/Y                      rotate Y axis\n"
+        " z/Z                      rotate Z axis\n"
+        " p/P                      change projection constant\n");
 }
 
 static void print_version() {
@@ -100,12 +100,12 @@ int main(int argc, char **argv) {
     }
 
     // texture
-    Framebuffer8Bit_t texture;
-    res = framebuffer_8bit_read_from_dat(&texture, "assets/texture_8bit.dat");
-    if (res) {
-        log_warning_fmt("could not read palette=%d", res);
-        return 3;
-    }
+    // Framebuffer8Bit_t texture;
+    // res = framebuffer_8bit_read_from_dat(&texture, "assets/texture_8bit.dat");
+    // if (res) {
+    //     log_warning_fmt("could not read palette=%d", res);
+    //     return 3;
+    // }
 
     // window
     Window_t window = window_create(WIDTH, HEIGHT, "test_3d", FS_8_BIT);
@@ -120,64 +120,73 @@ int main(int argc, char **argv) {
     font_init(&mia1, FONT_TYPE_MIA_1);
 
     // cube
-    Vertex3d_t cube_triangles[36] = {{-1, -1, -1}, // front
-                                     {1,  1,  -1},
-                                     {-1, 1,  -1},
-                                     {-1, -1, -1},
-                                     {1,  -1, -1},
-                                     {1,  1,  -1},
-                                     {-1, -1, 1}, // left
-                                     {-1, 1,  -1},
-                                     {-1, 1,  1},
-                                     {-1, -1, 1},
-                                     {-1, -1, -1},
-                                     {-1, 1,  -1},
-                                     {1,  -1, 1}, // right
-                                     {1,  1,  -1},
-                                     {1,  -1, -1},
-                                     {1,  -1, 1},
-                                     {1,  1,  1},
-                                     {1,  1,  -1},
-                                     {-1, -1, 1}, // back
-                                     {-1, 1,  1},
-                                     {1,  1,  1},
-                                     {-1, -1, 1},
-                                     {1,  1,  1},
-                                     {1,  -1, 1},
-                                     {-1, 1,  -1}, // top
-                                     {1,  1,  1},
-                                     {-1, 1,  1},
-                                     {-1, 1,  -1},
-                                     {1,  1,  -1},
-                                     {1,  1,  1},
-                                     {-1, -1, -1}, // bottom
-                                     {-1, -1, 1},
-                                     {1,  -1, 1},
-                                     {-1, -1, -1},
-                                     {1,  -1, 1},
-                                     {1,  -1, -1}};
-//    Vertex3d_t cube_normals[12] = {
-//            {0,  0,  -1}, // front
-//            {0,  0,  -1},
-//            {-1, 0,  0}, // left
-//            {-1, 0,  0},
-//            {1,  0,  0}, // right
-//            {1,  0,  0},
-//            {0,  0,  1}, // back
-//            {0,  0,  1},
-//            {0,  1,  0}, // top
-//            {0,  1,  0},
-//            {0,  -1, 0}, // bottom
-//            {0,  -1, 0}
-//    };
-//    const float texture_coordinates[6][2] = {{0.0f, 1.0f},
-//                                             {1.0f, 1.0f},
-//                                             {0.0f, 0.0f},
-//                                             {0.0f, 1.0f},
-//                                             {1.0f, 1.0f},
-//                                             {1.0f, 0.0f}};
+    Vertex3d_t cube_triangles[36] = {
+        {-1, -1, -1}, // front
+        {1, -1, -1},
+        {1, 1, -1},
+        {-1, -1, -1},
+        {1, 1, -1},
+        {-1, 1, -1},
+        {-1, -1, 1}, // left
+        {-1, 1, -1},
+        {-1, 1, 1},
+        {-1, -1, 1},
+        {-1, -1, -1},
+        {-1, 1, -1},
+        {1, -1, 1}, // right
+        {1, 1, -1},
+        {1, -1, -1},
+        {1, -1, 1},
+        {1, 1, 1},
+        {1, 1, -1},
+        {-1, -1, 1}, // back
+        {-1, 1, 1},
+        {1, 1, 1},
+        {-1, -1, 1},
+        {1, 1, 1},
+        {1, -1, 1},
+        {-1, 1, -1}, // top
+        {1, 1, 1},
+        {-1, 1, 1},
+        {-1, 1, -1},
+        {1, 1, -1},
+        {1, 1, 1},
+        {-1, -1, -1}, // bottom
+        {-1, -1, 1},
+        {1, -1, 1},
+        {-1, -1, -1},
+        {1, -1, 1},
+        {1, -1, -1}
+    };
+    //    Vertex3d_t cube_normals[12] = {
+    //            {0,  0,  -1}, // front
+    //            {0,  0,  -1},
+    //            {-1, 0,  0}, // left
+    //            {-1, 0,  0},
+    //            {1,  0,  0}, // right
+    //            {1,  0,  0},
+    //            {0,  0,  1}, // back
+    //            {0,  0,  1},
+    //            {0,  1,  0}, // top
+    //            {0,  1,  0},
+    //            {0,  -1, 0}, // bottom
+    //            {0,  -1, 0}
+    //    };
+    //    const float texture_coordinates[6][2] = {{0.0f, 1.0f},
+    //                                             {1.0f, 1.0f},
+    //                                             {0.0f, 0.0f},
+    //                                             {0.0f, 1.0f},
+    //                                             {1.0f, 1.0f},
+    //                                             {1.0f, 0.0f}};
 
-    Color8Bit_t cube_colors[12] = {RED, RED, GREEN, GREEN, BLUE, BLUE, CYAN, CYAN, WHITE, WHITE, GRAY, GRAY};
+    Color8Bit_t cube_colors[12] = {
+        RED, RED, //front
+        GREEN, GREEN, // left
+        BLUE, BLUE, // right
+        CYAN, CYAN, //back,
+        WHITE, WHITE, // top
+        GRAY, GRAY // bottom
+    };
     Vertex3d_t cube_translation = {0, 0, 5};
     Vertex3d_t cube_rotation = {0, 0, 0};
 
@@ -238,32 +247,32 @@ int main(int argc, char **argv) {
                         close_event = 1;
                     }
                 }
-                    break;
+                break;
                 default:
                     break;
             }
         }
 
         // update
-        cube_rotation[1] += deg_to_rad(AUTO_ROTATE);
+        // cube_rotation[1] += deg_to_rad(AUTO_ROTATE);
 
         // clear framebuffer
         framebuffer_8bit_fill(&framebuffer, BLACK);
 
         // render cube color
-        sw_renderer_8bit_fill_polygon_color_new(&swRenderer, cube_triangles, // first rect will have texture
-                                                12, cube_colors, cube_translation, cube_rotation);
+        sw_renderer_8bit_fill_triangles_color(&swRenderer, cube_triangles, // first rect will have texture
+                                            12, cube_colors, cube_translation, cube_rotation);
         // render cube texture
-//        sw_renderer_8bit_fill_polygon_texture(&swRenderer,
-//                                              cube_triangles,
-//                                              texture_coordinates,
-//                                              2,
-//                                              &texture,
-//                                              cube_translation,
-//                                              cube_rotation);
+        //        sw_renderer_8bit_fill_polygon_texture(&swRenderer,
+        //                                              cube_triangles,
+        //                                              texture_coordinates,
+        //                                              2,
+        //                                              &texture,
+        //                                              cube_translation,
+        //                                              cube_rotation);
 
         // render texture
-        framebuffer_8bit_draw_framebuffer(&framebuffer, framebuffer.width - texture.width, framebuffer.height - texture.height, &texture);
+        // framebuffer_8bit_draw_framebuffer(&framebuffer, framebuffer.width - texture.width, framebuffer.height - texture.height, &texture);
         // fps
         after = now();
         if (show_fps) {
@@ -279,7 +288,7 @@ int main(int argc, char **argv) {
     font_deinit(&mia1);
     sw_renderer_8bit_deinit(&swRenderer);
     framebuffer_8bit_deinit(&framebuffer);
-    framebuffer_8bit_deinit(&texture);
+    // framebuffer_8bit_deinit(&texture);
     exdev_base_deinit();
 
     return 0;

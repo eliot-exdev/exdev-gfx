@@ -406,7 +406,7 @@ void framebuffer_8bit_fill_triangle(Framebuffer8Bit_t *fb, const Vertex2d_t *tri
             w0 = edgeFunction(triangle[1], triangle[2], p);
             w1 = edgeFunction(triangle[2], triangle[0], p);
             w2 = edgeFunction(triangle[0], triangle[1], p);
-            if (w0 > 0 && w1 > 0 && w2 > 0) {
+            if (w0 >= 0 && w1 >= 0 && w2 >= 0) {
                 *framebuffer_8bit_pixel_at(fb, i, j) = c;
             }
         }
