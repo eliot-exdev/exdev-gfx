@@ -80,11 +80,9 @@ void framebuffer_8bit_deinit(Framebuffer8Bit_t* fb);
 void framebuffer_8bit_draw_text(Framebuffer8Bit_t* fb, const Font_t* f, const char* text, int text_length,
                                 Color8Bit_t c, int x, int y);
 
+void framebuffer_8bit_draw_line(Framebuffer8Bit_t *fb, const Vertex2d_t a, const Vertex2d_t b, Color8Bit_t c);
+
 void framebuffer_8bit_fill_triangle(Framebuffer8Bit_t* fb, const Vertex2d_t* triangle, Color8Bit_t c);
-
-void framebuffer_8bit_fill_triangle_fast(Framebuffer8Bit_t* fb, const Vertex2d_t* triangle, Color8Bit_t c);
-
-//void framebuffer_8bit_fill_triangle_texture(Framebuffer8Bit_t *fb, const Vertex2d_t *triangle, const Framebuffer8Bit_t *texture);
 
 void framebuffer_8bit_draw_framebuffer(Framebuffer8Bit_t* fb, int x, int y, const Framebuffer8Bit_t* src);
 

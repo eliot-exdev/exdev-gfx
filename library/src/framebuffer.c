@@ -32,18 +32,14 @@ ColorRGB_t *framebuffer_pixel_at(const Framebuffer_t *fb, const int x, const int
     return &fb->buffer[(y * fb->width) + x];
 }
 
-int sgn(const int x) {
-    return (x > 0) ? 1 : (x < 0) ? -1 : 0;
-}
-
 void framebuffer_draw_line(Framebuffer_t *fb, const Vertex2d_t a, const Vertex2d_t b, const ColorRGBA_t *c) {
     int x, y, t, dx, dy, incx, incy, pdx, pdy, ddx, ddy, deltaslowdirection, deltafastdirection, err;
 
     dx = (int) (b[0] - a[0]);
     dy = (int) (b[1] - a[1]);
 
-    incx = sgn(dx);
-    incy = sgn(dy);
+    incx = (dx > 0) ? 1 : (dx < 0) ? -1 : 0;
+    incy = (dy > 0) ? 1 : (dy < 0) ? -1 : 0;
     if (dx < 0) dx = -dx;
     if (dy < 0) dy = -dy;
 

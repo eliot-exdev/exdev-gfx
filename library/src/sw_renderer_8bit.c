@@ -163,7 +163,9 @@ void sw_renderer_8bit_draw_triangles_color(SWRenderer8bit_t *sw,
         }
 
         // draw triangle
-        // TODO: implement me!
+       framebuffer_8bit_draw_line(sw->fb,triangle_2d[0],triangle_2d[1],colors[i]);
+       framebuffer_8bit_draw_line(sw->fb,triangle_2d[1],triangle_2d[2],colors[i]);
+       framebuffer_8bit_draw_line(sw->fb,triangle_2d[2],triangle_2d[0],colors[i]);
     }
 }
 

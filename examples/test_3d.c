@@ -260,7 +260,7 @@ int main(int argc, char **argv) {
         framebuffer_8bit_fill(&framebuffer, BLACK);
 
         // render cube color
-        sw_renderer_8bit_fill_triangles_color(&swRenderer, cube_triangles, // first rect will have texture
+        sw_renderer_8bit_draw_triangles_color(&swRenderer, cube_triangles, // first rect will have texture
                                             12, cube_colors, cube_translation, cube_rotation);
         // render cube texture
         //        sw_renderer_8bit_fill_polygon_texture(&swRenderer,

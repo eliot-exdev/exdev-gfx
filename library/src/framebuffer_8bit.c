@@ -371,6 +371,52 @@ void framebuffer_8bit_draw_text(Framebuffer8Bit_t *fb, const Font_t *f, const ch
     }
 }
 
+void framebuffer_8bit_draw_line(Framebuffer8Bit_t *fb, const Vertex2d_t a, const Vertex2d_t b, Color8Bit_t c) {
+    int x, y, t, dx, dy, incx, incy, pdx, pdy, ddx, ddy, deltaslowdirection, deltafastdirection, err;
+
+    dx = (int) (b[0] - a[0]);
+    dy = (int) (b[1] - a[1]);
+
+    incx = (dx > 0) ? 1 : (dx < 0) ? -1 : 0;
+    incy = (dy > 0) ? 1 : (dy < 0) ? -1 : 0;
+    if (dx < 0) dx = -dx;
+    if (dy < 0) dy = -dy;
+
+    if (dx > dy) {
+        pdx = incx;
+        pdy = 0;
+        ddx = incx;
+        ddy = incy;
+        deltaslowdirection = dy;
+        deltafastdirection = dx;
+    } else {
+        pdx = 0;
+        pdy = incy;
+        ddx = incx;
+        ddy = incy;
+        deltaslowdirection = dx;
+        deltafastdirection = dy;
+    }
+
+    x = (int) a[0];
+    y = (int) a[1];
+    err = deltafastdirection / 2;
+    fb->buffer[y * fb->width + x] = c;
+
+    for (t = 0; t < deltafastdirection; ++t) {
+        err -= deltaslowdirection;
+        if (err < 0) {
+            err += deltafastdirection;
+            x += ddx;
+            y += ddy;
+        } else {
+            x += pdx;
+            y += pdy;
+        }
+        fb->buffer[y * fb->width + x] = c;
+    }
+}
+
 void framebuffer_8bit_fill_triangle(Framebuffer8Bit_t *fb, const Vertex2d_t *triangle, const Color8Bit_t c) {
     int xmin = min(min(triangle[0][0], triangle[1][0]), triangle[2][0]);
     int xmax = max(max(triangle[0][0], triangle[1][0]), triangle[2][0]);
