@@ -2,8 +2,8 @@
  * Copyright 2022 Andre Geisler (andre@exdev.de)
  */
 
-#ifndef EXDEVGFX2_SW_RENDERER_H
-#define EXDEVGFX2_SW_RENDERER_H
+#ifndef EXDEVGFX2_SW_RENDERER_8BIT_H
+#define EXDEVGFX2_SW_RENDERER_8BIT_H
 
 #include <exdevgfx/framebuffer_8bit.h>
 #include <exdevgfx/vertex3d.h>
@@ -43,4 +43,4 @@ void sw_renderer_8bit_fill_triangles_color(SWRenderer8bit_t *sw,
 }
 #endif
 
-#endif //EXDEVGFX2_SW_RENDERER_H
+#endif //EXDEVGFX2_SW_RENDERER_8BIT_H

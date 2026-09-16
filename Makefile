@@ -42,13 +42,14 @@ EXDEV_GFX_SOURCES=library/src/args.c\
                   library/src/vertex2d.c\
                   library/src/vertex3d.c\
                   library/src/voxelspace.c\
+                  library/src/sw_renderer_8bit.c\
                   library/src_amiga/exdev_base_amiga.c\
                   library/src_amiga/helper_amiga.c\
                   library/src_amiga/window_amiga.c
 
 exdev_gfx_mos_gcc.a: $(EXDEV_GFX_SOURCES)
 	$(CC_GCC) -c ${INCLUDES_MOS} ${C_FLAGS_MOS_GCC} $(^)
-	$(AR) -r $(@) args.o color.o events.o font.o framebuffer.o framebuffer_8bit.o framebuffer_rgba.o heightmap.o helper.o julia.o matrix.o palette.o vertex2d.o vertex3d.o voxelspace.o exdev_base_amiga.o helper_amiga.o window_amiga.o
+	$(AR) -r $(@) args.o color.o events.o font.o framebuffer.o framebuffer_8bit.o framebuffer_rgba.o heightmap.o helper.o julia.o matrix.o palette.o vertex2d.o vertex3d.o voxelspace.o exdev_base_amiga.o helper_amiga.o window_amiga.o sw_renderer_8bit.o
 
 exdev_gfx_aos_060.lib: $(EXDEV_GFX_SOURCES)
 	$(CC) -c ${INCLUDES_AOS} ${C_FLAGS_060} $(^) -DLOW_RESOLUTION
@@ -72,12 +73,12 @@ EXDEV_GFX_UI_SOURCES=library/src/ui/ui_application.c\
                      library/src/ui/ui_vertical_scroll_bar.c\
                      library/src/ui/ui_icon.c\
                      library/src/ui/ui_text.c\
-                     library/src/ui/ui_layered_container.c
+                     library/src/ui/ui_layered_container.c\
                      library/src/ui/ui_3d_renderer.c
 
 exdev_gfx_ui_mos_gcc.a: $(EXDEV_GFX_UI_SOURCES)
 	$(CC_GCC) -c ${INCLUDES_MOS} ${C_FLAGS_MOS_GCC} $(^)
-	$(AR) -r $(@) ui_application.o ui_component.o ui_component_list.o ui_scroll.o ui_horizontal_scroll_bar.o ui_vertical_scroll_bar.o ui_icon.o ui_text.o ui_layered_container.o
+	$(AR) -r $(@) ui_application.o ui_component.o ui_component_list.o ui_scroll.o ui_horizontal_scroll_bar.o ui_vertical_scroll_bar.o ui_icon.o ui_text.o ui_layered_container.o ui_3d_renderer.o
 
 exdev_gfx_ui_aos_060.lib: $(EXDEV_GFX_UI_SOURCES)
 	$(CC) -c ${INCLUDES_AOS} ${C_FLAGS_060} $(^)
@@ -118,7 +119,7 @@ application_mos_gcc: examples/test_application.c exdev_gfx_ui_mos_gcc.a exdev_gf
 application_060: examples/test_application.c exdev_gfx_ui_aos_060.lib exdev_gfx_aos_060.lib
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060}
 
-3d_app: examples/test_3d.c exdev_gfx_ui_mos_gcc.a exdev_gfx_mos_gcc.a
+3d_app: examples/test_3d_app.c exdev_gfx_ui_mos_gcc.a exdev_gfx_mos_gcc.a
 	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
 
 #--- voxelspace ---#
