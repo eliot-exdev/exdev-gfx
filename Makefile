@@ -73,6 +73,7 @@ EXDEV_GFX_UI_SOURCES=library/src/ui/ui_application.c\
                      library/src/ui/ui_icon.c\
                      library/src/ui/ui_text.c\
                      library/src/ui/ui_layered_container.c
+                     library/src/ui/ui_3d_renderer.c
 
 exdev_gfx_ui_mos_gcc.a: $(EXDEV_GFX_UI_SOURCES)
 	$(CC_GCC) -c ${INCLUDES_MOS} ${C_FLAGS_MOS_GCC} $(^)
@@ -116,6 +117,9 @@ application_mos_gcc: examples/test_application.c exdev_gfx_ui_mos_gcc.a exdev_gf
 
 application_060: examples/test_application.c exdev_gfx_ui_aos_060.lib exdev_gfx_aos_060.lib
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060}
+
+3d_app: examples/test_3d.c exdev_gfx_ui_mos_gcc.a exdev_gfx_mos_gcc.a
+	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
 
 #--- voxelspace ---#
 voxelspace_all: voxelspace_mos voxelspace_060 voxelspace_060_c2p voxelspace_030_c2p

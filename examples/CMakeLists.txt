@@ -102,6 +102,13 @@ target_link_libraries(test_application
         exdevgfx
 )
 
+add_executable(test_3d_app
+        test_3d_app.c
+)
+target_link_libraries(test_3d_app
+        exdevgfx
+)
+
 install(TARGETS julia voxelspace
         RUNTIME DESTINATION bin
         )

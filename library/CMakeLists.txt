@@ -27,6 +27,7 @@ if (MORPHOS OR AMIGAOS)
             src_amiga/exdev_base_amiga.c
             src_amiga/helper_amiga.c
             src_amiga/window_amiga.c
+            src/ui/ui_3d_renderer.c
             src/ui/ui_component_list.c
             src/ui/ui_component.c
             src/ui/ui_icon.c
@@ -85,6 +86,7 @@ else ()
             src/ui/ui_application.c
             src/ui/ui_text.c
             src/ui/ui_layered_container.c
+            src/ui/ui_3d_renderer.c
     )
     target_include_directories(${PROJECT_NAME}
             PUBLIC include

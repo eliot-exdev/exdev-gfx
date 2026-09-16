@@ -41,6 +41,10 @@ void ui_application_prepare(UIApplication_t *self) {
     assert(self);
 
     // setup palette
+    if (self->palette.numPens < PEN_INDEX_CYAN) {
+        palette_8bit_init(&self->palette, PEN_INDEX_CYAN + 1);
+    }
+
     palette_8bit_set_pen(&self->palette, &PEN_BLACK, PEN_INDEX_BLACK);
     palette_8bit_set_pen(&self->palette, &PEN_WHITE, PEN_INDEX_WHITE);
 
@@ -50,8 +54,8 @@ void ui_application_prepare(UIApplication_t *self) {
     palette_8bit_set_pen(&self->palette, &PEN_DARK_GREEN, PEN_INDEX_DARK_GREEN);
     palette_8bit_set_pen(&self->palette, &PEN_GREEN, PEN_INDEX_GREEN);
 
-    palette_8bit_set_pen(&self->palette, &PEN_DARK_BLUE, PEN_INDEX_DARK_BLUE);// background
-    palette_8bit_set_pen(&self->palette, &PEN_BLUE, PEN_INDEX_BLUE);          // border
+    palette_8bit_set_pen(&self->palette, &PEN_DARK_BLUE, PEN_INDEX_DARK_BLUE); // background
+    palette_8bit_set_pen(&self->palette, &PEN_BLUE, PEN_INDEX_BLUE); // border
 
     palette_8bit_set_pen(&self->palette, &PEN_DARK_YELLOW, PEN_INDEX_DARK_YELLOW);
     palette_8bit_set_pen(&self->palette, &PEN_YELLOW, PEN_INDEX_YELLOW);

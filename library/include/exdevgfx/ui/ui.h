@@ -7,11 +7,14 @@
 
 #ifdef __cplusplus
 extern "C" {
+
+
 #endif
 
 #include <exdevgfx/window.h>
 #include <exdevgfx/framebuffer_8bit.h>
 #include <exdevgfx/events.h>
+#include <exdevgfx/sw_renderer_8bit.h>
 
 #define PEN_INDEX_BLACK 0
 #define PEN_INDEX_WHITE 1
@@ -46,6 +49,7 @@ enum ui_component_type {
     UI_COMPONENT_SCROLL_PANE,
     UI_COMPONENT_SCROLL_BAR_HORIZONTAL,
     UI_COMPONENT_SCROLL_BAR_VERTICAL,
+    UI_COMPONENT_3D_RENDERER,
     UI_COMPONENT_CUSTOM
 };
 
@@ -58,6 +62,7 @@ struct UIComponentList {
     struct UIComponent **components;
     int size;
 };
+
 typedef struct UIComponentList UIComponentList_t;
 
 void ui_component_list_init(UIComponentList_t *self);
@@ -79,14 +84,16 @@ typedef void (*dirty_function)(void *self);
 struct UIComponent {
     UIComponentType_t type;
     int subtype;
+
     struct {
-        int x;// relative to parent
-        int y;// relative to parent
+        int x; // relative to parent
+        int y; // relative to parent
         int width;
         int height;
         Color8Bit_t background_color;
         Color8Bit_t border_color;
     } properties;
+
     struct {
         uint8_t dirty_flag;
         uint8_t enabled_flag;
@@ -228,6 +235,7 @@ struct UIHorizontalScrollBar;
 struct UIVerticalScrollBar;
 
 typedef void (*on_x_offset_function)(struct UIScrollContainer *self, int x_offset);
+
 typedef void (*on_y_offset_function)(struct UIScrollContainer *self, int y_offset);
 
 enum ui_scrolling_support {
@@ -240,6 +248,7 @@ typedef enum ui_scrolling_support UIScrollingSupport_t;
 
 struct UIScrollContainer {
     UIComponent_t base;
+
     struct {
         int x_offset;
         int y_offset;
@@ -281,6 +290,7 @@ void ui_scroll_container_set_dirty(UIScrollContainer_t *self);
 //--- UIHorizontalSrollBar ---//
 struct UIHorizontalScrollBar {
     UIComponent_t base;
+
     struct {
         int x_pos;
     } properties;
@@ -313,6 +323,7 @@ void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, long time_el
 //--- UIVerticalScrollBar ---//
 struct UIVerticalScrollBar {
     UIComponent_t base;
+
     struct {
         int y_pos;
     } properties;
@@ -342,6 +353,44 @@ int ui_vertical_scroll_bar_paint(UIVerticalScrollBar_t *self, Framebuffer8Bit_t 
 
 void ui_vertical_scroll_bar_update(UIVerticalScrollBar_t *self, long time_elapsed, const Event_t *events, int num_events, struct UIApplication *app, void *usr_ptr);
 
+//--- UI3DRenderer ---//
+struct UI3DRenderer;
+
+typedef void (*ui_3d_renderer_update_scene)(struct UI3DRenderer *self, long time_elapsed, const Event_t *events, int num_events, struct UIApplication *app, void *usr_ptr);
+
+typedef void (*ui_3d_renderer_render_scene)(struct UI3DRenderer *self, void *usr_ptr);
+
+struct UI3DRenderer {
+    UIComponent_t base;
+
+    struct {
+        Vertex3d_t position;
+        Vertex3d_t rotation;
+        SWRenderer8bit_t renderer;
+    } properties;
+
+    struct {
+        uint8_t first_paint;
+    } flags;
+
+    struct {
+        ui_3d_renderer_update_scene update_scene;
+        ui_3d_renderer_render_scene render_scene;
+    } functions;
+};
+
+typedef struct UI3DRenderer UI3DRenderer_t;
+
+void ui_3d_renderer_init(UI3DRenderer_t *self, int x, int y, int width, int height);
+
+UI3DRenderer_t *ui_3d_renderer_create(int x, int y, int width, int height);
+
+void ui_3d_renderer_destroy(UI3DRenderer_t *self);
+
+int ui_3d_renderer_paint(UI3DRenderer_t *self, Framebuffer8Bit_t *fb, int x_offset, int y_offset, int width, int height, void *usr_ptr);
+
+void ui_3d_renderer_update(UI3DRenderer_t *self, long time_elapsed, const Event_t *events, int num_events, struct UIApplication *app, void *usr_ptr);
+
 //--- UIApplication ---//
 struct UIApplication {
     Window_t *window;
@@ -367,6 +416,7 @@ void ui_application_quit(UIApplication_t *self);
 void ui_application_start_modal_dialog(UIApplication_t *self, UIComponent_t *modal);
 
 void ui_application_stop_modal_dialog(UIApplication_t *self);
+
 
 #ifdef __cplusplus
 }
