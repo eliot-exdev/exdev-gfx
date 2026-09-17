@@ -16,9 +16,6 @@ void ui_3d_renderer_init(UI3DRenderer_t *self, const int x, const int y, const i
 
     self->functions.update_scene = NULL;
     self->functions.render_scene = NULL;
-
-    vertex3d_init(self->properties.position);
-    vertex3d_init(self->properties.rotation);
 }
 
 UI3DRenderer_t *ui_3d_renderer_create(const int x, const int y, const int width, const int height) {

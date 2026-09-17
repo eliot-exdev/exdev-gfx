@@ -122,38 +122,26 @@ static int is_visible(const Vertex2d_t *t) {
 //     }
 // }
 
-void sw_renderer_8bit_draw_triangles_color(SWRenderer8bit_t *sw,
-                                         const Vertex3d_t *triangles,
-                                         const int triangles_count,
-                                         const Color8Bit_t *colors,
-                                         const Vertex3d_t trans,
-                                         const Vertex3d_t rot) {
+void sw_renderer_8bit_draw_triangles(SWRenderer8bit_t *sw,
+                                     const Vertex3d_t *triangles,
+                                     const int triangles_count,
+                                     const Color8Bit_t *colors,
+                                     const Matrix_t matrix) {
     assert(sw);
     assert(triangles);
     assert(colors);
     assert(triangles_count > 0);
 
     Vertex3d_t triangle_tmp[3];
-    //    Vertex3d_t normal_tmp;
     Vertex2d_t triangle_2d[3];
 
-    // matrix
-    MATRIX_DEFAULT(m);
-    matrix_rotate(m, rot, m);
-
     for (int i = 0; i < triangles_count; ++i) {
-        // rotate triangle and normal
-        matrix_mul_vector(m, triangles[i * 3 + 0], triangle_tmp[0]);
-        matrix_mul_vector(m, triangles[i * 3 + 1], triangle_tmp[1]);
-        matrix_mul_vector(m, triangles[i * 3 + 2], triangle_tmp[2]);
-        //        matrix_mul_vector(m, normals[i], normal_tmp);
+        // rotate and translate
+        matrix_mul_vector(matrix, triangles[i * 3 + 0], triangle_tmp[0]);
+        matrix_mul_vector(matrix, triangles[i * 3 + 1], triangle_tmp[1]);
+        matrix_mul_vector(matrix, triangles[i * 3 + 2], triangle_tmp[2]);
 
-        // translate triangle
-        vertex3d_add(triangle_tmp[0], trans, triangle_tmp[0]);
-        vertex3d_add(triangle_tmp[1], trans, triangle_tmp[1]);
-        vertex3d_add(triangle_tmp[2], trans, triangle_tmp[2]);
-
-        // project triangle 3D -> 2d
+        // project triangle 3D -> 2D
         project_vertex(sw, triangle_tmp[0], triangle_2d[0]);
         project_vertex(sw, triangle_tmp[1], triangle_2d[1]);
         project_vertex(sw, triangle_tmp[2], triangle_2d[2]);
@@ -163,19 +151,18 @@ void sw_renderer_8bit_draw_triangles_color(SWRenderer8bit_t *sw,
         }
 
         // draw triangle
-       framebuffer_8bit_draw_line(sw->fb,triangle_2d[0],triangle_2d[1],colors[i]);
-       framebuffer_8bit_draw_line(sw->fb,triangle_2d[1],triangle_2d[2],colors[i]);
-       framebuffer_8bit_draw_line(sw->fb,triangle_2d[2],triangle_2d[0],colors[i]);
+        framebuffer_8bit_draw_line(sw->fb, triangle_2d[0], triangle_2d[1], colors[i]);
+        framebuffer_8bit_draw_line(sw->fb, triangle_2d[1], triangle_2d[2], colors[i]);
+        framebuffer_8bit_draw_line(sw->fb, triangle_2d[2], triangle_2d[0], colors[i]);
     }
 }
 
 
-void sw_renderer_8bit_fill_triangles_color(SWRenderer8bit_t *sw,
-                                         const Vertex3d_t *triangles,
-                                         const int triangles_count,
-                                         const Color8Bit_t *colors,
-                                         const Vertex3d_t trans,
-                                         const Vertex3d_t rot) {
+void sw_renderer_8bit_fill_triangles(SWRenderer8bit_t *sw,
+                                     const Vertex3d_t *triangles,
+                                     const int triangles_count,
+                                     const Color8Bit_t *colors,
+                                     const Matrix_t matrix) {
     assert(sw);
     assert(triangles);
     assert(colors);
@@ -184,22 +171,13 @@ void sw_renderer_8bit_fill_triangles_color(SWRenderer8bit_t *sw,
     Vertex3d_t triangle_tmp[3];
     Vertex2d_t triangle_2d[3];
 
-    // matrix
-    MATRIX_DEFAULT(m);
-    matrix_rotate(m, rot, m);
-
     for (int i = 0; i < triangles_count; ++i) {
-        // rotate triangle and normal
-        matrix_mul_vector(m, triangles[i * 3 + 0], triangle_tmp[0]);
-        matrix_mul_vector(m, triangles[i * 3 + 1], triangle_tmp[1]);
-        matrix_mul_vector(m, triangles[i * 3 + 2], triangle_tmp[2]);
+        // rotate and translate
+        matrix_mul_vector(matrix, triangles[i * 3 + 0], triangle_tmp[0]);
+        matrix_mul_vector(matrix, triangles[i * 3 + 1], triangle_tmp[1]);
+        matrix_mul_vector(matrix, triangles[i * 3 + 2], triangle_tmp[2]);
 
-        // translate triangle
-        vertex3d_add(triangle_tmp[0], trans, triangle_tmp[0]);
-        vertex3d_add(triangle_tmp[1], trans, triangle_tmp[1]);
-        vertex3d_add(triangle_tmp[2], trans, triangle_tmp[2]);
-
-        // project triangle 3D -> 2d
+        // project triangle 3D -> 2D
         project_vertex(sw, triangle_tmp[0], triangle_2d[0]);
         project_vertex(sw, triangle_tmp[1], triangle_2d[1]);
         project_vertex(sw, triangle_tmp[2], triangle_2d[2]);

@@ -18,7 +18,7 @@
 #ifdef __VBCC__
 __entry
 #endif
-unsigned char versiontag[] = "\0$VER: " VERSION;
+        unsigned char versiontag[] = "\0$VER: " VERSION;
 #endif
 
 #ifndef LOW_RESOLUTION
@@ -33,20 +33,20 @@ unsigned char versiontag[] = "\0$VER: " VERSION;
 
 static void print_help() {
     printf("test_3d [ARGUMENTS]...\n"
-        "arguments:\n"
-        " -h, --help              print help message and exit\n"
-        " -v, --version           print version\n"
-        "commands:\n"
-        " cursor keys              translate up, dow, left, right\n"
-        " +/-                      translate Z axis/zoom in/out\n"
-        " x/X                      rotate X axis\n"
-        " y/Y                      rotate Y axis\n"
-        " z/Z                      rotate Z axis\n"
-        " p/P                      change projection constant\n");
+           "arguments:\n"
+           " -h, --help              print help message and exit\n"
+           " -v, --version           print version\n"
+           "commands:\n"
+           " cursor keys              translate up, dow, left, right\n"
+           " +/-                      translate Z axis/zoom in/out\n"
+           " x/X                      rotate X axis\n"
+           " y/Y                      rotate Y axis\n"
+           " z/Z                      rotate Z axis\n"
+           " p/P                      change projection constant\n");
 }
 
 static void print_version() {
-    printf(VERSION"\n");
+    printf(VERSION "\n");
 }
 
 void parse_args(int argc, char **argv) {
@@ -121,43 +121,42 @@ int main(int argc, char **argv) {
 
     // cube
     Vertex3d_t cube_triangles[36] = {
-        {-1, -1, -1}, // front
-        {1, -1, -1},
-        {1, 1, -1},
-        {-1, -1, -1},
-        {1, 1, -1},
-        {-1, 1, -1},
-        {-1, -1, 1}, // left
-        {-1, 1, -1},
-        {-1, 1, 1},
-        {-1, -1, 1},
-        {-1, -1, -1},
-        {-1, 1, -1},
-        {1, -1, 1}, // right
-        {1, 1, -1},
-        {1, -1, -1},
-        {1, -1, 1},
-        {1, 1, 1},
-        {1, 1, -1},
-        {-1, -1, 1}, // back
-        {-1, 1, 1},
-        {1, 1, 1},
-        {-1, -1, 1},
-        {1, 1, 1},
-        {1, -1, 1},
-        {-1, 1, -1}, // top
-        {1, 1, 1},
-        {-1, 1, 1},
-        {-1, 1, -1},
-        {1, 1, -1},
-        {1, 1, 1},
-        {-1, -1, -1}, // bottom
-        {-1, -1, 1},
-        {1, -1, 1},
-        {-1, -1, -1},
-        {1, -1, 1},
-        {1, -1, -1}
-    };
+            {-1, -1, -1},// front
+            {1, -1, -1},
+            {1, 1, -1},
+            {-1, -1, -1},
+            {1, 1, -1},
+            {-1, 1, -1},
+            {-1, -1, 1},// left
+            {-1, 1, -1},
+            {-1, 1, 1},
+            {-1, -1, 1},
+            {-1, -1, -1},
+            {-1, 1, -1},
+            {1, -1, 1},// right
+            {1, 1, -1},
+            {1, -1, -1},
+            {1, -1, 1},
+            {1, 1, 1},
+            {1, 1, -1},
+            {-1, -1, 1},// back
+            {-1, 1, 1},
+            {1, 1, 1},
+            {-1, -1, 1},
+            {1, 1, 1},
+            {1, -1, 1},
+            {-1, 1, -1},// top
+            {1, 1, 1},
+            {-1, 1, 1},
+            {-1, 1, -1},
+            {1, 1, -1},
+            {1, 1, 1},
+            {-1, -1, -1},// bottom
+            {-1, -1, 1},
+            {1, -1, 1},
+            {-1, -1, -1},
+            {1, -1, 1},
+            {1, -1, -1}};
     //    Vertex3d_t cube_normals[12] = {
     //            {0,  0,  -1}, // front
     //            {0,  0,  -1},
@@ -180,12 +179,12 @@ int main(int argc, char **argv) {
     //                                             {1.0f, 0.0f}};
 
     Color8Bit_t cube_colors[12] = {
-        RED, RED, //front
-        GREEN, GREEN, // left
-        BLUE, BLUE, // right
-        CYAN, CYAN, //back,
-        WHITE, WHITE, // top
-        GRAY, GRAY // bottom
+            RED, RED,    //front
+            GREEN, GREEN,// left
+            BLUE, BLUE,  // right
+            CYAN, CYAN,  //back,
+            WHITE, WHITE,// top
+            GRAY, GRAY   // bottom
     };
     Vertex3d_t cube_translation = {0, 0, 5};
     Vertex3d_t cube_rotation = {0, 0, 0};
@@ -246,8 +245,7 @@ int main(int argc, char **argv) {
                     } else if (event.key_event.code == 'q') {
                         close_event = 1;
                     }
-                }
-                break;
+                } break;
                 default:
                     break;
             }
@@ -260,8 +258,10 @@ int main(int argc, char **argv) {
         framebuffer_8bit_fill(&framebuffer, BLACK);
 
         // render cube color
-        sw_renderer_8bit_draw_triangles_color(&swRenderer, cube_triangles, // first rect will have texture
-                                            12, cube_colors, cube_translation, cube_rotation);
+        MATRIX_DEFAULT(m);
+        matrix_rotate(m, cube_rotation, m);
+        matrix_translate(m, cube_translation, m);
+        sw_renderer_8bit_draw_triangles(&swRenderer, cube_triangles, 12, cube_colors, m);
         // render cube texture
         //        sw_renderer_8bit_fill_polygon_texture(&swRenderer,
         //                                              cube_triangles,

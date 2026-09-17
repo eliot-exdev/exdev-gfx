@@ -364,8 +364,6 @@ struct UI3DRenderer {
     UIComponent_t base;
 
     struct {
-        Vertex3d_t position;
-        Vertex3d_t rotation;
         SWRenderer8bit_t renderer;
     } properties;
 
