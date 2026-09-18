@@ -61,30 +61,26 @@ static const Color8Bit_t cube_colors[NUM_COLORS] = {
         PEN_INDEX_CYAN, PEN_INDEX_CYAN     // bottom
 };
 
-static Vertex3d_t rot = {0, 0, 0};
+static float rot_y = 0.0f;
 
 static void my_update_scene(UI3DRenderer_t *self, const long time_elapsed, const Event_t *events, const int num_events, struct UIApplication *app, void *usr_ptr) {
-    rot[1] -= deg_to_rad(4.0f);
+    rot_y -= deg_to_rad(4.0f);
 }
 
 static void my_render_scene(UI3DRenderer_t *self, void *usr_ptr) {
 
     // render left cube wireframe
-    Vertex3d_t pos;
-    vertex3d_set(pos, -3.0f, 0, 5);
     MATRIX_DEFAULT(m);
-    matrix_init(m);
-    matrix_rotate(m, rot, m);
-    matrix_translate(m, pos, m);
+    matrix_rotateY(m, rot_y, m);
+    matrix_translateX(m, -3.0f, m);
+    matrix_translateZ(m, 5.0f, m);
     sw_renderer_8bit_draw_triangles(&self->properties.renderer, cube_triangles, NUM_TRIANGLES, cube_colors, m);
 
     // render right cube filled
-    Vertex3d_t rot_tmp;
-    vertex3d_set(rot_tmp, 0, -rot[1], 0);
-    vertex3d_set(pos, 3.0f, 0, 5);
     matrix_init(m);
-    matrix_rotate(m, rot_tmp, m);
-    matrix_translate(m, pos, m);
+    matrix_rotateY(m, -rot_y, m);
+    matrix_translateX(m, 3.0f, m);
+    matrix_translateZ(m, 5.0f, m);
     sw_renderer_8bit_fill_triangles(&self->properties.renderer, cube_triangles, NUM_TRIANGLES, cube_colors, m);
 }
 

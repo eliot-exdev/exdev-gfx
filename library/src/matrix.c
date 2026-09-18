@@ -122,6 +122,21 @@ void matrix_translate(const Matrix_t src, const Vertex3d_t vec, Matrix_t dst) {
     matrix_mul_matrix(src, tm, dst);
 }
 
+void matrix_translateX(const Matrix_t src, const float x, Matrix_t dst) {
+    const Vertex3d_t v = {x, 0, 0};
+    matrix_translate(src, v, dst);
+}
+
+void matrix_translateY(const Matrix_t src, const float y, Matrix_t dst) {
+    const Vertex3d_t v = {0, y, 0};
+    matrix_translate(src, v, dst);
+}
+
+void matrix_translateZ(const Matrix_t src, const float z, Matrix_t dst) {
+    const Vertex3d_t v = {0, 0, z};
+    matrix_translate(src, v, dst);
+}
+
 void matrix_scale(const Matrix_t src, const Vertex3d_t vec, Matrix_t dst) {
     MATRIX_DEFAULT(sm);
     sm[0][0] = vec[0];

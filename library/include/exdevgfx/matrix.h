@@ -33,6 +33,12 @@ void matrix_rotateZ(const Matrix_t src, float rz, Matrix_t dst);
 
 void matrix_translate(const Matrix_t src, const Vertex3d_t vec, Matrix_t dst);
 
+void matrix_translateX(const Matrix_t src, float x, Matrix_t dst);
+
+void matrix_translateY(const Matrix_t src, float y, Matrix_t dst);
+
+void matrix_translateZ(const Matrix_t src, float z, Matrix_t dst);
+
 void matrix_scale(const Matrix_t src, const Vertex3d_t vec, Matrix_t dst);
 
 #ifdef __cplusplus
