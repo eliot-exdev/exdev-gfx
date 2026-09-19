@@ -53,15 +53,15 @@ exdev_gfx_mos_gcc.a: $(EXDEV_GFX_SOURCES)
 
 exdev_gfx_aos_060.lib: $(EXDEV_GFX_SOURCES)
 	$(CC) -c ${INCLUDES_AOS} ${C_FLAGS_060} $(^) -DLOW_RESOLUTION
-	$(JOIN) as $(@) library/src/args.o library/src/color.o library/src/events.o library/src/font.o library/src/framebuffer.o library/src/framebuffer_8bit.o library/src/framebuffer_rgba.o library/src/heightmap.o library/src/helper.o library/src/julia.o library/src/matrix.o library/src/palette.o library/src/vertex2d.o library/src/vertex3d.o library/src/voxelspace.o library/src_amiga/exdev_base_amiga.o library/src_amiga/helper_amiga.o library/src_amiga/window_amiga.o
+	$(JOIN) as $(@) library/src/args.o library/src/color.o library/src/events.o library/src/font.o library/src/framebuffer.o library/src/framebuffer_8bit.o library/src/framebuffer_rgba.o library/src/heightmap.o library/src/helper.o library/src/julia.o library/src/matrix.o library/src/palette.o library/src/vertex2d.o library/src/vertex3d.o library/src/voxelspace.o library/src_amiga/exdev_base_amiga.o library/src_amiga/helper_amiga.o library/src_amiga/window_amiga.o library/src/sw_renderer_8bit.o
 
 exdev_gfx_aos_060_c2p.lib: $(EXDEV_GFX_SOURCES)
 	$(CC) -c ${INCLUDES_AOS} -IWork:workspace/c2plib/sdk/C ${C_FLAGS_060} $(^) -DUSE_C2P -DLOW_RESOLUTION
-	$(JOIN) as $(@) library/src/args.o library/src/color.o library/src/events.o library/src/font.o library/src/framebuffer.o library/src/framebuffer_8bit.o library/src/framebuffer_rgba.o library/src/heightmap.o library/src/helper.o library/src/julia.o library/src/matrix.o library/src/palette.o library/src/vertex2d.o library/src/vertex3d.o library/src/voxelspace.o library/src_amiga/exdev_base_amiga.o library/src_amiga/helper_amiga.o library/src_amiga/window_amiga.o
+	$(JOIN) as $(@) library/src/args.o library/src/color.o library/src/events.o library/src/font.o library/src/framebuffer.o library/src/framebuffer_8bit.o library/src/framebuffer_rgba.o library/src/heightmap.o library/src/helper.o library/src/julia.o library/src/matrix.o library/src/palette.o library/src/vertex2d.o library/src/vertex3d.o library/src/voxelspace.o library/src_amiga/exdev_base_amiga.o library/src_amiga/helper_amiga.o library/src_amiga/window_amiga.o library/src/sw_renderer_8bit.o
 
 exdev_gfx_aos_030_c2p.lib: $(EXDEV_GFX_SOURCES)
 	$(CC) -c ${INCLUDES_AOS} -IWork:workspace/c2plib/sdk/C ${C_FLAGS_030} $(^) -DUSE_C2P -DLOW_RESOLUTION
-	$(JOIN) as $(@) library/src/args.o library/src/color.o library/src/events.o library/src/font.o library/src/framebuffer.o library/src/framebuffer_8bit.o library/src/framebuffer_rgba.o library/src/heightmap.o library/src/helper.o library/src/julia.o library/src/matrix.o library/src/palette.o library/src/vertex2d.o library/src/vertex3d.o library/src/voxelspace.o library/src_amiga/exdev_base_amiga.o library/src_amiga/helper_amiga.o library/src_amiga/window_amiga.o
+	$(JOIN) as $(@) library/src/args.o library/src/color.o library/src/events.o library/src/font.o library/src/framebuffer.o library/src/framebuffer_8bit.o library/src/framebuffer_rgba.o library/src/heightmap.o library/src/helper.o library/src/julia.o library/src/matrix.o library/src/palette.o library/src/vertex2d.o library/src/vertex3d.o library/src/voxelspace.o library/src_amiga/exdev_base_amiga.o library/src_amiga/helper_amiga.o library/src_amiga/window_amiga.o library/src/sw_renderer_8bit.
 
 
 #--- exdev-gfx-ui ---#
@@ -82,11 +82,11 @@ exdev_gfx_ui_mos_gcc.a: $(EXDEV_GFX_UI_SOURCES)
 
 exdev_gfx_ui_aos_060.lib: $(EXDEV_GFX_UI_SOURCES)
 	$(CC) -c ${INCLUDES_AOS} ${C_FLAGS_060} $(^)
-	$(JOIN) as $(@) library/src/ui/ui_application.o library/src/ui/ui_component.o library/src/ui/ui_component_list.o library/src/ui/ui_scroll.o library/src/ui/ui_horizontal_scroll_bar.o library/src/ui/ui_vertical_scroll_bar.o library/src/ui/ui_icon.o library/src/ui/ui_text.o library/src/ui/ui_layered_container.o
+	$(JOIN) as $(@) library/src/ui/ui_application.o library/src/ui/ui_component.o library/src/ui/ui_component_list.o library/src/ui/ui_scroll.o library/src/ui/ui_horizontal_scroll_bar.o library/src/ui/ui_vertical_scroll_bar.o library/src/ui/ui_icon.o library/src/ui/ui_text.o library/src/ui/ui_layered_container.o library/src/ui/ui_3d_renderer.o
 
 exdev_gfx_ui_aos_030.lib: $(EXDEV_GFX_UI_SOURCES)
 	$(CC) -c ${INCLUDES_AOS} ${C_FLAGS_030} $(^)
-	$(JOIN) as $(@) library/src/ui/ui_application.o library/src/ui/ui_component.o library/src/ui/ui_component_list.o library/src/ui/ui_scroll.o library/src/ui/ui_horizontal_scroll_bar.o library/src/ui/ui_vertical_scroll_bar.o library/src/ui/ui_icon.o library/src/ui/ui_text.o library/src/ui/ui_layered_container.o
+	$(JOIN) as $(@) library/src/ui/ui_application.o library/src/ui/ui_component.o library/src/ui/ui_component_list.o library/src/ui/ui_scroll.o library/src/ui/ui_horizontal_scroll_bar.o library/src/ui/ui_vertical_scroll_bar.o library/src/ui/ui_icon.o library/src/ui/ui_text.o library/src/ui/ui_layered_container.o library/src/ui/ui_3d_renderer.o
 
 
 #--- exdev-gfx-easing ---#
@@ -119,8 +119,17 @@ application_mos_gcc: examples/test_application.c exdev_gfx_ui_mos_gcc.a exdev_gf
 application_060: examples/test_application.c exdev_gfx_ui_aos_060.lib exdev_gfx_aos_060.lib
 	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060}
 
-3d_app: examples/test_3d_app.c exdev_gfx_ui_mos_gcc.a exdev_gfx_mos_gcc.a
+#--- 3d_app ---#
+3d_app_all: 3d_app_mos 3d_app_aos_060 3d_app_aos_060_c2p
+
+3d_app_mos: examples/test_3d_app.c exdev_gfx_ui_mos_gcc.a exdev_gfx_mos_gcc.a
 	$(CC_GCC) -o ${@} ${INCLUDES_MOS} $(^) ${C_FLAGS_MOS_GCC} ${LD_FLAGS_MOS_GCC}
+    
+3d_app_aos_060: examples/test_3d_app.c exdev_gfx_ui_aos_060.lib exdev_gfx_aos_060.lib 
+	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060} -DLOW_RESOLUTION
+    
+3d_app_aos_060_c2p: examples/test_3d_app.c exdev_gfx_ui_aos_060.lib exdev_gfx_aos_060_c2p.lib
+	$(CC) -o ${@} ${INCLUDES_AOS} $(^) ${C_FLAGS_060} ${LD_FLAGS_060} -LWork:workspace/c2plib/sdk -lc2p -DUSE_C2P -DLOW_RESOLUTION
 
 #--- voxelspace ---#
 voxelspace_all: voxelspace_mos voxelspace_060 voxelspace_060_c2p voxelspace_030_c2p
@@ -169,4 +178,4 @@ dist_voxelspace: voxelspace_all
 #--- clean ---#
 .PHONY: clean
 clean:
-	$(RM) -f julia_* voxelspace_* application_* test_sprite_* *.o library/easing/src/*.o *.lib *.a library/src/*.o library/src_amiga/*.o
+	$(RM) -f julia_* voxelspace_* application_* test_sprite_* *.o library/easing/src/*.o *.lib *.a library/src/*.o library/src_amiga/*.o 3d_app_*
