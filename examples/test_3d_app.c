@@ -5,9 +5,20 @@
 
 #include "exdevgfx/helper.h"
 
+#ifdef LOW_RESOLUTION
+#if USE_C2P
+#define WIDTH 320
+#define HEIGHT 256
+#else
+#define WIDTH 320
+#define HEIGHT 240
+#endif
+#else
 #define WIDTH 640
 #define HEIGHT 480
-#define UPDATE_INTERVAL 40// ms
+#endif
+
+#define UPDATE_INTERVAL 40 // ms
 
 #define NUM_TRIANGLES 12
 #define NUM_COLORS NUM_TRIANGLES

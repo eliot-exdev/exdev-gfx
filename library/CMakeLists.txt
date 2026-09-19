@@ -47,11 +47,13 @@ if (MORPHOS OR AMIGAOS)
     target_compile_options(${PROJECT_NAME}
             PUBLIC -Wno-format -Wno-int-conversion
     )
+    if(USE_LOW_RESOLUTION)
+        target_compile_definitions(${PROJECT_NAME} PUBLIC LOW_RESOLUTION)
+    endif ()
     if (AMIGAOS)
-        target_compile_definitions(${PROJECT_NAME} PRIVATE LOW_RESOLUTION)
         if (USE_AMIGA_C2P)
             target_include_directories(${PROJECT_NAME} PRIVATE ${AMIGA_C2P_INCLUDE_DIR})
-            target_compile_definitions(${PROJECT_NAME} PRIVATE USE_C2P)
+            target_compile_definitions(${PROJECT_NAME} PUBLIC USE_C2P)
             target_link_libraries(${PROJECT_NAME} PRIVATE ${AMIGA_C2P_LIBRARY})
         endif ()
     endif ()
@@ -99,6 +101,9 @@ else ()
     target_compile_options(${PROJECT_NAME}
             PUBLIC -Wno-c2x-extensions -Wno-unused-variable -fPIC -Wno-format
     )
+    if(USE_LOW_RESOLUTION)
+        target_compile_definitions(${PROJECT_NAME} PUBLIC LOW_RESOLUTION)
+    endif ()
 endif ()
 
 install(TARGETS ${PROJECT_NAME}
