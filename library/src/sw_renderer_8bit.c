@@ -191,6 +191,40 @@ void sw_renderer_8bit_fill_triangles(SWRenderer8bit_t *sw,
     }
 }
 
+void sw_renderer_8bit_fill_triangles_texture(SWRenderer8bit_t *sw,
+                                         const Vertex3d_t *triangles,
+                                         int triangles_count,
+                                         const Framebuffer8Bit_t *texture,
+                                         const TextureCoordinates_t *texture_coords,
+                                         const Matrix_t matrix) {
+    assert(sw);
+    assert(triangles);
+    assert(texture);
+    assert(texture_coords);
+    assert(triangles_count > 0);
+
+    Vertex3d_t triangle_tmp[3];
+    Vertex2d_t triangle_2d[3];
+
+    for (int i = 0; i < triangles_count; ++i) {
+        // rotate and translate
+        matrix_mul_vector(matrix, triangles[i * 3 + 0], triangle_tmp[0]);
+        matrix_mul_vector(matrix, triangles[i * 3 + 1], triangle_tmp[1]);
+        matrix_mul_vector(matrix, triangles[i * 3 + 2], triangle_tmp[2]);
+
+        // project triangle 3D -> 2D
+        project_vertex(sw, triangle_tmp[0], triangle_2d[0]);
+        project_vertex(sw, triangle_tmp[1], triangle_2d[1]);
+        project_vertex(sw, triangle_tmp[2], triangle_2d[2]);
+
+        if (!is_visible(triangle_2d)) {
+            continue;
+        }
+
+
+    }
+}
+
 //static void barycentric(const Vertex3d_t a, const Vertex3d_t b, const Vertex3d_t c, const Vertex3d_t p, Vertex3d_t res) {
 //    const Vertex3d_t s0 = {c[0] - a[0], b[0] - a[0], a[0] - p[0]};
 //    const Vertex3d_t s1 = {c[1] - a[1], b[1] - a[1], a[1] - p[1]};
