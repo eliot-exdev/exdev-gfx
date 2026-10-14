@@ -221,111 +221,95 @@ void sw_renderer_8bit_fill_triangles_texture(SWRenderer8bit_t *sw,
             continue;
         }
 
+        int xmin = min(min(triangle_2d[0][0], triangle_2d[1][0]), triangle_2d[2][0]);
+        int xmax = max(max(triangle_2d[0][0], triangle_2d[1][0]), triangle_2d[2][0]);
+        int ymin = min(min(triangle_2d[0][1], triangle_2d[1][1]), triangle_2d[2][1]);
+        int ymax = max(max(triangle_2d[0][1], triangle_2d[1][1]), triangle_2d[2][1]);
+
+        if (xmax <= 0 || xmin >= sw->fb->width) {
+            continue;
+        }
+        if (ymax <= 0 || ymin >= sw->fb->height) {
+            continue;
+        }
+
+        if (xmin < 0) {
+            xmin = 0;
+        }
+        if (xmax >= sw->fb->width) {
+            xmax = sw->fb->width - 1;
+        }
+        if (ymin < 0) {
+            ymin = 0;
+        }
+        if (ymax >= sw->fb->height) {
+            ymax = sw->fb->height - 1;
+        }
+
+        const float area = edgeFunction(triangle_2d[0], triangle_2d[1], triangle_2d[2]);
+        if (area <= 0.0f) {
+            continue;
+        }
+        const TextureCoordinates_t *uv = &texture_coords[i * 3];
+
+        // edge functions are linear in x and y -> step them incrementally
+        const float e0dx = triangle_2d[2][1] - triangle_2d[1][1];
+        const float e0dy = triangle_2d[1][0] - triangle_2d[2][0];
+        const float e1dx = triangle_2d[0][1] - triangle_2d[2][1];
+        const float e1dy = triangle_2d[2][0] - triangle_2d[0][0];
+        const float e2dx = triangle_2d[1][1] - triangle_2d[0][1];
+        const float e2dy = triangle_2d[0][0] - triangle_2d[1][0];
+
+        // texture coordinates (in texels) are linear in x and y as well
+        const float inv_area = 1.0f / area;
+        const float su = (float) (texture->width - 1) * inv_area;
+        const float sv = (float) (texture->height - 1) * inv_area;
+        const float u0 = uv[0].u * su, u1 = uv[1].u * su, u2 = uv[2].u * su;
+        const float v0 = uv[0].v * sv, v1 = uv[1].v * sv, v2 = uv[2].v * sv;
+        const float dudx = e0dx * u0 + e1dx * u1 + e2dx * u2;
+        const float dudy = e0dy * u0 + e1dy * u1 + e2dy * u2;
+        const float dvdx = e0dx * v0 + e1dx * v1 + e2dx * v2;
+        const float dvdy = e0dy * v0 + e1dy * v1 + e2dy * v2;
+
+        // values at the first pixel center
+        const Vertex2d_t p = {(float) xmin + 0.5f, (float) ymin + 0.5f};
+        float w0_row = edgeFunction(triangle_2d[1], triangle_2d[2], p);
+        float w1_row = edgeFunction(triangle_2d[2], triangle_2d[0], p);
+        float w2_row = edgeFunction(triangle_2d[0], triangle_2d[1], p);
+        float u_row = w0_row * u0 + w1_row * u1 + w2_row * u2;
+        float v_row = w0_row * v0 + w1_row * v1 + w2_row * v2;
+
+        const int tex_width = texture->width;
+        const Color8Bit_t *tex = texture->buffer;
+        Color8Bit_t *dst_row = sw->fb->buffer + ymin * sw->fb->width + xmin;
+
+        for (int y = ymin; y <= ymax; ++y) {
+            float w0 = w0_row, w1 = w1_row, w2 = w2_row;
+            float u = u_row, v = v_row;
+            Color8Bit_t *dst = dst_row;
+            int inside = 0;
+            for (int x = xmin; x <= xmax; ++x) {
+                if (w0 >= 0 && w1 >= 0 && w2 >= 0) {
+                    *dst = tex[(int) v * tex_width + (int) u];
+                    inside = 1;
+                } else if (inside) {
+                    // triangle is convex: no more pixels in this row
+                    break;
+                }
+                w0 += e0dx;
+                w1 += e1dx;
+                w2 += e2dx;
+                u += dudx;
+                v += dvdx;
+                ++dst;
+            }
+            w0_row += e0dy;
+            w1_row += e1dy;
+            w2_row += e2dy;
+            u_row += dudy;
+            v_row += dvdy;
+            dst_row += sw->fb->width;
+        }
 
     }
 }
-
-//static void barycentric(const Vertex3d_t a, const Vertex3d_t b, const Vertex3d_t c, const Vertex3d_t p, Vertex3d_t res) {
-//    const Vertex3d_t s0 = {c[0] - a[0], b[0] - a[0], a[0] - p[0]};
-//    const Vertex3d_t s1 = {c[1] - a[1], b[1] - a[1], a[1] - p[1]};
-//    Vertex3d_t u;
-//    vertex3d_cross(s0, s1, u);
-//
-//    if (fabsf(u[2]) < 1.0f) {
-//        res[0] = -1;
-//        res[1] = 1;
-//        res[2] = 1;
-//        return;
-//    }
-//
-//    res[0] = 1.0f - (u[0] + u[1]) / u[2];
-//    res[1] = u[1] / u[2];
-//    res[2] = u[0] / u[2];
-//
-//}
-
-// void sw_renderer_8bit_fill_polygon_texture(SWRenderer8bit_t *sw,
-//                                            const Vertex3d_t *triangles,
-//                                            //                                           const Vertex2d_t *uv_coordinates,
-//                                            int triangles_count,
-//                                            const Framebuffer8Bit_t *texture,
-//                                            const Vertex3d_t trans,
-//                                            const Vertex3d_t rot) {
-//     assert(sw);
-//     assert(triangles);
-//     assert(texture);
-//     assert(triangles_count > 0);
-//
-//     Vertex3d_t triangle_tmp[3];
-//     Vertex2d_t triangle_2d[3];
-//
-//     // matrix
-//     MATRIX_DEFAULT(m);
-//     matrix_rotate(m, rot, m);
-//
-//     for (int ti = 0; ti < triangles_count; ++ti) {
-//         // rotate triangle and normal
-//         matrix_mul_vector(m, triangles[ti * 3 + 0], triangle_tmp[0]);
-//         matrix_mul_vector(m, triangles[ti * 3 + 1], triangle_tmp[1]);
-//         matrix_mul_vector(m, triangles[ti * 3 + 2], triangle_tmp[2]);
-//
-//         // translate triangle
-//         vertex3d_add(triangle_tmp[0], trans, triangle_tmp[0]);
-//         vertex3d_add(triangle_tmp[1], trans, triangle_tmp[1]);
-//         vertex3d_add(triangle_tmp[2], trans, triangle_tmp[2]);
-//
-//         // project triangle 2D -> 2d
-//         project_vertex(sw, triangle_tmp[0], triangle_2d[0]);
-//         project_vertex(sw, triangle_tmp[1], triangle_2d[1]);
-//         project_vertex(sw, triangle_tmp[2], triangle_2d[2]);
-//
-//         if (!is_visible(triangle_2d)) {
-//             continue;
-//         }
-//
-//         // draw triangle
-//         int xmin = min(min(triangle_2d[0][0], triangle_2d[1][0]), triangle_2d[2][0]);
-//         int xmax = max(max(triangle_2d[0][0], triangle_2d[1][0]), triangle_2d[2][0]);
-//         int ymin = min(min(triangle_2d[0][1], triangle_2d[1][1]), triangle_2d[2][1]);
-//         int ymax = max(max(triangle_2d[0][1], triangle_2d[1][1]), triangle_2d[2][1]);
-//
-//         if (xmax <= 0 || xmin >= sw->fb->width) {
-//             continue;
-//         }
-//         if (ymax <= 0 || ymin >= sw->fb->height) {
-//             continue;
-//         }
-//
-//         if (xmin < 0) {
-//             xmin = 0;
-//         }
-//         if (xmax >= sw->fb->width) {
-//             xmax = sw->fb->width - 1;
-//         }
-//         if (ymin < 0) {
-//             ymin = 0;
-//         }
-//         if (ymax >= sw->fb->height) {
-//             ymax = sw->fb->height - 1;
-//         }
-//
-//         float w0, w1, w2;
-//         Vertex2d_t p;
-//         for (int j = ymin; j <= ymax; ++j) {
-//             for (int i = xmin; i <= xmax; ++i) {
-//                 p[0] = (float) i;
-//                 p[1] = (float) j;
-//                 w0 = edgeFunction(triangle_2d[1], triangle_2d[2], p);
-//                 w1 = edgeFunction(triangle_2d[2], triangle_2d[0], p);
-//                 w2 = edgeFunction(triangle_2d[0], triangle_2d[1], p);
-//                 if (w0 > 0 && w1 > 0 && w2 > 0) {
-//                     *framebuffer_8bit_pixel_at(sw->fb, i, j) = *framebuffer_8bit_pixel_at(
-//                         texture,
-//                         ((i - xmin) / (float) (xmax - xmin)) * (texture->width - 1),
-//                         ((j - ymin) / (float) (ymax - ymin)) * (texture->height - 1)
-//                     );
-//                 }
-//             }
-//         }
-//     }
-// }

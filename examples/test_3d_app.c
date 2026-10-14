@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "exdevgfx/helper.h"
+#include "exdevgfx/logger.h"
 
 #ifdef LOW_RESOLUTION
 #if USE_C2P
@@ -26,51 +27,54 @@
 
 // cube
 static const Vertex3d_t cube_triangles[NUM_VERTICES] = {
-        {-1, -1, -1},// front
-        {1, -1, -1},
-        {1, 1, -1},
-        {-1, -1, -1},
-        {1, 1, -1},
-        {-1, 1, -1},
-        {-1, -1, 1},// left
-        {-1, 1, -1},
-        {-1, 1, 1},
-        {-1, -1, 1},
-        {-1, -1, -1},
-        {-1, 1, -1},
-        {1, -1, 1},// right
-        {1, 1, -1},
-        {1, -1, -1},
-        {1, -1, 1},
-        {1, 1, 1},
-        {1, 1, -1},
-        {-1, -1, 1},// back
-        {-1, 1, 1},
-        {1, 1, 1},
-        {-1, -1, 1},
-        {1, 1, 1},
-        {1, -1, 1},
-        {-1, 1, -1},// top
-        {1, 1, 1},
-        {-1, 1, 1},
-        {-1, 1, -1},
-        {1, 1, -1},
-        {1, 1, 1},
-        {-1, -1, -1},// bottom
-        {-1, -1, 1},
-        {1, -1, 1},
-        {-1, -1, -1},
-        {1, -1, 1},
-        {1, -1, -1}};
+    {-1, -1, -1}, // front
+    {1, -1, -1},
+    {1, 1, -1},
+    {-1, -1, -1},
+    {1, 1, -1},
+    {-1, 1, -1},
+    {-1, -1, 1}, // left
+    {-1, 1, -1},
+    {-1, 1, 1},
+    {-1, -1, 1},
+    {-1, -1, -1},
+    {-1, 1, -1},
+    {1, -1, 1}, // right
+    {1, 1, -1},
+    {1, -1, -1},
+    {1, -1, 1},
+    {1, 1, 1},
+    {1, 1, -1},
+    {-1, -1, 1}, // back
+    {-1, 1, 1},
+    {1, 1, 1},
+    {-1, -1, 1},
+    {1, 1, 1},
+    {1, -1, 1},
+    {-1, 1, -1}, // top
+    {1, 1, 1},
+    {-1, 1, 1},
+    {-1, 1, -1},
+    {1, 1, -1},
+    {1, 1, 1},
+    {-1, -1, -1}, // bottom
+    {-1, -1, 1},
+    {1, -1, 1},
+    {-1, -1, -1},
+    {1, -1, 1},
+    {1, -1, -1}
+};
 
 static const Color8Bit_t cube_colors[NUM_COLORS] = {
-        PEN_INDEX_RED, PEN_INDEX_RED,      //front
-        PEN_INDEX_GREEN, PEN_INDEX_GREEN,  // left
-        PEN_INDEX_BLUE, PEN_INDEX_BLUE,    // right
-        PEN_INDEX_YELLOW, PEN_INDEX_YELLOW,//back,
-        PEN_INDEX_GRAY, PEN_INDEX_GRAY,    // top
-        PEN_INDEX_CYAN, PEN_INDEX_CYAN     // bottom
+    PEN_INDEX_RED, PEN_INDEX_RED, //front
+    PEN_INDEX_GREEN, PEN_INDEX_GREEN, // left
+    PEN_INDEX_BLUE, PEN_INDEX_BLUE, // right
+    PEN_INDEX_YELLOW, PEN_INDEX_YELLOW, //back,
+    PEN_INDEX_GRAY, PEN_INDEX_GRAY, // top
+    PEN_INDEX_CYAN, PEN_INDEX_CYAN // bottom
 };
+
+static Framebuffer8Bit_t texture;
 
 static float rot_y = 0.0f;
 
@@ -79,7 +83,6 @@ static void my_update_scene(UI3DRenderer_t *self, const long time_elapsed, const
 }
 
 static void my_render_scene(UI3DRenderer_t *self, void *usr_ptr) {
-
     // render left cube wireframe
     MATRIX_DEFAULT(m);
     matrix_rotateY(m, rot_y, m);
@@ -93,15 +96,50 @@ static void my_render_scene(UI3DRenderer_t *self, void *usr_ptr) {
     matrix_translateX(m, 3.0f, m);
     matrix_translateZ(m, 5.0f, m);
     sw_renderer_8bit_fill_triangles(&self->properties.renderer, cube_triangles, NUM_TRIANGLES, cube_colors, m);
+
+    // render middle plane textured
+    TextureCoordinates_t tc[NUM_VERTICES] = {
+        {0, 1}, {1, 1}, {1, 0}, // front
+        {0, 1}, {1, 0}, {0, 0},
+        {0, 1}, {1, 0}, {0, 0}, // left
+        {0, 1}, {1, 1}, {1, 0},
+        {1, 1}, {0, 0}, {0, 1}, // right
+        {1, 1}, {1, 0}, {0, 0},
+        {1, 1}, {1, 0}, {0, 0}, // back
+        {1, 1}, {0, 0}, {0, 1},
+        {0, 1}, {1, 0}, {0, 0}, // top
+        {0, 1}, {1, 1}, {1, 0},
+        {0, 0}, {0, 1}, {1, 1}, // bottom
+        {0, 0}, {1, 1}, {1, 0}
+    };
+    matrix_init(m);
+    matrix_rotateY(m, -rot_y, m);
+    matrix_translateY(m, -2.0f, m);
+    matrix_translateZ(m, 4.0f, m);
+    sw_renderer_8bit_fill_triangles_texture(&self->properties.renderer, cube_triangles, NUM_TRIANGLES, &texture, tc, m);
 }
 
 
 int main() {
     exdev_base_init();
 
+    // load texture
+    int res = framebuffer_8bit_read_from_dat(&texture, "assets/amiga_logo_8bit.dat");
+    if (res) {
+        log_warning_fmt("could not read texture from: %s", "assets/amiga_logo_8bit.dat");
+        return res;
+    }
+
     // application
     UIApplication_t app;
     ui_application_init(&app, WIDTH, HEIGHT, NULL);
+
+    // set palette
+    res = palette_8bit_read_from_dat(&app.palette, "assets/amiga_logo_8bit.pal");
+    if (res) {
+        log_warning_fmt("could not read palette from: %s", "assets/amiga_logo_8bit.pal");
+        return res;
+    }
 
     // 3d
     UI3DRenderer_t *ui_3d = ui_3d_renderer_create(2, 2, WIDTH - 4, HEIGHT - 4);
@@ -115,6 +153,7 @@ int main() {
 
     // cleanup
     ui_application_destroy(&app);
+    framebuffer_8bit_deinit(&texture);
     exdev_base_deinit();
 
     return 0;
