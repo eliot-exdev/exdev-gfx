@@ -192,11 +192,11 @@ void sw_renderer_8bit_fill_triangles(SWRenderer8bit_t *sw,
 }
 
 void sw_renderer_8bit_fill_triangles_texture(SWRenderer8bit_t *sw,
-                                         const Vertex3d_t *triangles,
-                                         int triangles_count,
-                                         const Framebuffer8Bit_t *texture,
-                                         const TextureCoordinates_t *texture_coords,
-                                         const Matrix_t matrix) {
+                                             const Vertex3d_t *triangles,
+                                             int triangles_count,
+                                             const Framebuffer8Bit_t *texture,
+                                             const TextureCoordinates_t *texture_coords,
+                                             const Matrix_t matrix) {
     assert(sw);
     assert(triangles);
     assert(texture);
@@ -205,6 +205,9 @@ void sw_renderer_8bit_fill_triangles_texture(SWRenderer8bit_t *sw,
 
     Vertex3d_t triangle_tmp[3];
     Vertex2d_t triangle_2d[3];
+
+    const int tex_width = texture->width;
+    const Color8Bit_t *tex = texture->buffer;
 
     for (int i = 0; i < triangles_count; ++i) {
         // rotate and translate
@@ -226,6 +229,7 @@ void sw_renderer_8bit_fill_triangles_texture(SWRenderer8bit_t *sw,
         int ymin = min(min(triangle_2d[0][1], triangle_2d[1][1]), triangle_2d[2][1]);
         int ymax = max(max(triangle_2d[0][1], triangle_2d[1][1]), triangle_2d[2][1]);
 
+        // outside of framebuffer
         if (xmax <= 0 || xmin >= sw->fb->width) {
             continue;
         }
@@ -279,15 +283,13 @@ void sw_renderer_8bit_fill_triangles_texture(SWRenderer8bit_t *sw,
         float u_row = w0_row * u0 + w1_row * u1 + w2_row * u2;
         float v_row = w0_row * v0 + w1_row * v1 + w2_row * v2;
 
-        const int tex_width = texture->width;
-        const Color8Bit_t *tex = texture->buffer;
         Color8Bit_t *dst_row = sw->fb->buffer + ymin * sw->fb->width + xmin;
 
         for (int y = ymin; y <= ymax; ++y) {
             float w0 = w0_row, w1 = w1_row, w2 = w2_row;
             float u = u_row, v = v_row;
             Color8Bit_t *dst = dst_row;
-            int inside = 0;
+            char inside = 0;
             for (int x = xmin; x <= xmax; ++x) {
                 if (w0 >= 0 && w1 >= 0 && w2 >= 0) {
                     *dst = tex[(int) v * tex_width + (int) u];
@@ -303,6 +305,7 @@ void sw_renderer_8bit_fill_triangles_texture(SWRenderer8bit_t *sw,
                 v += dvdx;
                 ++dst;
             }
+
             w0_row += e0dy;
             w1_row += e1dy;
             w2_row += e2dy;
@@ -310,6 +313,5 @@ void sw_renderer_8bit_fill_triangles_texture(SWRenderer8bit_t *sw,
             v_row += dvdy;
             dst_row += sw->fb->width;
         }
-
     }
 }
