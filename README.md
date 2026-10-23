@@ -3,22 +3,34 @@ Simple 2D/3D graphics engine for Linux (amd64, arm64), MorphOs (ppc), AmigaOs (6
 Currently macOS support is not yet ready (but this will come in near future). 
 This library is for private learning purposes only, but there might be some interesting stuff inside.  
 
-# examples
-There are two interesting examples which are using this graphics engine.  
+Some features:  
+- 2D rendering api (aplha, scale, rotate, ...)
+- 3D rendering (wireframe, flat, textured)
+- Object-oriented UI application framework
+- Easing functions
 
-## julia
+# Examples
+Here are some examples which are using this library:
+
+## Julia
 A simple mandelbrot renderer:  
 ![julia](screenshots/julia.png)
 
-## voxelspace
+## Voxelspace
 A simple voxelspace renderer (do you remember [Comanche](https://en.wikipedia.org/wiki/Comanche_(video_game_series))?):  
 ![voxelspace](screenshots/voxelspace_world_5.png)
+
+## [Settle The World map editor](https://github.com/eliot-exdev/stw-map-editor)
+![sprite](screenshots/stw.png)
+
+## 3D test app
+![sprite](screenshots/3d_app.png)
 
 ## sprite
 A simple sprite renderer with alpha, scaling and rotation:  
 ![sprite](screenshots/sprite.png)
 
-# tools
+# Tools
 ## convert_palette_to_pgm
 Converts an existing palette to pgm. 
 Usage:
@@ -27,7 +39,7 @@ Usage:
 
 ![palette](screenshots/palette.png)
 
-# build
+# Build
 
 ## Linux
 
