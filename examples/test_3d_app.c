@@ -26,7 +26,7 @@
 #define NUM_VERTICES 36
 
 // cube
-static const Vertex3d_t cube_triangles[NUM_VERTICES] = {
+static const Vertex3d_t CUBE_TRIANGLES[NUM_VERTICES] = {
     {-1, -1, -1}, // front
     {1, -1, -1},
     {1, 1, -1},
@@ -65,7 +65,22 @@ static const Vertex3d_t cube_triangles[NUM_VERTICES] = {
     {1, -1, -1}
 };
 
-static const Color8Bit_t cube_colors[NUM_COLORS] = {
+static const TextureCoordinates_t CUBE_UV[NUM_VERTICES] = {
+    {0, 1}, {1, 1}, {1, 0}, // front
+    {0, 1}, {1, 0}, {0, 0},
+    {0, 1}, {1, 0}, {0, 0}, // left
+    {0, 1}, {1, 1}, {1, 0},
+    {1, 1}, {0, 0}, {0, 1}, // right
+    {1, 1}, {1, 0}, {0, 0},
+    {1, 1}, {1, 0}, {0, 0}, // back
+    {1, 1}, {0, 0}, {0, 1},
+    {0, 1}, {1, 0}, {0, 0}, // top
+    {0, 1}, {1, 1}, {1, 0},
+    {0, 0}, {0, 1}, {1, 1}, // bottom
+    {0, 0}, {1, 1}, {1, 0}
+};
+
+static const Color8Bit_t CUBE_COLORS[NUM_COLORS] = {
     PEN_INDEX_RED, PEN_INDEX_RED, //front
     PEN_INDEX_GREEN, PEN_INDEX_GREEN, // left
     PEN_INDEX_BLUE, PEN_INDEX_BLUE, // right
@@ -79,7 +94,7 @@ static Framebuffer8Bit_t texture;
 static float rot_y = 0.0f;
 
 static void my_update_scene(UI3DRenderer_t *self, const long time_elapsed, const Event_t *events, const int num_events, struct UIApplication *app, void *usr_ptr) {
-    rot_y -= deg_to_rad(4.0f);
+    rot_y -= deg_to_rad(2.0f);
 }
 
 static void my_render_scene(UI3DRenderer_t *self, void *usr_ptr) {
@@ -88,35 +103,21 @@ static void my_render_scene(UI3DRenderer_t *self, void *usr_ptr) {
     matrix_rotateY(m, rot_y, m);
     matrix_translateX(m, -3.0f, m);
     matrix_translateZ(m, 5.0f, m);
-    sw_renderer_8bit_draw_triangles(&self->properties.renderer, cube_triangles, NUM_TRIANGLES, cube_colors, m);
+    sw_renderer_8bit_draw_triangles(&self->properties.renderer, CUBE_TRIANGLES, NUM_TRIANGLES, CUBE_COLORS, m);
 
-    // render right cube filled
+    // render right cube flat
     matrix_init(m);
-    matrix_rotateY(m, -rot_y, m);
+    matrix_rotateY(m, rot_y, m);
     matrix_translateX(m, 3.0f, m);
     matrix_translateZ(m, 5.0f, m);
-    sw_renderer_8bit_fill_triangles(&self->properties.renderer, cube_triangles, NUM_TRIANGLES, cube_colors, m);
+    sw_renderer_8bit_fill_triangles(&self->properties.renderer, CUBE_TRIANGLES, NUM_TRIANGLES, CUBE_COLORS, m);
 
-    // render middle plane textured
-    TextureCoordinates_t tc[NUM_VERTICES] = {
-        {0, 1}, {1, 1}, {1, 0}, // front
-        {0, 1}, {1, 0}, {0, 0},
-        {0, 1}, {1, 0}, {0, 0}, // left
-        {0, 1}, {1, 1}, {1, 0},
-        {1, 1}, {0, 0}, {0, 1}, // right
-        {1, 1}, {1, 0}, {0, 0},
-        {1, 1}, {1, 0}, {0, 0}, // back
-        {1, 1}, {0, 0}, {0, 1},
-        {0, 1}, {1, 0}, {0, 0}, // top
-        {0, 1}, {1, 1}, {1, 0},
-        {0, 0}, {0, 1}, {1, 1}, // bottom
-        {0, 0}, {1, 1}, {1, 0}
-    };
+    // render middle cube textured
     matrix_init(m);
-    matrix_rotateY(m, -rot_y, m);
+    matrix_rotateY(m, rot_y, m);
     matrix_translateY(m, -2.0f, m);
     matrix_translateZ(m, 4.0f, m);
-    sw_renderer_8bit_fill_triangles_texture(&self->properties.renderer, cube_triangles, NUM_TRIANGLES, &texture, tc, m);
+    sw_renderer_8bit_fill_triangles_texture(&self->properties.renderer, CUBE_TRIANGLES, NUM_TRIANGLES, &texture, CUBE_UV, m);
 }
 
 
