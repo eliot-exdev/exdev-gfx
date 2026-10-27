@@ -1,8 +1,8 @@
 # Generated from CLion C/C++ Code Style settings
 BasedOnStyle: LLVM
-SortIncludes: Never
+SortIncludes: CaseSensitive
 AccessModifierOffset: -4
-AlignAfterOpenBracket: Align
+AlignAfterOpenBracket: true
 AlignConsecutiveAssignments: None
 AlignOperands: Align
 AllowAllArgumentsOnNextLine: false
@@ -35,7 +35,7 @@ BreakBeforeBinaryOperators: None
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: BeforeColon
 BreakInheritanceList: BeforeColon
-ColumnLimit: 0
+ColumnLimit: 160
 CompactNamespaces: false
 ContinuationIndentWidth: 8
 IndentCaseLabels: true
