@@ -9,6 +9,8 @@
 
 #ifdef __cplusplus
 extern "C" {
+
+
 #endif
 
 typedef float Matrix_t[4][4];
@@ -32,6 +34,8 @@ void matrix_rotateY(const Matrix_t src, float ry, Matrix_t dst);
 void matrix_rotateZ(const Matrix_t src, float rz, Matrix_t dst);
 
 void matrix_translate(const Matrix_t src, const Vertex3d_t vec, Matrix_t dst);
+
+void matrix_translateXYZ(const Matrix_t src, float x, float y, float z, Matrix_t dst);
 
 void matrix_translateX(const Matrix_t src, float x, Matrix_t dst);
 
