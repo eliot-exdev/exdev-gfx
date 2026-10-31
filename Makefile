@@ -11,7 +11,7 @@ LD_FLAGS_MOS_GCC=-lm
 INCLUDES_MOS=-Ilibrary/include -Ilibrary/easing/include
 
 #--- AmigaOs 060 ---#
-C_FLAGS_060=+aos68k -c99 -fpu=68060 -cpu=68060 -speed -final -DNDEBUG -D__AMIGA__
+C_FLAGS_060=+aos68k -c99 -fpu=68060 -cpu=68060 -speed -final -schedule -inline-size=0 -DNDEBUG -D__AMIGA__
 LD_FLAGS_060=-lm060
 
 #--- AmigaOs 030 ---#
@@ -61,7 +61,7 @@ exdev_gfx_aos_060_c2p.lib: $(EXDEV_GFX_SOURCES)
 
 exdev_gfx_aos_030_c2p.lib: $(EXDEV_GFX_SOURCES)
 	$(CC) -c ${INCLUDES_AOS} -IWork:workspace/c2plib/sdk/C ${C_FLAGS_030} $(^) -DUSE_C2P -DLOW_RESOLUTION
-	$(JOIN) as $(@) library/src/args.o library/src/color.o library/src/events.o library/src/font.o library/src/framebuffer.o library/src/framebuffer_8bit.o library/src/framebuffer_rgba.o library/src/heightmap.o library/src/helper.o library/src/julia.o library/src/matrix.o library/src/palette.o library/src/vertex2d.o library/src/vertex3d.o library/src/voxelspace.o library/src_amiga/exdev_base_amiga.o library/src_amiga/helper_amiga.o library/src_amiga/window_amiga.o library/src/sw_renderer_8bit.
+	$(JOIN) as $(@) library/src/args.o library/src/color.o library/src/events.o library/src/font.o library/src/framebuffer.o library/src/framebuffer_8bit.o library/src/framebuffer_rgba.o library/src/heightmap.o library/src/helper.o library/src/julia.o library/src/matrix.o library/src/palette.o library/src/vertex2d.o library/src/vertex3d.o library/src/voxelspace.o library/src_amiga/exdev_base_amiga.o library/src_amiga/helper_amiga.o library/src_amiga/window_amiga.o library/src/sw_renderer_8bit.o
 
 
 #--- exdev-gfx-ui ---#
