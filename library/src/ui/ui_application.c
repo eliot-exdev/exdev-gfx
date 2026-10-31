@@ -9,6 +9,7 @@
 #include "exdevgfx/logger.h"
 
 #include <assert.h>
+#include <stdlib.h>
 
 void ui_application_init(UIApplication_t *self, const int width, const int height, void *usr_ptr) {
     assert(self);

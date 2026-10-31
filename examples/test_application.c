@@ -35,7 +35,7 @@ void left_update(UIComponent_t *self, const long ms, const Event_t *events, cons
     }
 }
 
-int right_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, const int x_offset, const int y_offset, int, int, void *usr_ptr) {
+int right_paint(UIComponent_t *self, Framebuffer8Bit_t *fb, const int x_offset, const int y_offset, const int width, const int height, void *usr_ptr) {
     const int tmp = self->flags.dirty_flag;
 
     const int x = self->properties.x + x_offset;
