@@ -83,9 +83,9 @@ set(CMAKE_C_COMPILER_RANLIB ${MOS_RANLIB})
 set(CMAKE_CXX_COMPILER_RANLIB ${MOS_RANLIB})
 
 # set compile flags
-set(CMAKE_C_FLAGS "-noixemul -mcpu=G4 -mno-altivec")
+set(CMAKE_C_FLAGS "-mcpu=7450 -mtune=7450 -mno-altivec -ffast-math -noixemul")
 set(CMAKE_C_FLAGS_RELEASE "-Ofast -DNDEBUG")
-set(CMAKE_CXX_FLAGS "-noixemul -mcpu=G4 -mno-altivec")
+set(CMAKE_CXX_FLAGS "-mcpu=7450 -mtune=7450 -mno-altivec -ffast-math -noixemul")
 set(CMAKE_CXX_FLAGS_RELEASE "-Ofast -DNDEBUG")
 
 add_compile_definitions(__MORPHOS__)
