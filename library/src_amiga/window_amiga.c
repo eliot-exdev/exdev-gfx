@@ -36,6 +36,12 @@ struct NativeWindow {
     Framebuffer8Bit_t chunky_buffer;
 #ifdef USE_C2P
     APTR C2P_context;
+#else
+    struct ScreenBuffer *buffers[2];
+    struct MsgPort *safe_port;
+    ULONG signal_mask;
+    char safe_to_draw;
+    int current_buffer;
 #endif
 };
 
@@ -294,31 +300,51 @@ Window_t *window_create(const int width, const int height, const char *title, co
 
     framebuffer_8bit_init(&w->chunky_buffer, width, height);
 
+    w->safe_port = CreateMsgPort();
+    w->safe_to_draw = 1;
+    w->current_buffer = 0;
+    w->buffers[0] = AllocScreenBuffer(w->screen, NULL, SB_SCREEN_BITMAP);
+    w->buffers[1] = AllocScreenBuffer(w->screen, NULL, 0);
+
+    w->buffers[0]->sb_DBufInfo->dbi_SafeMessage.mn_ReplyPort = w->safe_port;
+    w->buffers[1]->sb_DBufInfo->dbi_SafeMessage.mn_ReplyPort = w->safe_port;
+
+    w->signal_mask = 1L << w->safe_port->mp_SigBit;
+
     return (Window_t *) w;
 }
 #endif
 
 void window_destroy(Window_t *win) {
-    NativeWindow_t *nwin = NATIVE_WINDOW_CAST(win);
+    NativeWindow_t *w = NATIVE_WINDOW_CAST(win);
 
-    if (nwin->window) {
-        CloseWindow(nwin->window);
+#ifndef USE_C2P
+    if (w->buffers[0])
+        FreeScreenBuffer(w->screen, w->buffers[0]);
+    if (w->buffers[1])
+        FreeScreenBuffer(w->screen, w->buffers[1]);
+    if (w->safe_port)
+        DeleteMsgPort(w->safe_port);
+#endif
+
+    if (w->window) {
+        CloseWindow(w->window);
     }
-    if (nwin->screen) {
-        CloseScreen(nwin->screen);
+    if (w->screen) {
+        CloseScreen(w->screen);
     }
 
 #ifdef USE_C2P
-    C2P_DestroyContext(nwin->C2P_context);
-    nwin->chunky_buffer.buffer = NULL;
+    C2P_DestroyContext(w->C2P_context);
+    w->chunky_buffer.buffer = NULL;
 #else
-    framebuffer_8bit_deinit(&nwin->chunky_buffer);
+    framebuffer_8bit_deinit(&w->chunky_buffer);
 #endif
 
-    nwin->window = NULL;
-    nwin->screen = NULL;
+    w->window = NULL;
+    w->screen = NULL;
 
-    free(nwin);
+    free(w);
 }
 
 int window_get_width(const Window_t *win) {
@@ -362,11 +388,34 @@ void window_blit_chunky_buffer(Window_t *win) {
 #ifdef USE_C2P
     C2P_Chunky2Planar(NATIVE_WINDOW_CAST(win)->C2P_context);
 #else
-    WriteChunkyPixels(NATIVE_WINDOW_CAST(win)->window->RPort, 0, 0,
-                      NATIVE_WINDOW_CAST(win)->chunky_buffer.width,
-                      NATIVE_WINDOW_CAST(win)->chunky_buffer.height,
-                      NATIVE_WINDOW_CAST(win)->chunky_buffer.buffer,
-                      NATIVE_WINDOW_CAST(win)->chunky_buffer.width);
+    NativeWindow_t *w = NATIVE_WINDOW_CAST(win);
+    // wait
+    while (!w->safe_to_draw) {
+        Wait(w->signal_mask);
+        while (GetMsg(w->safe_port)) {
+            w->safe_to_draw = 1;
+        }
+    }
+
+    struct RastPort *rp = &w->screen->RastPort;
+    struct BitMap *backBM = w->buffers[w->current_buffer ^ 1]->sb_BitMap;
+
+    struct BitMap *oldBM = rp->BitMap;
+    rp->BitMap = backBM;
+
+    WriteChunkyPixels(rp, 0, 0,
+                      w->chunky_buffer.width,
+                      w->chunky_buffer.height,
+                      w->chunky_buffer.buffer,
+                      w->chunky_buffer.width);
+
+    rp->BitMap = oldBM;
+
+    w->safe_to_draw = 0;
+    if (ChangeScreenBuffer(w->screen, w->buffers[w->current_buffer ^ 1])) {
+        w->current_buffer ^= 1;
+        w->safe_to_draw = 0;
+    }
 #endif
 }
 
