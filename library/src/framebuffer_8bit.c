@@ -371,7 +371,7 @@ void framebuffer_8bit_draw_text(Framebuffer8Bit_t *fb, const Font_t *f, const ch
     }
 }
 
-void framebuffer_8bit_draw_line(Framebuffer8Bit_t *fb, const Vertex2d_t a, const Vertex2d_t b, Color8Bit_t c) {
+void framebuffer_8bit_draw_line(Framebuffer8Bit_t *fb, const Vertex2d_t a, const Vertex2d_t b, const Color8Bit_t c) {
     int x, y, t, dx, dy, incx, incy, pdx, pdy, ddx, ddy, deltaslowdirection, deltafastdirection, err;
 
     dx = (int) (b[0] - a[0]);

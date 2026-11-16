@@ -193,7 +193,7 @@ void sw_renderer_8bit_fill_triangles(SWRenderer8bit_t *sw,
 
 void sw_renderer_8bit_fill_triangles_texture(SWRenderer8bit_t *sw,
                                              const Vertex3d_t *triangles,
-                                             int triangles_count,
+                                             const int triangles_count,
                                              const Framebuffer8Bit_t *texture,
                                              const TextureCoordinates_t *texture_coords,
                                              const Matrix_t matrix) {

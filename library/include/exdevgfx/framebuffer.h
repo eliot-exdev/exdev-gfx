@@ -30,9 +30,9 @@ ColorRGB_t *framebuffer_pixel_at(const Framebuffer_t *fb, int x, int y);
 
 void framebuffer_draw_line(Framebuffer_t *fb, const Vertex2d_t a, const Vertex2d_t b, const ColorRGBA_t *c);
 
-void framebuffer_draw_vertical_line_rgb(Framebuffer_t *fb, int x, int y, int dy, const ColorRGB_t *c);
+void framebuffer_draw_vertical_line_rgb(Framebuffer_t *fb, int x, int y, int dx, const ColorRGB_t *c);
 
-void framebuffer_draw_vertical_line(Framebuffer_t *fb, int x, int y, int dy, const ColorRGBA_t *c);
+void framebuffer_draw_vertical_line(Framebuffer_t *fb, int x, int y, int dx, const ColorRGBA_t *c);
 
 void framebuffer_draw_horizontal_line(Framebuffer_t *fb, int x, int y, int dx, const ColorRGB_t *c);
 

@@ -18,7 +18,7 @@ void framebuffer_rgba_deinit(FramebufferRGBA_t *fb) {
     fb->buffer = NULL;
 }
 
-void framebuffer_rgba_fill(FramebufferRGBA_t *fb, const Framebuffer_t *src, unsigned char a) {
+void framebuffer_rgba_fill(FramebufferRGBA_t *fb, const Framebuffer_t *src, const unsigned char a) {
     assert(src);
     assert(fb);
     assert(src->width == fb->width);

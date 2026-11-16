@@ -69,7 +69,7 @@ int ui_horizontal_scroll_bar_paint(UIHorizontalScrollBar_t *self, Framebuffer8Bi
     return res;
 }
 
-void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, const long ms, const Event_t *events, const int num_events, UIApplication_t *app, void *usr_ptr) {
+void ui_horizontal_scroll_bar_update(UIHorizontalScrollBar_t *self, const long time_elapsed, const Event_t *events, const int num_events, UIApplication_t *app, void *usr_ptr) {
     assert(self);
     assert(events);
 

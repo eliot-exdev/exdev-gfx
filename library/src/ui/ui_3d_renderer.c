@@ -49,7 +49,7 @@ int ui_3d_renderer_paint(UI3DRenderer_t *self, Framebuffer8Bit_t *fb, const int 
     return 1;
 }
 
-void ui_3d_renderer_update(UI3DRenderer_t *self, const long time_elapsed, const Event_t *events, int num_events, struct UIApplication *app, void *usr_ptr) {
+void ui_3d_renderer_update(UI3DRenderer_t *self, const long time_elapsed, const Event_t *events, const int num_events, struct UIApplication *app, void *usr_ptr) {
     assert(self);
 
     if (!self->base.flags.enabled_flag) {

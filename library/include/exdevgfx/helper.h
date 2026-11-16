@@ -12,8 +12,8 @@
 #include <exec/exec.h>
 #include <clib/exec_protos.h>
 #else
-#include <stdlib.h>
 #endif
+#include <stdio.h>
 
 #ifdef __cplusplus
 extern "C" {
